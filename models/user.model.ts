@@ -7,13 +7,8 @@ import {
   DataType,
   HasMany,
   BeforeUpdate,
-} from 'sequelize-typescript';
-import { TableName } from 'src/enums/database.enum';
-import { Article } from './article.model';
-import { Category } from './category.model';
-import { Bookmark } from './bookmark.model';
-import { Like } from './like.model';
-import { Comment } from './comment.model';
+} from "sequelize-typescript";
+import { TableName } from "src/enums/database.enum";
 
 @Table({ tableName: TableName.USERS })
 export class User extends Model {
@@ -43,21 +38,6 @@ export class User extends Model {
 
   @UpdatedAt
   updatedAt: Date;
-
-  @HasMany(() => Category)
-  categories: Article[];
-
-  @HasMany(() => Article)
-  articles: Article[];
-
-  @HasMany(() => Bookmark)
-  bookmarks: Bookmark[];
-
-  @HasMany(() => Like)
-  likes: Like[];
-
-  @HasMany(() => Comment)
-  comments: Comment[];
 
   @BeforeUpdate
   static updateTimestamp(instance: User) {

@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.createTable("plarform_games", {
+    return queryInterface.createTable("platform_games", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -14,10 +14,10 @@ module.exports = {
         allowNull: false,
         references: { model: "games", key: "id" },
       },
-      plarform_id: {
+      platform_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: "plarforms", key: "id" },
+        references: { model: "platforms", key: "id" },
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -33,6 +33,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("plarform_games");
+    return queryInterface.dropTable("platform_games");
   },
 };

@@ -30,7 +30,7 @@ module.exports = {
         allowNull: false,
       },
       metacritic: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       createdAt: {

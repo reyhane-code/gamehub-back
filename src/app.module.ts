@@ -10,6 +10,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from './custom-exceptions/all-exception-filter';
 import { DatabaseModule } from './database/database.module';
 import { LangMiddleware } from './middlewares/lang-middleware';
+import { GamesModule } from './games/games.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { LangMiddleware } from './middlewares/lang-middleware';
       load: [configuration],
       isGlobal: true,
     }),
+    GamesModule,
   ],
   controllers: [AppController],
   providers: [
