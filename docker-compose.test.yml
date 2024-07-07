@@ -1,0 +1,54 @@
+version: '3.8'
+services:
+  api:
+    build: .
+    ports:
+      - 3500:3500
+    environment:
+      STAGE: 'test'
+      NODE_ENV: 'test'
+      PORT: '3500'
+      REDIS_HOST: 'redis'
+      REDIS_PORT: '6379'
+      REDIS_PASSWORD: 'eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81'
+      POSTGRES_PASSWORD: 'rewq4321'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_DB: 'gamehub_test_db'
+      POSTGRES_HOST: 'postgres'
+      VALIDATION_TOKEN_SECRET: '1385723409yfdshgpsdfhigtiwpri0958342952yujkldshgnjfkjdl923248939'
+
+    depends_on:
+      - postgres
+      - redis
+    command: ['npm', 'run', 'test:e2e']
+
+  postgres:
+    image: 'postgres'
+    container_name: postgres-gamehub
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres-data:/var/lib/postgres
+    environment:
+      POSTGRES_PASSWORD: 'rewq4321'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_DB: 'gamehub_test_db'
+      POSTGRES_HOST: 'postgres'
+    restart: unless-stopped
+
+  redis:
+    image: 'redis'
+    container_name: redis-gamehub
+    ports:
+      - 6379:6379
+    command:
+      - /bin/sh
+      - -c
+      # - Double dollars, so that the variable is not expanded by Docker Compose
+      # - Surround by quotes, so that the shell does not split the password
+      # - The ${variable:?message} syntax causes shell to exit with a non-zero
+      #   code and print a message, when the variable is not set or empty
+      - redis-server --requirepass "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81"
+    #volumes:
+    # - redis:/var/lib/redis/data
+    # - ./redis.conf:/usr/local/etc/redis/redis.conf
