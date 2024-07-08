@@ -11,6 +11,7 @@ import { AllExceptionsFilter } from './custom-exceptions/all-exception-filter';
 import { DatabaseModule } from './database/database.module';
 import { LangMiddleware } from './middlewares/lang-middleware';
 import { GamesModule } from './games/games.module';
+import { GenresModule } from './genres/genres.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { GamesModule } from './games/games.module';
       isGlobal: true,
     }),
     GamesModule,
+    GenresModule,
   ],
   controllers: [AppController],
   providers: [
