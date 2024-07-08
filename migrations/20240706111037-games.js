@@ -25,7 +25,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      rationg_top: {
+      rating_top: {
         type: Sequelize.STRING,
         allowNull: false,
       },

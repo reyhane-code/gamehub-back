@@ -69,4 +69,5 @@ services:
       - .:/gamehub/src/app
     depends_on:
       - postgres
+      - migrate
     command: sh -c "npx sequelize-cli db:seed:all"
