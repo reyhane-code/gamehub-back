@@ -12,6 +12,7 @@ import { DatabaseModule } from './database/database.module';
 import { LangMiddleware } from './middlewares/lang-middleware';
 import { GamesModule } from './games/games.module';
 import { GenresModule } from './genres/genres.module';
+import { PlatformsModule } from './platforms/platforms.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { GenresModule } from './genres/genres.module';
     }),
     GamesModule,
     GenresModule,
+    PlatformsModule,
   ],
   controllers: [AppController],
   providers: [
