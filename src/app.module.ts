@@ -13,6 +13,7 @@ import { LangMiddleware } from './middlewares/lang-middleware';
 import { GamesModule } from './games/games.module';
 import { GenresModule } from './genres/genres.module';
 import { PlatformsModule } from './platforms/platforms.module';
+import { PublishersModule } from './publishers/publishers.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { PlatformsModule } from './platforms/platforms.module';
     GamesModule,
     GenresModule,
     PlatformsModule,
+    PublishersModule,
   ],
   controllers: [AppController],
   providers: [

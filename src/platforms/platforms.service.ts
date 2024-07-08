@@ -9,18 +9,18 @@ export class PlatformsService {
     @Inject(Repositories.PLATFORMS) private platformsRepository: typeof Platform
   ) {}
 
-  async addGenre() {}
+  async addPlatform() {}
 
-  async deleteGenre() {}
+  async deletePlatform() {}
 
-  async updateGenre() {}
+  async updatePlatform() {}
 
   async findOneById(id: number) {
-    const genre = await this.platformsRepository.findOne({ where: { id } });
-    if (!genre) {
+    const platform = await this.platformsRepository.findOne({ where: { id } });
+    if (!platform) {
       throw new NotFoundException("No platform was found!");
     }
-    return genre;
+    return platform;
   }
 
   async findAll() {

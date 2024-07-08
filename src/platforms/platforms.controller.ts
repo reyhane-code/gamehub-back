@@ -3,11 +3,11 @@ import { paginationQueryOptions } from "src/interfaces/database.interfaces";
 import { PlatformsService } from "./platforms.service";
 
 @Controller("platform")
-export class GenresController {
+export class PlatformsController {
   constructor(private platformsService: PlatformsService) {}
 
   @Get("/:id")
-  findGenre(@Param("id") id: number) {
+  findPlatform(@Param("id") id: number) {
     return this.platformsService.findOneById(id);
   }
 
