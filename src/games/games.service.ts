@@ -1,5 +1,11 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { Game } from "models/game.model";
+import { Genre } from "models/genre.model";
+import { GenreGame } from "models/genre_game.model";
+import { Platform } from "models/platform.model";
+import { PlatformGame } from "models/platform_game.model";
+import { Publisher } from "models/publisher.model";
+import { PublisherGame } from "models/publisher_game.model";
 import { Repositories } from "src/enums/database.enum";
 import { paginationQueryOptions } from "src/interfaces/database.interfaces";
 
@@ -17,20 +23,35 @@ export class GamesService {
     return game;
   }
 
-  //TODO: join with others.
   async getGames() {
-    const games = await this.gamesRepository.findAll();
-    if (!games) {
-      throw new NotFoundException("NO game was found.");
-    }
-    return games;
-  }
-
-  //TODO: join with others.
-  async getGamesWithPaginate({ perPage, page }: paginationQueryOptions) {
     const games = await this.gamesRepository.findAll({
-      limit: perPage,
-      offset: perPage * page,
+      include: [
+        {
+          model: PublisherGame,
+          include: [
+            {
+              model: Publisher,
+            },
+          ],
+        },
+        {
+          model: PlatformGame,
+          include: [
+            {
+              model: Platform,
+              as: "parent_platforms",
+            },
+          ],
+        },
+        {
+          model: GenreGame,
+          include: [
+            {
+              model: Genre,
+            },
+          ],
+        },
+      ],
     });
     if (!games) {
       throw new NotFoundException("NO game was found.");
@@ -38,9 +59,47 @@ export class GamesService {
     return games;
   }
 
-//   async addGame() {}
+  async getGamesWithPaginate({ perPage, page }: paginationQueryOptions) {
+    const games = await this.gamesRepository.findAll({
+      limit: perPage,
+      offset: perPage * page,
+      include: [
+        {
+          model: PublisherGame,
+          include: [
+            {
+              model: Publisher,
+            },
+          ],
+        },
+        {
+          model: PlatformGame,
+          include: [
+            {
+              model: Platform,
+              as: "parent_platforms",
+            },
+          ],
+        },
+        {
+          model: GenreGame,
+          include: [
+            {
+              model: Genre,
+            },
+          ],
+        },
+      ],
+    });
+    if (!games) {
+      throw new NotFoundException("NO game was found.");
+    }
+    return games;
+  }
 
-//   async deleteGame() {}
+  //   async addGame() {}
 
-//   async updateGame() {}
+  //   async deleteGame() {}
+
+  //   async updateGame() {}
 }
