@@ -15,8 +15,8 @@ export class GamesService {
     @Inject(Repositories.GAMES) private gamesRepository: typeof Game
   ) {}
 
-  async findOneById(id: number) {
-    const game = await this.gamesRepository.findOne({ where: { id } });
+  async findOneBySlug(slug: string) {
+    const game = await this.gamesRepository.findOne({ where: { slug } });
     if (!game) {
       throw new NotFoundException("NO game was found.");
     }

@@ -6,9 +6,9 @@ import { paginationQueryOptions } from "src/interfaces/database.interfaces";
 export class GamesController {
   constructor(private gamesService: GamesService) {}
 
-  @Get("/:id")
-  getGame(@Param("id") id: number) {
-    return this.gamesService.findOneById(id);
+  @Get("/:slug")
+  getGame(@Param("slug") slug: string) {
+    return this.gamesService.findOneBySlug(slug);
   }
 
   @Get("/all")
