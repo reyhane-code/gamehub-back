@@ -1,5 +1,5 @@
 {
-  "name": "knowledge",
+  "name": "gamehub",
   "version": "0.0.1",
   "description": "",
   "author": "reyhane-code <reyhane.code@gmail.com>",
@@ -93,5 +93,5 @@
     "testEnvironment": "node"
   },
   "main": "index.js",
-  "repository": "https://github.com/reyhane-code/knowledge.git"
+  "repository": "https://github.com/reyhane-code/gamehub.git"
 }

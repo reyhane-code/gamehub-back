@@ -10,16 +10,16 @@ import {
 import * as bcrypt from "bcrypt";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
-import { UserInterface } from "src/users/interfaces/user.interface";
+import { UserInterface } from "../users/interfaces/user.interface";
 import { Cache } from "cache-manager";
-import { SmsService } from "src/sms/sms.service";
+import { SmsService } from "../sms/sms.service";
 import { LoginOrRegisterDto } from "./dtos/login-or-register.dto";
-import { SmsSenderNumbers, SmsStatus } from "src/sms/enum/sms.enum";
+import { SmsSenderNumbers, SmsStatus } from "../sms/enum/sms.enum";
 import { LoginWithPasswordDto } from "./dtos/login-with-password.dto";
 import { GetValidationTokenDto } from "./dtos/get-validation-token.dto";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { User } from "models/user.model";
-import { Repositories } from "src/enums/database.enum";
+import { Repositories } from "../enums/database.enum";
 
 @Injectable()
 export class AuthService {

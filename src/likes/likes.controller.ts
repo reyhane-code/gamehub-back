@@ -7,7 +7,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { LikesService } from "./likes.service";
-import { AuthGuard } from "src/guards/auth.guard";
+import { AuthGuard } from "../guards/auth.guard";
 import { CurrentUser } from "src/users/decorators/current-user.decorator";
 import { UserInterface } from "src/users/interfaces/user.interface";
 

@@ -6,17 +6,18 @@ import {
   UseGuards,
   Put,
   Query,
-} from '@nestjs/common';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { CurrentUser } from './decorators/current-user.decorator';
-import { UpdateUserDto } from './dtos/update-user.dto';
-import { UserInterface } from './interfaces/user.interface';
-import { paginationQueryOptions } from 'src/interfaces/database.interfaces';
-import { paginationDefault } from 'src/constance';
-import { UserPasswordDto } from './dtos/user-password.dto';
-import { UsersService } from './users.service';
+} from "@nestjs/common";
 
-@Controller('/user')
+import { CurrentUser } from "./decorators/current-user.decorator";
+import { UpdateUserDto } from "./dtos/update-user.dto";
+import { UserInterface } from "./interfaces/user.interface";
+import { paginationQueryOptions } from "src/interfaces/database.interfaces";
+import { paginationDefault } from "src/constance";
+import { UserPasswordDto } from "./dtos/user-password.dto";
+import { UsersService } from "./users.service";
+import { AuthGuard } from "../guards/auth.guard";
+
+@Controller("/user")
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
@@ -38,10 +39,10 @@ export class UsersController {
     return this.usersService.deleteUser(user);
   }
   @UseGuards(AuthGuard)
-  @Put('/password')
+  @Put("/password")
   setPassword(
     @CurrentUser() user: UserInterface,
-    @Body() body: UserPasswordDto,
+    @Body() body: UserPasswordDto
   ) {
     return this.usersService.setUserPassword(user, body);
   }
