@@ -15,6 +15,7 @@ import { GenresModule } from "./genres/genres.module";
 import { PlatformsModule } from "./platforms/platforms.module";
 import { PublishersModule } from "./publishers/publishers.module";
 import { SmsModule } from "./sms/sms.module";
+import { LikesModule } from './likes/likes.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { SmsModule } from "./sms/sms.module";
     PlatformsModule,
     PublishersModule,
     SmsModule,
+    LikesModule,
   ],
   controllers: [AppController],
   providers: [

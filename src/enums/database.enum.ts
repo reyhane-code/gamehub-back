@@ -7,6 +7,7 @@ export enum TableName {
   PUBLISHER_GAMES = "publisher_games",
   GENRE_GAMES = "genre_games",
   PLATFORM_GAMES = "platform_games",
+  LIKES = "likes",
 }
 
 export enum Repositories {
@@ -18,4 +19,5 @@ export enum Repositories {
   PUBLISHER_GAMES = "PUBLISHER_GAMES_REPOSITORY",
   GENRE_GAMES = "GENRE_GAMES_REPOSITORY",
   PLATFORM_GAMES = "PLATFORM_GAMES_REPOSITORY",
+  LIKES = "LIKES_REPOSITORY",
 }
