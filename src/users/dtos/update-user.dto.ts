@@ -5,7 +5,7 @@ import {
   IsEmail,
   MinLength,
   IsNumber,
-} from 'src/custom-validator';
+} from '../../custom-validator';
 
 export class UpdateUserDto {
   @Expose()
