@@ -5013,6 +5013,11 @@ pg-connection-string@^2.6.1, pg-connection-string@^2.6.4:
   resolved "https://registry.npmjs.org/pg-connection-string/-/pg-connection-string-2.6.4.tgz"
   integrity sha512-v+Z7W/0EO707aNMaAEfiGnGL9sxxumwLl2fJvCQtMn9Fxsg+lPpPkdcyBSv/KFgpGdYkMfn+EI1Or2EHjpgLCA==
 
+pg-format@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/pg-format/-/pg-format-1.0.4.tgz#27734236c2ad3f4e5064915a59334e20040a828e"
+  integrity sha512-YyKEF78pEA6wwTAqOUaHIN/rWpfzzIuMh9KdAhc3rSLQ/7zkRFcCgYBAEGatDstLyZw4g0s9SNICmaTGnBVeyw==
+
 pg-hstore@^2.3.4:
   version "2.3.4"
   resolved "https://registry.npmjs.org/pg-hstore/-/pg-hstore-2.3.4.tgz"
