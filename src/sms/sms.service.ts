@@ -1,21 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import createAxiosInstance from 'src/helpers/axios/create-axios-instance';
-import { SendSmsDto } from './dtos/send-sms.dto';
-import { SmsSenderUrls, SmsSettings, SmsStatus } from './enum/sms.enum';
+import { Injectable } from "@nestjs/common";
+import createAxiosInstance from "src/helpers/create-axios-instance";
+import { SendSmsDto } from "./dtos/send-sms.dto";
+import { SmsSenderUrls, SmsSettings, SmsStatus } from "./enum/sms.enum";
 
 @Injectable()
 export class SmsService {
-  constructor(
-  ) { }
+  constructor() {}
 
-  async sendSms(
-    body: SendSmsDto,
-  ) {
-
+  async sendSms(body: SendSmsDto) {
     try {
-      const recipientListTo = body.recipientList.filter((rec) => rec != 'undefined');
+      const recipientListTo = body.recipientList.filter(
+        (rec) => rec != "undefined"
+      );
       const bodyOfSms = {
-        op: 'send',
+        op: "send",
         from: body.senderNumber,
         to: recipientListTo,
         uname: SmsSettings.USERNAME,
@@ -25,7 +23,7 @@ export class SmsService {
         //sender,
         // time,
       };
-      const api = createAxiosInstance(SmsSettings.BASE_URL)
+      const api = createAxiosInstance(SmsSettings.BASE_URL);
       const sendData = await api.post(SmsSenderUrls.SELECT_wAY, bodyOfSms);
       const newSendList: string[] = [];
       sendData.data.forEach((sendStatus: number, index: number) => {
@@ -41,9 +39,8 @@ export class SmsService {
         return SmsStatus.MAY_USER_BLOCK;
       }
     } catch (e) {
-      console.error('sms send error ', e);
+      console.error("sms send error ", e);
       return SmsStatus.ERROR_TO_SEND;
     }
   }
-
 }

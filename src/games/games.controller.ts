@@ -11,13 +11,12 @@ export class GamesController {
     return this.gamesService.findOneBySlug(slug);
   }
 
-  @Get("/all")
-  getGames() {
-    return this.gamesService.getGames();
-  }
-
-  @Get("/all/paginate")
-  getGamesWithPaginat(@Query() query: paginationQueryOptions) {
-    return this.gamesService.getGamesWithPaginate(query);
+  @Get("all/:genreId/:platformId")
+  getGames(
+    @Param("genereId") genreId: number,
+    @Param("platformId") platformId: number,
+    @Query() query: paginationQueryOptions
+  ) {
+    return this.gamesService.getGames(genreId, platformId, query);
   }
 }
