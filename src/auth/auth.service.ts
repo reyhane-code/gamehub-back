@@ -168,7 +168,7 @@ export class AuthService {
 
       const message = `با سلام کد تایید شما در بیس پروژه : ${code}`;
 
-      let number: SmsSenderNumbers = SmsSenderNumbers.NUMBER_5000;
+      let number: SmsSenderNumbers = SmsSenderNumbers.NUMBER_3500;
       if (+tryNumber > 0) {
         number =
           +tryNumber % 2 == 0
