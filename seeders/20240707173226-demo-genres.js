@@ -1,20 +1,54 @@
-"use strict";
+'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.bulkInsert("genres", [
+    return queryInterface.bulkInsert('genres', [
       {
         id: 1,
-        name: "genre1",
-        image_background: "dummyurl1",
+        name: 'Action',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         id: 2,
-        name: "genre2",
-        image_background: "dummyurl2",
+        name: 'RPG',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 3,
+        name: 'Strategy',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 4,
+        name: 'Shooter',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 5,
+        name: 'Advanture',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 6,
+        name: 'Puzzle',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 7,
+        name: 'Racing',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 8,
+        name: 'Sports',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -22,6 +56,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.bulkDelete("genres", null, {});
+    return queryInterface.bulkDelete('genres', null, {});
   },
 };
