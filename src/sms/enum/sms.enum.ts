@@ -14,7 +14,7 @@ export enum SmsStatus {
 }
 
 export enum SmsSenderNumbers {
-  NUMBER_5000 = '500010707583321',
+  NUMBER_3500 = '350010707583321',
   NUMBER_9000 = '+9890000145',
   NUMBER_1000 = '+9810004223',
   NUMBER_98EVENT = '+98EVENT', // more expensive
