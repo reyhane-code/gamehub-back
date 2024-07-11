@@ -2,7 +2,7 @@ import { Controller, Get, Param, Query } from "@nestjs/common";
 import { GenresService } from "./genres.service";
 import { paginationQueryOptions } from "src/interfaces/database.interfaces";
 
-@Controller("genre")
+@Controller("genres")
 export class GenresController {
   constructor(private genresService: GenresService) {}
 

@@ -5,21 +5,18 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.bulkInsert("genre_games", [
       {
-        id: 1,
         game_id: 1,
         genre_id: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        id: 2,
         game_id: 2,
         genre_id: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        id: 3,
         game_id: 1,
         genre_id: 2,
         createdAt: new Date(),
