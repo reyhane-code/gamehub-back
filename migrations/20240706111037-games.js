@@ -10,11 +10,11 @@ module.exports = {
         autoIncrement: true,
       },
       name: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT('medium'),
         allowNull: false,
       },
       description: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT('medium'),
         allowNull: false,
       },
       slug: {

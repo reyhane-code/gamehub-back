@@ -6,8 +6,12 @@ import {
   UpdatedAt,
   DataType,
   BeforeUpdate,
-} from "sequelize-typescript";
-import { TableName } from "src/enums/database.enum";
+  BelongsToMany,
+} from 'sequelize-typescript';
+import { TableName } from 'src/enums/database.enum';
+import { Genre } from './genre.model';
+import { Platform } from './platform.model';
+import { Publisher } from './publisher.model';
 
 @Table({ tableName: TableName.GAMES })
 export class Game extends Model {
@@ -25,7 +29,7 @@ export class Game extends Model {
 
   @Column({ type: DataType.STRING, allowNull: false })
   rating_top: string;
-  
+
   @Column({ type: DataType.INTEGER, allowNull: false })
   metacritic: number;
 
@@ -35,6 +39,15 @@ export class Game extends Model {
   @UpdatedAt
   updatedAt: Date;
 
+  @BelongsToMany(() => Genre, 'GenreGame')
+  genres: Genre[];
+
+  @BelongsToMany(() => Platform, 'PlatformGame')
+  platforms: Platform[];
+
+  @BelongsToMany(() => Publisher, 'PublisherGame')
+  publishers: Publisher[];
+ 
   @BeforeUpdate
   static updateTimestamp(instance: Game) {
     instance.updatedAt = new Date();

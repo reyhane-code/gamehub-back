@@ -6,8 +6,10 @@ import {
   UpdatedAt,
   DataType,
   BeforeUpdate,
-} from "sequelize-typescript";
-import { TableName } from "src/enums/database.enum";
+  BelongsToMany,
+} from 'sequelize-typescript';
+import { TableName } from 'src/enums/database.enum';
+import { Game } from './game.model';
 
 @Table({ tableName: TableName.PUBLISHERS })
 export class Publisher extends Model {
@@ -19,6 +21,9 @@ export class Publisher extends Model {
 
   @UpdatedAt
   updatedAt: Date;
+
+  @BelongsToMany(() => Game, 'PublisherGame')
+  games: Game[];
 
   @BeforeUpdate
   static updateTimestamp(instance: Publisher) {
