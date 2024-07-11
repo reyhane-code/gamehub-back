@@ -12,6 +12,9 @@ import { TableName } from 'src/enums/database.enum';
 import { Genre } from './genre.model';
 import { Platform } from './platform.model';
 import { Publisher } from './publisher.model';
+import { GenreGame } from './genre_game.model';
+import { PlatformGame } from './platform_game.model';
+import { PublisherGame } from './publisher_game.model';
 
 @Table({ tableName: TableName.GAMES })
 export class Game extends Model {
@@ -39,13 +42,13 @@ export class Game extends Model {
   @UpdatedAt
   updatedAt: Date;
 
-  @BelongsToMany(() => Genre, 'GenreGame')
+  @BelongsToMany(() => Genre, ()=> GenreGame)
   genres: Genre[];
 
-  @BelongsToMany(() => Platform, 'PlatformGame')
+  @BelongsToMany(() => Platform, ()=> PlatformGame)
   platforms: Platform[];
 
-  @BelongsToMany(() => Publisher, 'PublisherGame')
+  @BelongsToMany(() => Publisher, () => PublisherGame)
   publishers: Publisher[];
  
   @BeforeUpdate

@@ -10,6 +10,7 @@ import {
 } from 'sequelize-typescript';
 import { TableName } from 'src/enums/database.enum';
 import { Game } from './game.model';
+import { PlatformGame } from './platform_game.model';
 
 @Table({ tableName: TableName.PLATFORMS })
 export class Platform extends Model {
@@ -25,7 +26,7 @@ export class Platform extends Model {
   @UpdatedAt
   updatedAt: Date;
 
-  @BelongsToMany(() => Game, 'PlatformGame')
+  @BelongsToMany(() => Game, ()=> PlatformGame)
   games: Game[];
  
   @BeforeUpdate
