@@ -30,11 +30,11 @@ export class PublisherGame extends Model {
   @UpdatedAt
   updatedAt: Date;
 
-  @BelongsTo(() => Game)
-  game: Game;
+  // @BelongsTo(() => Game)
+  // game: Game;
 
-  @BelongsTo(() => Publisher)
-  publisher: Publisher;
+  // @BelongsTo(() => Publisher)
+  // publisher: Publisher;
   
   @BeforeUpdate
   static updateTimestamp(instance: PublisherGame) {

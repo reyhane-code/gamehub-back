@@ -33,9 +33,9 @@ export class GenreGame extends Model {
   static updateTimestamp(instance: GenreGame) {
     instance.updatedAt = new Date();
   }
-  @BelongsTo(() => Game)
-  game: Game;
+  // @BelongsTo(() => Game)
+  // game: Game;
 
-  @BelongsTo(() => Genre)
-  genre: Genre;
+  // @BelongsTo(() => Genre)
+  // genre: Genre;
 }
