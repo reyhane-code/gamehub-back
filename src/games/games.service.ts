@@ -33,23 +33,12 @@ export class GamesService {
     const games = await this.gamesRepository.findAll({
       include: [
         {
-          model: PlatformGame,
-          include: [
-            {
-              model: Platform,
-              as: 'parent_platforms',
-            },
-          ],
-          where: { platform_id: platformId },
+          model: Platform,
+          where: { id: platformId },
         },
         {
-          model: GenreGame,
-          include: [
-            {
-              model: Genre,
-            },
-          ],
-          where: { genre_id: genreId },
+          model: Genre,
+          where: { id: genreId },
         },
       ],
       limit: perPage,

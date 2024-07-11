@@ -30,11 +30,11 @@ export class PlatformGame extends Model {
   @UpdatedAt
   updatedAt: Date;
 
-  @BelongsTo(() => Game)
-  game: Game;
+  // @BelongsTo(() => Game)
+  // game: Game;
 
-  @BelongsTo(() => Platform)
-  platform: Platform;
+  // @BelongsTo(() => Platform)
+  // platform: Platform;
 
   @BeforeUpdate
   static updateTimestamp(instance: PlatformGame) {
