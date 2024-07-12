@@ -7,6 +7,7 @@ import { PlatformGame } from 'models/platform_game.model';
 import { Repositories } from 'src/enums/database.enum';
 import { paginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { getGamesQuery } from './interfaces/games.interface';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class GamesService {
@@ -21,9 +22,9 @@ export class GamesService {
     }
     return game;
   }
-
+  //TODO: set order
   async getGames({
-    page,
+    page ,
     perPage,
     genreId,
     platformId,
@@ -31,19 +32,14 @@ export class GamesService {
     search,
   }: getGamesQuery) {
     const games = await this.gamesRepository.findAll({
-      include: [
-        {
-          model: Platform,
-          where: { id: platformId },
-        },
-        {
-          model: Genre,
-          where: { id: genreId },
-        },
-      ],
       limit: perPage,
       offset: perPage * page,
-      order: [ordering, 'ASC'],
+      include: [
+        { model: Platform, where: { id: platformId }},
+        { model: Genre, where: { id: genreId } },
+      ],
+      where: { name: { [Op.like]: `%${search}%` } },
+      order: [],
     });
     if (!games) {
       throw new NotFoundException('NO game was found.');
