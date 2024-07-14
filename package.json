@@ -50,6 +50,7 @@
     "rxjs": "^7.8.1",
     "sequelize": "^6.37.3",
     "sequelize-cli": "^6.6.2",
+    "sequelize-pool": "^8.0.0",
     "sequelize-typescript": "^2.1.6"
   },
   "devDependencies": {

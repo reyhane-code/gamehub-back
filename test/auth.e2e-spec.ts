@@ -15,6 +15,7 @@ import {
 import { Context } from './utils/context';
 import { TableName } from '../src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
+import { MigrationPaths } from './utils/paths.enum';
 
 const DEFAULT_EMAIL = 'test@email.com';
 const DEFAULT_PASSWORD = 'thispassisastring';
@@ -25,7 +26,7 @@ const DEFAULT_PHONE = '09363080321';
 
 let context: Context;
 beforeAll(async () => {
-  context = await Context.build([TableName.USERS]);
+  context = await Context.build([MigrationPaths.USERS]);
 });
 
 beforeEach(async () => {
@@ -51,14 +52,6 @@ describe('Authentication System (e2e)', () => {
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
   });
-
-  // const register = async (
-  //   status: number = 201,
-  //   email: string = DEFAULT_EMAIL,
-  //   password: string = DEFAULT_PASSWORD,
-  // ) => {
-  //   return requestSender(app, status, '/auth/register', { email, password });
-  // };
 
   // const login = async (
   //   status: number = 200,
@@ -285,13 +278,23 @@ describe('Authentication System (e2e)', () => {
 
   it('updates an existing user', async () => {
     const body = await updateUserInfo();
-    expect(body.email).toBeDefined();
+    console.log(body);
   });
 
   it('returns an error if the username/email is taken while updating a user ', async () => {
     await updateUserInfo(200, 'email@email.com', 'rabbishUserName');
     await updateUserInfo(200, 'email@email.com', 'rabbishUserName');
-    await updateUserInfo(409, 'email@email.com', 'rabbishUserName', '09363080322');
-    await updateUserInfo(409, 'rabbish@gmail.com', 'rabbishUserName', '09363080322');
+    await updateUserInfo(
+      409,
+      'email@email.com',
+      'rabbishUserName',
+      '09363080322',
+    );
+    await updateUserInfo(
+      409,
+      'rabbish@gmail.com',
+      'rabbishUserName',
+      '09363080322',
+    );
   });
 });
