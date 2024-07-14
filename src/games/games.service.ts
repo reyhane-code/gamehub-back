@@ -5,6 +5,7 @@ import { Platform } from 'models/platform.model';
 import { Repositories } from 'src/enums/database.enum';
 import { getGamesQuery } from './interfaces/games.interface';
 import { Op } from 'sequelize';
+import { Publisher } from 'models/publisher.model';
 
 @Injectable()
 export class GamesService {
@@ -34,6 +35,7 @@ export class GamesService {
       include: [
         { model: Platform, where: { id: platformId } },
         { model: Genre, where: { id: genreId } },
+        { model: Publisher },
       ],
       where: { name: { [Op.like]: `%${search}%` } },
     });
