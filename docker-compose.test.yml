@@ -13,14 +13,14 @@ services:
       REDIS_PASSWORD: 'eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81'
       POSTGRES_PASSWORD: 'rewq4321'
       POSTGRES_USER: 'postgres'
-      POSTGRES_DB: 'gamehub_test_db'
+      POSTGRES_DB: 'gamehub_db'
       POSTGRES_HOST: 'postgres'
       VALIDATION_TOKEN_SECRET: '1385723409yfdshgpsdfhigtiwpri0958342952yujkldshgnjfkjdl923248939'
 
     depends_on:
       - postgres
       - redis
-    command: ['npm', 'run', 'test:e2e']
+    command: 'npm run test:e2e --detectOpenHandles'
 
   postgres:
     image: 'postgres'
@@ -32,7 +32,7 @@ services:
     environment:
       POSTGRES_PASSWORD: 'rewq4321'
       POSTGRES_USER: 'postgres'
-      POSTGRES_DB: 'gamehub_test_db'
+      POSTGRES_DB: 'gamehub_db'
       POSTGRES_HOST: 'postgres'
     restart: unless-stopped
 
