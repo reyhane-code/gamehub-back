@@ -75,10 +75,13 @@ export class GamesService {
         ? [order.substring(1), sortOperation.DESC]
         : [order, sortOperation.ASC]
       : [];
+
+    const pageVal = page || paginationDefault.page;
+    const perPageVal = perPage || paginationDefault.perPage;
+
     return {
-      limit: perPage ? perPage : paginationDefault.perPage,
-      offset:
-        page || paginationDefault.page * perPage || paginationDefault.perPage,
+      limit: perPageVal,
+      offset: (pageVal - 1) * perPageVal,
       include: includeClauses || [],
       where: {},
       //Todo: fix this
