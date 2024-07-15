@@ -31,7 +31,12 @@ module.exports = {
       },
       metacritic: {
         type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      user_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
+        references: { model: 'users', key: 'id' },
       },
       createdAt: {
         type: Sequelize.DATE,

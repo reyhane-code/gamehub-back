@@ -10,6 +10,8 @@ import {
   DeletedAt,
 } from 'sequelize-typescript';
 import { TableName } from 'src/enums/database.enum';
+import { Game } from './game.model';
+import { Like } from './like.model';
 
 @Table({ tableName: TableName.USERS })
 export class User extends Model {
@@ -42,6 +44,12 @@ export class User extends Model {
 
   @DeletedAt
   deletedAt?: Date | null;
+
+  @HasMany(() => Game)
+  games: Game[];
+
+  @HasMany(() => Like)
+  likes: Like[];
 
   @BeforeUpdate
   static updateTimestamp(instance: User) {

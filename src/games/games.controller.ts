@@ -1,6 +1,17 @@
-import { Controller, Delete, Get, Param, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { GamesService } from './games.service';
 import { getGamesQuery } from './interfaces/games.interface';
+import { AddGameDto } from './dtos/add-game.dto';
+import { UserInterface } from 'src/users/interfaces/user.interface';
 
 @Controller('games')
 export class GamesController {
@@ -22,5 +33,10 @@ export class GamesController {
   @Delete('/:id')
   softDelete(@Param('id') id: number, @Query() isSoftDelete: boolean = true) {
     return this.gamesService.deleteGame(id, isSoftDelete);
+  }
+
+  @Post()
+  addGame(@Body() body: AddGameDto, user: UserInterface) {
+    return this.gamesService.addGame(body, user);
   }
 }
