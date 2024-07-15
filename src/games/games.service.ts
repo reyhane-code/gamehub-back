@@ -6,6 +6,8 @@ import { Repositories } from 'src/enums/database.enum';
 import { getGamesQuery } from './interfaces/games.interface';
 import { Op } from 'sequelize';
 import { Publisher } from 'models/publisher.model';
+import { sortOperation } from 'src/enums/order.enum';
+import { paginationDefault } from 'src/constance';
 
 @Injectable()
 export class GamesService {
@@ -21,38 +23,68 @@ export class GamesService {
     return game;
   }
 
-  //TODO : fix order
   async getGames({
     page,
     perPage,
     genreId,
     platformId,
+    order,
     search,
   }: getGamesQuery) {
-    const { count, rows } = await this.gamesRepository.findAndCountAll({
-      limit: perPage,
-      offset: perPage * page,
-      include: [
-        { model: Platform, where: { id: platformId } },
-        { model: Genre, where: { id: genreId } },
-        { model: Publisher },
-      ],
-      where: { name: { [Op.like]: `%${search}%` } },
+    const query = this.buildGetGamesQuery({
+      page,
+      perPage,
+      genreId,
+      platformId,
+      order,
     });
+    //could not move to buildGetGamesQuery cause of Op.like types error
+    query.where = search ? { name: { [Op.like]: `%${search}%` } } : {};
+
+    const rows = await this.gamesRepository.findAll(query);
     if (rows.length < 1) {
       throw new NotFoundException('NO game was found.');
     }
 
-    const responseData = {
-      count,
+    return {
+      count: rows.length,
       data: rows,
       page,
       perPage,
       offset: perPage * page,
     };
-    return responseData;
   }
 
+  buildGetGamesQuery({
+    page,
+    perPage,
+    genreId,
+    platformId,
+    order,
+  }: getGamesQuery) {
+    const includeClauses = [
+      genreId ? { model: Genre, where: { id: genreId } } : { model: Genre },
+      platformId
+        ? { model: Platform, where: { id: platformId } }
+        : { model: Platform },
+      { model: Publisher },
+    ];
+
+    const orderClause = order
+      ? order.charAt(0) === '-'
+        ? [order.substring(1), sortOperation.DESC]
+        : [order, sortOperation.ASC]
+      : [];
+    return {
+      limit: perPage ? perPage : paginationDefault.perPage,
+      offset:
+        page || paginationDefault.page * perPage || paginationDefault.perPage,
+      include: includeClauses || [],
+      where: {},
+      //Todo: fix this
+      // order: orderClause || [],
+    };
+  }
   //   async addGame() {}
 
   //   async deleteGame() {}
