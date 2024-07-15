@@ -8,6 +8,7 @@ import {
   BeforeUpdate,
   BelongsToMany,
   DeletedAt,
+  ForeignKey,
 } from 'sequelize-typescript';
 import { TableName } from 'src/enums/database.enum';
 import { Genre } from './genre.model';
@@ -16,13 +17,14 @@ import { Publisher } from './publisher.model';
 import { GenreGame } from './genre_game.model';
 import { PlatformGame } from './platform_game.model';
 import { PublisherGame } from './publisher_game.model';
+import { User } from './user.model';
 
 @Table({ tableName: TableName.GAMES })
 export class Game extends Model {
   @Column({ type: DataType.STRING, allowNull: false })
   name: string;
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column({ type: DataType.STRING, allowNull: true })
   description: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
@@ -31,11 +33,15 @@ export class Game extends Model {
   @Column({ type: DataType.STRING, allowNull: false })
   background_image: string;
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column({ type: DataType.STRING, allowNull: true })
   rating_top: string;
 
-  @Column({ type: DataType.INTEGER, allowNull: false })
+  @Column({ type: DataType.INTEGER, allowNull: true })
   metacritic: number;
+
+  @ForeignKey(() => User)
+  @Column(DataType.INTEGER)
+  user_id: number;
 
   @CreatedAt
   createdAt: Date;

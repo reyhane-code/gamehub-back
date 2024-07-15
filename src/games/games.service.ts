@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Game } from 'models/game.model';
 import { Genre } from 'models/genre.model';
 import { Platform } from 'models/platform.model';
@@ -8,6 +13,8 @@ import { Op } from 'sequelize';
 import { Publisher } from 'models/publisher.model';
 import { sortOperation } from 'src/enums/order.enum';
 import { paginationDefault } from 'src/constance';
+import { AddGameDto } from './dtos/add-game.dto';
+import { UserInterface } from 'src/users/interfaces/user.interface';
 
 @Injectable()
 export class GamesService {
@@ -88,7 +95,24 @@ export class GamesService {
       // order: orderClause || [],
     };
   }
-  //   async addGame() {}
+  async addGame(
+    { name, description, background_image, rating_top, metacritic }: AddGameDto,
+    user: UserInterface,
+  ) {
+    try {
+      return this.gamesRepository.create({
+        name: name,
+        slug: name.toLowerCase().replace(/\s+/g, '-'),
+        description,
+        background_image,
+        rating_top,
+        metacritic,
+        user_id: user.id,
+      });
+    } catch (error) {
+      throw new BadRequestException('something went wrong');
+    }
+  }
 
   async deleteGame(gameId: number, isSoftDelete: boolean) {
     if (isSoftDelete) {
