@@ -15,6 +15,7 @@ import { sortOperation } from 'src/enums/order.enum';
 import { paginationDefault } from 'src/constance';
 import { AddGameDto } from './dtos/add-game.dto';
 import { UserInterface } from 'src/users/interfaces/user.interface';
+import { UpdateGameDto } from './dtos/update-game.dto';
 
 @Injectable()
 export class GamesService {
@@ -101,7 +102,7 @@ export class GamesService {
   ) {
     try {
       return this.gamesRepository.create({
-        name: name,
+        name,
         slug: name.toLowerCase().replace(/\s+/g, '-'),
         description,
         background_image,
@@ -125,5 +126,35 @@ export class GamesService {
     }
   }
 
-  //   async updateGame() {}
+  async updateGame(
+    {
+      name,
+      description,
+      background_image,
+      rating_top,
+      metacritic,
+    }: UpdateGameDto,
+    id: number,
+  ) {
+    try {
+      const foundGame = await this.findOneById(id);
+      return this.gamesRepository.update(
+        {
+          name,
+          slug: name ? name.toLowerCase().replace(/\s+/g, '-') : foundGame.slug,
+          description,
+          background_image,
+          rating_top,
+          metacritic,
+        },
+        { where: { id } },
+      );
+    } catch (error) {
+      throw new BadRequestException('Something went wrong!');
+    }
+  }
+
+  findUserGames(user: UserInterface) {
+    return this.gamesRepository.findAll({ where: { user_id: user.id } });
+  }
 }

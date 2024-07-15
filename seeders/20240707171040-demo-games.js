@@ -17,8 +17,8 @@ module.exports = {
           'https://uploadkon.ir/uploads/92de13_24vampire-masquerade-bloodlines2-ps5-wallpapers-07.jpg',
         rating_top: 1,
         metacritic: 316,
+        user_id: 1,
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       //2
       {
@@ -30,8 +30,8 @@ module.exports = {
           'https://uploadkon.ir/uploads/e57513_24HD-wallpaper-video-game-v-rising.jpg',
         rating_top: 2,
         metacritic: 62,
+        user_id: 1,
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       //3
       {
@@ -42,8 +42,8 @@ module.exports = {
           'https://uploadkon.ir/uploads/b4ec13_24EGS-SongsofConquest-Lavapotion-S1-2560x1440-fa8ea8f7cebfc72538f205aab8649839.jpeg',
         rating_top: 49,
         metacritic: 819,
+        user_id: 1,
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       //4
       {
@@ -54,8 +54,8 @@ module.exports = {
           'https://uploadkon.ir/uploads/289f13_24HD-wallpaper-poster-of-prince-of-persia-the-sands-of-time-remake.jpg',
         rating_top: 52,
         metacritic: 2210,
+        user_id: 1,
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       //5
       {
@@ -67,8 +67,8 @@ module.exports = {
           'https://uploadkon.ir/uploads/fb6613_24da93ffb65843f39b240ffd97c07a3acb.jpg',
         rating_top: 53,
         metacritic: 974,
+        user_id: 1,
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       //6
       {
@@ -80,8 +80,8 @@ module.exports = {
           'https://uploadkon.ir/uploads/bb7513_24853aa2b76ae85fcf2782ace58cf7479f.jpg',
         rating_top: 50,
         metacritic: 4457,
+        user_id: 1,
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       //7
       {
@@ -93,8 +93,8 @@ module.exports = {
           'https://uploadkon.ir/uploads/6bdd13_2428d602abdd520db08fb78ab931259be0.jpg',
         rating_top: 81,
         metacritic: 8645,
+        user_id: 1,
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       //8
       {
@@ -105,8 +105,8 @@ module.exports = {
           'https://uploadkon.ir/uploads/4e0713_2464fdee7e7b863fbc22460cb8e38614b9.jpg',
         rating_top: 198,
         metacritic: 523,
+        user_id: 1,
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       //9
       {
@@ -123,8 +123,8 @@ module.exports = {
           'https://uploadkon.ir/uploads/4beb13_248b7ae9f5da33a75da7b5177587b8ca9d.jpg',
         rating_top: 64,
         metacritic: 2907,
+        user_id: 1,
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       //10
       {
@@ -136,8 +136,8 @@ module.exports = {
           'https://uploadkon.ir/uploads/ce3c13_24d3d7496a03343bfbb79fda79a48e3e5a.jpg',
         rating_top: 0,
         metacritic: 12228,
+        user_id: 1,
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
     ]);
   },
