@@ -9,9 +9,12 @@ import {
   BeforeUpdate,
   DeletedAt,
 } from 'sequelize-typescript';
-import { TableName } from 'src/enums/database.enum';
+import { Role, TableName } from 'src/enums/database.enum';
 import { Game } from './game.model';
 import { Like } from './like.model';
+import { Platform } from './platform.model';
+import { Genre } from './genre.model';
+import { Publisher } from './publisher.model';
 
 @Table({ tableName: TableName.USERS })
 export class User extends Model {
@@ -36,6 +39,9 @@ export class User extends Model {
   @Column({ type: DataType.BOOLEAN, defaultValue: true })
   active: boolean;
 
+  @Column({ type: DataType.STRING, defaultValue: Role.USER })
+  role: Role;
+
   @CreatedAt
   createdAt: Date;
 
@@ -50,6 +56,15 @@ export class User extends Model {
 
   @HasMany(() => Like)
   likes: Like[];
+
+  @HasMany(() => Platform)
+  platforms: Platform[];
+
+  @HasMany(() => Genre)
+  genres: Genre[];
+
+  @HasMany(() => Publisher)
+  publishers: Publisher[];
 
   @BeforeUpdate
   static updateTimestamp(instance: User) {

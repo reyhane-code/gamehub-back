@@ -7,8 +7,7 @@ import {
   DataType,
   BeforeUpdate,
   ForeignKey,
-  HasMany,
-  BelongsTo,
+  DeletedAt,
 } from 'sequelize-typescript';
 import { TableName } from 'src/enums/database.enum';
 import { Game } from './game.model';
@@ -30,12 +29,9 @@ export class PublisherGame extends Model {
   @UpdatedAt
   updatedAt: Date;
 
-  // @BelongsTo(() => Game)
-  // game: Game;
+  @DeletedAt
+  deletedAt?: Date | null;
 
-  // @BelongsTo(() => Publisher)
-  // publisher: Publisher;
-  
   @BeforeUpdate
   static updateTimestamp(instance: PublisherGame) {
     instance.updatedAt = new Date();
