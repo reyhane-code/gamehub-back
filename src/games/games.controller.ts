@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { GamesService } from './games.service';
 import { getGamesQuery } from './interfaces/games.interface';
-import { sortOperation } from 'src/enums/order.enum';
+import { paginationDefault } from 'src/constance';
 
 @Controller('games')
 export class GamesController {
