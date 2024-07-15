@@ -7,6 +7,7 @@ import {
   DataType,
   BeforeUpdate,
   BelongsToMany,
+  DeletedAt,
 } from 'sequelize-typescript';
 import { TableName } from 'src/enums/database.enum';
 import { Genre } from './genre.model';
@@ -42,15 +43,18 @@ export class Game extends Model {
   @UpdatedAt
   updatedAt: Date;
 
-  @BelongsToMany(() => Genre, ()=> GenreGame)
+  @DeletedAt
+  deletedAt?: Date | null;
+
+  @BelongsToMany(() => Genre, () => GenreGame)
   genres: Genre[];
 
-  @BelongsToMany(() => Platform, ()=> PlatformGame)
+  @BelongsToMany(() => Platform, () => PlatformGame)
   platforms: Platform[];
 
   @BelongsToMany(() => Publisher, () => PublisherGame)
   publishers: Publisher[];
- 
+
   @BeforeUpdate
   static updateTimestamp(instance: Game) {
     instance.updatedAt = new Date();
