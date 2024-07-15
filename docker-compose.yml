@@ -2,6 +2,15 @@ version: '3.8'
 services:
   api:
     build: .
+    volumes:
+      - .:/code
+    # x-develop:
+    #   watch:
+    #     - action: sync
+    #       path: ./
+    #       target: /
+    #     - action: rebuild
+    #       path: package.json
     restart: always
     ports:
       - 3500:3500
