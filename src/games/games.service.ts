@@ -15,8 +15,8 @@ export class GamesService {
     @Inject(Repositories.GAMES) private gamesRepository: typeof Game,
   ) {}
 
-  async findOneBySlug(slug: string) {
-    const game = await this.gamesRepository.findOne({ where: { slug } });
+  async findOneById(id: number) {
+    const game = await this.gamesRepository.findOne({ where: { id } });
     if (!game) {
       throw new NotFoundException('NO game was found.');
     }
@@ -90,7 +90,16 @@ export class GamesService {
   }
   //   async addGame() {}
 
-  //   async deleteGame() {}
+  async deleteGame(gameId: number, isSoftDelete: boolean) {
+    if (isSoftDelete) {
+      return this.gamesRepository.destroy({ where: { id: gameId } });
+    } else {
+      return this.gamesRepository.destroy({
+        where: { id: gameId },
+        force: true,
+      });
+    }
+  }
 
   //   async updateGame() {}
 }

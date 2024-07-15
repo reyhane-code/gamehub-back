@@ -7,8 +7,9 @@ import {
   DataType,
   HasMany,
   BeforeUpdate,
-} from "sequelize-typescript";
-import { TableName } from "src/enums/database.enum";
+  DeletedAt,
+} from 'sequelize-typescript';
+import { TableName } from 'src/enums/database.enum';
 
 @Table({ tableName: TableName.USERS })
 export class User extends Model {
@@ -38,6 +39,9 @@ export class User extends Model {
 
   @UpdatedAt
   updatedAt: Date;
+
+  @DeletedAt
+  deletedAt?: Date | null;
 
   @BeforeUpdate
   static updateTimestamp(instance: User) {

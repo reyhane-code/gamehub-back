@@ -15,7 +15,7 @@ module.exports = {
       },
       description: {
         type: Sequelize.TEXT,
-        allowNull: false,
+        allowNull: true,
       },
       slug: {
         type: Sequelize.STRING,
@@ -27,7 +27,7 @@ module.exports = {
       },
       rating_top: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       metacritic: {
         type: Sequelize.INTEGER,
@@ -42,6 +42,10 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      },
+      deletedAt: {
+        type: Sequelize.DATE,
+        allowNull: true,
       },
     });
   },

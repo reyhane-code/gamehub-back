@@ -1,15 +1,14 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Put, Query } from '@nestjs/common';
 import { GamesService } from './games.service';
 import { getGamesQuery } from './interfaces/games.interface';
-import { paginationDefault } from 'src/constance';
 
 @Controller('games')
 export class GamesController {
   constructor(private gamesService: GamesService) {}
 
-  @Get('/:slug')
-  getGame(@Param('slug') slug: string) {
-    return this.gamesService.findOneBySlug(slug);
+  @Get('/:id')
+  getGame(@Param('id') id: number) {
+    return this.gamesService.findOneById(id);
   }
 
   @Get('/all')
@@ -18,5 +17,10 @@ export class GamesController {
     query: getGamesQuery,
   ) {
     return this.gamesService.getGames(query);
+  }
+
+  @Delete('/:id')
+  softDelete(@Param('id') id: number, @Query() isSoftDelete: boolean = true) {
+    return this.gamesService.deleteGame(id, isSoftDelete);
   }
 }
