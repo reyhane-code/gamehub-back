@@ -7,42 +7,34 @@ module.exports = {
       {
         name: 'Action',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         name: 'RPG',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         name: 'Strategy',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         name: 'Shooter',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         name: 'Advanture',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         name: 'Puzzle',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         name: 'Racing',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         name: 'Sports',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
     ]);
   },

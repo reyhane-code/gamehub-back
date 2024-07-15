@@ -7,52 +7,42 @@ module.exports = {
       {
         name: 'Paradox Interactive',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         name: 'Sony',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         name: 'Coffee Stain Studios',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         name: 'Ubisoft Entertainment',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         name: 'Devolver Digital',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         name: 'Ubisoft Entertainment',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         name: 'Bokeh Game Studio',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         name: 'Bandai Namco Entertainment',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         name: '505 Games',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
       {
         name: 'PLAION',
         createdAt: new Date(),
-        updatedAt: new Date(),
       },
     ]);
   },
