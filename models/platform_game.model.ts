@@ -9,6 +9,7 @@ import {
   HasMany,
   ForeignKey,
   BelongsTo,
+  DeletedAt,
 } from 'sequelize-typescript';
 import { TableName } from 'src/enums/database.enum';
 import { Game } from './game.model';
@@ -30,11 +31,8 @@ export class PlatformGame extends Model {
   @UpdatedAt
   updatedAt: Date;
 
-  // @BelongsTo(() => Game)
-  // game: Game;
-
-  // @BelongsTo(() => Platform)
-  // platform: Platform;
+  @DeletedAt
+  deletedAt?: Date | null;
 
   @BeforeUpdate
   static updateTimestamp(instance: PlatformGame) {

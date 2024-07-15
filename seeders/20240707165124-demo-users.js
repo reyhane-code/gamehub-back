@@ -12,6 +12,7 @@ module.exports = {
         first_name: 'reyhane',
         last_name: 'javidi',
         active: true,
+        role: 'super',
         createdAt: new Date(),
       },
       {
@@ -22,6 +23,7 @@ module.exports = {
         first_name: 'morteza',
         last_name: 'hatamikia',
         active: true,
+        role: 'super',
         createdAt: new Date(),
       },
     ]);

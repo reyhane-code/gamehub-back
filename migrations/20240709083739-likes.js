@@ -22,17 +22,21 @@ module.exports = {
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updatedAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      },
+      deletedAt: {
+        type: Sequelize.DATE,
+        allowNull: true,
       },
     });
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("likes");
+    return queryInterface.dropTable('likes');
   },
 };

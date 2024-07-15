@@ -6,34 +6,42 @@ module.exports = {
     return queryInterface.bulkInsert('genres', [
       {
         name: 'Action',
+        user_id: 1,
         createdAt: new Date(),
       },
       {
         name: 'RPG',
+        user_id: 1,
         createdAt: new Date(),
       },
       {
         name: 'Strategy',
+        user_id: 1,
         createdAt: new Date(),
       },
       {
         name: 'Shooter',
+        user_id: 1,
         createdAt: new Date(),
       },
       {
         name: 'Advanture',
+        user_id: 1,
         createdAt: new Date(),
       },
       {
         name: 'Puzzle',
+        user_id: 1,
         createdAt: new Date(),
       },
       {
         name: 'Racing',
+        user_id: 1,
         createdAt: new Date(),
       },
       {
         name: 'Sports',
+        user_id: 1,
         createdAt: new Date(),
       },
     ]);

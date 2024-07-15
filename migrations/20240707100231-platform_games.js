@@ -1,9 +1,9 @@
-"use strict";
+'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.createTable("platform_games", {
+    return queryInterface.createTable('platform_games', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -12,27 +12,31 @@ module.exports = {
       game_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: "games", key: "id" },
+        references: { model: 'games', key: 'id' },
       },
       platform_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: "platforms", key: "id" },
+        references: { model: 'platforms', key: 'id' },
       },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updatedAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      },
+      deletedAt: {
+        type: Sequelize.DATE,
+        allowNull: true,
       },
     });
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("platform_games");
+    return queryInterface.dropTable('platform_games');
   },
 };
