@@ -7,7 +7,7 @@ import {
 import { Platform } from 'models/platform.model';
 import { Repositories } from 'src/enums/database.enum';
 import { paginationQueryOptions } from 'src/interfaces/database.interfaces';
-import { AddPlatformDto } from './dtos/add-platform.dto copy';
+import { AddPlatformDto } from './dtos/add-platform.dto';
 import { UserInterface } from 'src/users/interfaces/user.interface';
 import { UpdatedPlatformDto } from './dtos/update-platform.dto';
 
