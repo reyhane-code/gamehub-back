@@ -147,7 +147,7 @@ export class AuthService {
       user.password
     );
     if (!comparePasswordResult) {
-      throw new NotFoundException("Invalid email or password");
+      throw new NotFoundException("Invalid crentials or password");
     }
     const { accessToken, refreshToken } = await this.generateAuthTokens(
       user.id
