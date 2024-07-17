@@ -1,23 +1,65 @@
-import { Controller, Get, Param, Query } from "@nestjs/common";
-import { GenresService } from "./genres.service";
-import { paginationQueryOptions } from "src/interfaces/database.interfaces";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { GenresService } from './genres.service';
+import { paginationQueryOptions } from 'src/interfaces/database.interfaces';
+import { AdminGuard } from 'src/guards/admin.guard';
+import { AddGenreDto } from './dtos/add-genre.dto';
+import { CurrentUser } from 'src/users/decorators/current-user.decorator';
+import { UserInterface } from 'src/users/interfaces/user.interface';
+import { UpdateGenreDto } from './dtos/update-genre.dto';
+import { paginationDefault } from 'src/constance';
 
-@Controller("genres")
+@Controller('genres')
 export class GenresController {
   constructor(private genresService: GenresService) {}
 
-  @Get("/:id")
-  findGenre(@Param("id") id: number) {
+  @Get('/:id')
+  findGenre(@Param('id') id: number) {
     return this.genresService.findOneById(id);
   }
 
-  @Get("/all")
+  @Get()
   findGenres() {
     return this.genresService.findAll();
   }
 
-  @Get("/all/paginate")
-  findGenresWithPaginate(@Query() query: paginationQueryOptions) {
+  @Get('/paginate')
+  findGenresWithPaginate(
+    @Query() query: paginationQueryOptions = paginationDefault,
+  ) {
     return this.genresService.findAllWithPaginate(query);
+  }
+
+  @UseGuards(AdminGuard)
+  @Get('/user')
+  getUserGenres(@CurrentUser() user: UserInterface) {
+    return this.genresService.findUserGenres(user);
+  }
+
+  @UseGuards(AdminGuard)
+  @Post()
+  addGenre(@Body() body: AddGenreDto, @CurrentUser() user: UserInterface) {
+    return this.genresService.addGenre(body, user);
+  }
+
+  @UseGuards(AdminGuard)
+  @Put('/:id')
+  updateGenre(@Param('id') id: number, body: UpdateGenreDto) {
+    return this.genresService.updateGenre(id, body);
+  }
+
+  @UseGuards(AdminGuard)
+  @Delete('/:id')
+  deleteGenre(@Param('id') id: number, @Query() isSoftDelete: boolean = true) {
+    return this.genresService.deleteGenre(id, isSoftDelete);
   }
 }

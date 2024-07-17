@@ -26,7 +26,7 @@ export class GamesController {
     return this.gamesService.findOneById(id);
   }
 
-  @Get('/all')
+  @Get()
   getGames(
     @Query()
     query: getGamesQuery,
@@ -42,7 +42,7 @@ export class GamesController {
 
   @UseGuards(AdminGuard)
   @Delete('/:id')
-  softDelete(@Param('id') id: number, @Query() isSoftDelete: boolean = true) {
+  deleteGame(@Param('id') id: number, @Query() isSoftDelete: boolean = true) {
     return this.gamesService.deleteGame(id, isSoftDelete);
   }
 

@@ -49,14 +49,14 @@ export class GamesService {
     //could not move to buildGetGamesQuery cause of Op.like types error
     query.where = search ? { name: { [Op.like]: `%${search}%` } } : {};
 
-    const rows = await this.gamesRepository.findAll(query);
-    if (rows.length < 1) {
+    const games = await this.gamesRepository.findAll(query);
+    if (games.length < 1) {
       throw new NotFoundException('NO game was found.');
     }
 
     return {
-      count: rows.length,
-      data: rows,
+      count: games.length,
+      data: games,
       page,
       perPage,
       offset: perPage * page,
