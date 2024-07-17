@@ -15,7 +15,7 @@ import { paginationDefault } from 'src/constance';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { UserInterface } from 'src/users/interfaces/user.interface';
-import { AddPlatformDto } from './dtos/add-platform.dto copy';
+import { AddPlatformDto } from './dtos/add-platform.dto';
 import { UpdatedPlatformDto } from './dtos/update-platform.dto';
 
 @Controller('platform')
