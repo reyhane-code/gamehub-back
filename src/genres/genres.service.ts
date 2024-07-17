@@ -76,7 +76,7 @@ export class GenresService {
       data: genres,
       page,
       perPage,
-      offset: page * perPage,
+      offset: (page - 1) * perPage,
     };
   }
 
