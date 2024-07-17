@@ -53,7 +53,7 @@ export class GenresController {
 
   @UseGuards(AdminGuard)
   @Put('/:id')
-  updateGenre(@Param('id') id: number, body: UpdateGenreDto) {
+  updateGenre(@Param('id') id: number, @Body() body: UpdateGenreDto) {
     return this.genresService.updateGenre(id, body);
   }
 
