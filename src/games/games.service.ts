@@ -61,8 +61,7 @@ export class GamesService {
       order,
       params,
     });
-    const count = await this.gamesRepository.count();
-    const { rows } = await this.gamesRepository.findAndCountAll({
+    const { count, rows } = await this.gamesRepository.findAndCountAll({
       ...query,
       distinct: true,
     });
