@@ -12,4 +12,4 @@ COPY ./ ./
 
 EXPOSE 3500
 
-CMD npm run start:dev && npm run migrate && npm run seed
+CMD npm run start:dev 

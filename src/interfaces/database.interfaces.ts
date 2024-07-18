@@ -17,3 +17,4 @@ export interface SearchFilterOptions {
 
   value: number | string | Date | number[] | string[] | boolean;
 }
+
