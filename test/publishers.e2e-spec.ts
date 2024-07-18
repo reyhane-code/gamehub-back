@@ -46,7 +46,10 @@ describe('Publishers System (e2e)', () => {
     await app.getHttpAdapter().getInstance().ready();
   });
 
-  const addWord = async (status: number = 201, { name }: AddPublisherDto) => {
+  const addPublisher = async (
+    status: number = 201,
+    { name }: AddPublisherDto,
+  ) => {
     const { accessToken } = await getValidationDataAndRegister(app);
     return request(app.getHttpServer())
       .post('/publishers')
@@ -78,105 +81,92 @@ describe('Publishers System (e2e)', () => {
       .then((res) => res.body);
   };
 
-  const getPublisherById = async (status: number = 200, wordId: number) => {
+  const getPublisherById = async (status: number = 200, id: number) => {
     return request(app.getHttpServer())
-      .get(`/word/${wordId}`)
+      .get(`/publishers/${id}`)
       .expect(status)
       .then((res) => res.body);
   };
 
-  //   it('adds a new word', async () => {
-  //     const body = await addWord(201, DEFAULT_WORD);
-  //     expect(body.word).toEqual(DEFAULT_WORD);
-  //   });
+  const getUserPublishers = async (
+    accessToken: string,
+    status: number = 200,
+  ) => {
+    return request(app.getHttpServer())
+      .get('/publishers/user')
+      .set('authorization', `Bearer ${accessToken}`)
+      .expect(status)
+      .then((res) => res.body);
+  };
 
-  //   it('returns a conflict error if the word already exists and is confirmed', async () => {
-  //     await addWord(201, DEFAULT_WORD);
-  //     await addWord(409, DEFAULT_WORD);
-  //     await addWord(201, 'new-word');
-  //   });
+  it('adds a new publisher', async () => {
+    const body = await addPublisher(201, { name: DEFAULT_PUBLISHER });
+    expect(body.name).toEqual(DEFAULT_PUBLISHER);
+  });
 
-  //   it('updates an exsisting word', async () => {
-  //     const word = await addWord(201, DEFAULT_WORD);
-  //     const body = await updateWord(200, word.id, 'new-word');
-  //     expect(body.word).toEqual('new-word');
-  //   });
+  it('updates an exsisting publisher', async () => {
+    const publisher = await addPublisher(201, { name: DEFAULT_PUBLISHER });
+    const body = await updatePublisher(200, publisher.id, { name: 'new-word' });
+    expect(body.name).toEqual('new-word');
+  });
 
-  //   it('returns error while updating with a wrong id', async () => {
-  //     await updateWord(404, 2, 'worddd');
-  //   });
+  it('returns error while updating with a wrong id', async () => {
+    await updatePublisher(404, 2, { name: 'rubbish' });
+  });
 
-  //   it('delete an exsisting word', async () => {
-  //     const word = await addWord(201, DEFAULT_WORD);
-  //     await deleteWord(200, word.id);
-  //   });
+  it('delete an exsisting publisher', async () => {
+    const publisher = await addPublisher(201, { name: DEFAULT_PUBLISHER });
+    await deletePublisher(200, publisher.id);
+  });
 
-  //   it('returns error while deleting a non-existing word', async () => {
-  //     await deleteWord(404, 2);
-  //   });
+  it('returns error while deleting a non-existing publisher', async () => {
+    await deletePublisher(404, 2);
+  });
 
-  //   it('assigns word to a user', async () => {
-  //     const word = await addWord(201, 'word');
-  //     await assignWord(201, word.id);
-  //   });
+  it('finds all publishers', async () => {
+    await addPublisher(201, { name: 'publisher1' });
+    await addPublisher(201, { name: 'publisher2' });
+    await addPublisher(201, { name: 'publisher3' });
+    const publishers = await request(app.getHttpServer())
+      .get('/publishers')
+      .expect(200)
+      .then((res) => res.body);
+    expect(publishers.count).toEqual(3);
+    expect(publishers.data).toBeDefined();
+  });
 
-  //   it('returns error when assigning a non-existing word', async () => {
-  //     await assignWord(404, 2);
-  //   });
+  it('returns error if there is no word when finding publishers', async () => {
+    return request(app.getHttpServer())
+      .get('/publishers')
+      .expect(404)
+      .then((res) => res.body);
+  });
 
-  //   it('finds all words', async () => {
-  //     await addWord(201, 'word1');
-  //     await addWord(201, 'word2');
-  //     await addWord(201, 'word3');
-  //     return request(app.getHttpServer())
-  //       .get('/word')
-  //       .expect(200)
-  //       .then((res) => res.body);
-  //   });
+  it('finds publisher by Id', async () => {
+    const publisher = await addPublisher(201, { name: 'new-publisher' });
+    await getPublisherById(200, publisher.id);
+  });
 
-  //   // it('returns error if there is no word when finding words', async () => {
-  //   //   return request(app.getHttpServer())
-  //   //     .get('/word')
-  //   //     .expect(404)
-  //   //     .then((res) => res.body);
-  //   // });
+  it('returns an error if the publisher does not exist when finding by id', async () => {
+    await getPublisherById(404, 23);
+  });
 
-  //   it('finds assigned words', async () => {
-  //     const word = await addWord(201, 'word');
-  //     await assignWord(201, word.id);
-  //     await getAssignedWords(200);
-  //   });
+  it('returns error if not the correct user when finding user publishers', async () => {
+    const { accessToken } = await getValidationDataAndRegister(app);
+    await addPublisher(201, { name: 'word' });
+    await getUserPublishers(accessToken, 404);
+  });
 
-  //   // it('returns error if there are no words when finding assigned words', async () => {
-  //   //   await getAssignedWords(404);
-  //   // });
-
-  //   it('finds word by Id', async () => {
-  //     const word = await addWord(201, 'newWord');
-  //     await getWordById(200, word.id);
-  //   });
-
-  //   it('returns an error if the word does not exist when finding by id', async () => {
-  //     await getWordById(404, 23);
-  //   });
-
-  //   it('finds user words', async () => {
-  //     const { accessToken } = await getValidationDataAndRegister(app);
-  //     await addWord(201, 'word');
-
-  //     return request(app.getHttpServer())
-  //       .get('/word/user/1')
-  //       .set('authorization', `Bearer ${accessToken}`)
-  //       .expect(200)
-  //       .then((res) => res.body);
-  //   });
-  //   //TODO : fix this
-  //   // it('reutrns error if user is wrong when finding user words', async () => {
-  //   //   const { accessToken } = await getValidationDataAndRegister(app);
-  //   //   return request(app.getHttpServer())
-  //   //     .get('/word/user/22')
-  //   //     .set('authorization', `Bearer ${accessToken}`)
-  //   //     .expect(404)
-  //   //     .then((res) => res.body);
-  //   // });
+  it('finds user publishers', async () => {
+    const { accessToken } = await getValidationDataAndRegister(app);
+    await request(app.getHttpServer())
+      .post('/publishers')
+      .set('authorization', `Bearer ${accessToken}`)
+      .send({ name: DEFAULT_PUBLISHER })
+      .expect(201)
+      .then((res) => res.body);
+    const publishers = await getUserPublishers(accessToken, 200);
+    expect(publishers.length).toEqual(1);
+    expect(publishers).toBeDefined();
+  });
 });
