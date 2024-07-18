@@ -15,10 +15,15 @@ export default class SequelizeManager {
 
   constructor() {}
 
+  async authenticateAndSync() {
+    await this.sequelize.authenticate();
+    await this.sequelize.sync();
+  }
+
   async connect(options: PoolOptions) {
     try {
       this.sequelize = new Sequelize(options);
-      await this.sequelize.authenticate();
+      await this.authenticateAndSync();
       console.log('Connection to database has been established successfully.');
     } catch (error) {
       console.error('Unable to connect to the database:', error);

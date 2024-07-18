@@ -27,7 +27,7 @@ export class Context {
 
     // Create a new role
     await sequelizePool.query(
-      `CREATE ROLE ${roleName} WITH LOGIN PASSWORD ${roleName};`,
+      `CREATE ROLE ${roleName} WITH LOGIN PASSWORD '${roleName}';`,
       { type: QueryTypes.RAW },
     );
 
@@ -60,6 +60,13 @@ export class Context {
   }
 
   async clean(tableNames: string[]) {
+    await sequelizePool.connect({
+      database: process.env.POSTGRES_DB,
+      host: process.env.POSTGRES_HOST,
+      username: this.roleName,
+      password: this.roleName,
+      dialect: 'postgres',
+    });
     for (const tableName of tableNames) {
       await sequelizePool.query(
         `TRUNCATE TABLE ${tableName} RESTART IDENTITY CASCADE;`,
