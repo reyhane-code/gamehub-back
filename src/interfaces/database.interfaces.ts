@@ -1,4 +1,4 @@
-import { sortOperation } from "src/enums/order.enum";
+import { FilterOperationEnum, sortOperation } from 'src/enums/enums';
 
 export interface paginationQueryOptions {
   perPage?: number;
@@ -8,4 +8,12 @@ export interface paginationQueryOptions {
 export interface orderQueryOptions {
   field?: string;
   opration?: sortOperation;
+}
+
+export interface SearchFilterOptions {
+  field: string;
+
+  operation: FilterOperationEnum;
+
+  value: number | string | Date | number[] | string[] | boolean;
 }

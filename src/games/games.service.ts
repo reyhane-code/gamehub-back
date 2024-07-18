@@ -11,7 +11,6 @@ import { Repositories } from 'src/enums/database.enum';
 import { getGamesQuery } from './interfaces/games.interface';
 import { Op } from 'sequelize';
 import { Publisher } from 'models/publisher.model';
-import { sortOperation } from 'src/enums/order.enum';
 import { paginationDefault } from 'src/constance';
 import { AddGameDto } from './dtos/add-game.dto';
 import { UserInterface } from 'src/users/interfaces/user.interface';
@@ -19,7 +18,9 @@ import { UpdateGameDto } from './dtos/update-game.dto';
 import { PlatformGame } from 'models/platform_game.model';
 import { PublisherGame } from 'models/publisher_game.model';
 import { GenreGame } from 'models/genre_game.model';
-import { toSlug } from 'src/helpers/helpers';
+import { setWhereQuery, toSlug } from 'src/helpers/helpers';
+import { OperationPositionEnum, sortOperation } from 'src/enums/enums';
+import { SearchFilterOptions } from 'src/interfaces/database.interfaces';
 
 @Injectable()
 export class GamesService {
@@ -41,24 +42,22 @@ export class GamesService {
     return game;
   }
 
-  async getGames({
-    page,
-    perPage,
-    genreId,
-    platformId,
-    order,
-    search,
-  }: getGamesQuery) {
-    const query = this.buildGetGamesQuery({
-      page,
-      perPage,
-      genreId,
-      platformId,
-      order,
-    });
-    //could not move to buildGetGamesQuery cause of Op.like types error
-    query.where = search ? { name: { [Op.like]: `%${search}%` } } : {};
-
+  async getGames(
+    { page, perPage, genreId, platformId, order }: getGamesQuery,
+    search?: SearchFilterOptions[],
+    filter?: SearchFilterOptions[],
+  ) {
+    const query = this.buildGetGamesQuery(
+      {
+        page,
+        perPage,
+        genreId,
+        platformId,
+        order,
+      },
+      search,
+      filter,
+    );
     const { count, rows } = await this.gamesRepository.findAndCountAll(query);
     if (rows.length < 1) {
       throw new NotFoundException('NO game was found.');
@@ -73,13 +72,11 @@ export class GamesService {
     };
   }
 
-  buildGetGamesQuery({
-    page,
-    perPage,
-    genreId,
-    platformId,
-    order,
-  }: getGamesQuery) {
+  buildGetGamesQuery(
+    { page, perPage, genreId, platformId, order }: getGamesQuery,
+    search?: SearchFilterOptions[],
+    filter?: SearchFilterOptions[],
+  ) {
     const includeClauses = [
       genreId ? { model: Genre, where: { id: genreId } } : { model: Genre },
       platformId
@@ -90,10 +87,16 @@ export class GamesService {
 
     const orderClause = order
       ? order.charAt(0) === '-'
-        ? [order.substring(1), sortOperation.DESC]
-        : [order, sortOperation.ASC]
-      : [];
+        ? `${order.substring(1)} ${sortOperation.DESC}`
+        : `${order} ${sortOperation.ASC}`
+      : '';
 
+    let whereClause = '';
+    if (filter.length >= 1) {
+      whereClause = setWhereQuery(OperationPositionEnum.FILTER, filter);
+    } else if (search.length >= 1) {
+      whereClause = setWhereQuery(OperationPositionEnum.SEARCH, search);
+    }
     const pageVal = page || paginationDefault.page;
     const perPageVal = perPage || paginationDefault.perPage;
 
@@ -101,9 +104,8 @@ export class GamesService {
       limit: perPageVal,
       offset: (pageVal - 1) * perPageVal,
       include: includeClauses || [],
-      where: {},
-      //Todo: fix this
-      // order: orderClause || [],
+      where: this.gamesRepository.sequelize.literal(whereClause),
+      order: this.gamesRepository.sequelize.literal(orderClause),
     };
   }
   async addGame(
