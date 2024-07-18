@@ -61,7 +61,11 @@ export class GamesService {
       order,
       params,
     });
-    const { count, rows } = await this.gamesRepository.findAndCountAll(query);
+    const count = await this.gamesRepository.count();
+    const { rows } = await this.gamesRepository.findAndCountAll({
+      ...query,
+      distinct: true,
+    });
     if (rows.length < 1) {
       throw new NotFoundException('NO game was found.');
     }
