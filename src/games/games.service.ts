@@ -19,6 +19,7 @@ import { UpdateGameDto } from './dtos/update-game.dto';
 import { PlatformGame } from 'models/platform_game.model';
 import { PublisherGame } from 'models/publisher_game.model';
 import { GenreGame } from 'models/genre_game.model';
+import { toSlug } from 'src/helpers/helpers';
 
 @Injectable()
 export class GamesService {
@@ -58,17 +59,17 @@ export class GamesService {
     //could not move to buildGetGamesQuery cause of Op.like types error
     query.where = search ? { name: { [Op.like]: `%${search}%` } } : {};
 
-    const games = await this.gamesRepository.findAll(query);
-    if (games.length < 1) {
+    const { count, rows } = await this.gamesRepository.findAndCountAll(query);
+    if (rows.length < 1) {
       throw new NotFoundException('NO game was found.');
     }
 
     return {
-      count: games.length,
-      data: games,
+      count,
+      data: rows,
       page,
       perPage,
-      offset: perPage * page,
+      offset: perPage * (page - 1),
     };
   }
 
@@ -121,7 +122,7 @@ export class GamesService {
     try {
       const game = await this.gamesRepository.create({
         name,
-        slug: name.toLowerCase().replace(/\s+/g, '-'),
+        slug: toSlug(name),
         description,
         background_image,
         rating_top,
@@ -190,7 +191,7 @@ export class GamesService {
       return this.gamesRepository.update(
         {
           name,
-          slug: name ? name.toLowerCase().replace(/\s+/g, '-') : foundGame.slug,
+          slug: name ? toSlug(name) : foundGame.slug,
           description,
           background_image,
           rating_top,

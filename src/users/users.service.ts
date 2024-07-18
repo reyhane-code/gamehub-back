@@ -51,21 +51,32 @@ export class UsersService {
         throw new BadRequestException('wrong passwrod!');
     }
     const salt = await bcrypt.genSalt(10);
-    const newPassword = await bcrypt.hash(body.password, salt);
-    const setPassword = await this.usersRepository.update(
-      { password: newPassword },
-      { where: { id: user.id } },
-      //TODO: do it with sequelize { serializeValue: ['password'] },
-    );
-    if (setPassword) return { message: 'password set successfully!' };
+    try {
+      const newPassword = await bcrypt.hash(body.password, salt);
+      const setPassword = await this.usersRepository.update(
+        { password: newPassword },
+        { where: { id: user.id }, returning: true, fields: ['password'] },
+      );
+      return { message: 'password set successfully!' };
+    } catch (error) {
+      throw new BadRequestException('something went wrong!');
+    }
   }
 
-  allUsers({ perPage, page }: paginationQueryOptions) {
-    return this.usersRepository.findAll({
+  async allUsers({ perPage, page }: paginationQueryOptions) {
+    const { count, rows } = await this.usersRepository.findAndCountAll({
       attributes: { exclude: ['password'] },
       limit: perPage,
-      offset: page * perPage,
+      offset: (page - 1) * perPage,
     });
+
+    return {
+      count,
+      data: rows,
+      page,
+      perPage,
+      offset: (page - 1) * perPage,
+    };
   }
 
   deleteUser(user: UserInterface) {

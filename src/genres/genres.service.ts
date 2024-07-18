@@ -57,23 +57,23 @@ export class GenresService {
 
   async findAll() {
     const genres = await this.genresRepository.findAll();
-    if (!genres) {
+    if (genres.length < 1) {
       throw new NotFoundException('No genres was found!');
     }
     return genres;
   }
 
   async findAllWithPaginate({ perPage, page }: paginationQueryOptions) {
-    const genres = await this.genresRepository.findAll({
+    const { count, rows } = await this.genresRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
     });
-    if (genres.length < 1) {
+    if (rows.length < 1) {
       throw new NotFoundException('No genres was found!');
     }
     return {
-      count: genres.length,
-      data: genres,
+      count,
+      data: rows,
       page,
       perPage,
       offset: (page - 1) * perPage,
