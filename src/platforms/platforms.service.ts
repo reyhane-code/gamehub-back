@@ -72,16 +72,16 @@ export class PlatformsService {
   }
 
   async findAllWithPaginate({ perPage, page }: paginationQueryOptions) {
-    const platforms = await this.platformsRepository.findAll({
+    const { count, rows } = await this.platformsRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
     });
-    if (platforms.length < 1) {
+    if (rows.length < 1) {
       throw new NotFoundException('No platforms was found!');
     }
     return {
-      count: platforms.length,
-      data: platforms,
+      count,
+      data: rows,
       page,
       perPage,
       offset: (page - 1) * perPage,
