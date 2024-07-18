@@ -18,7 +18,7 @@ import { UserInterface } from 'src/users/interfaces/user.interface';
 import { AddPlatformDto } from './dtos/add-platform.dto';
 import { UpdatedPlatformDto } from './dtos/update-platform.dto';
 
-@Controller('platform')
+@Controller('platforms')
 export class PlatformsController {
   constructor(private platformsService: PlatformsService) {}
 
