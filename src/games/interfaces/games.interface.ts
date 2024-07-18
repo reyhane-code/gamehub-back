@@ -5,5 +5,4 @@ export interface getGamesQuery {
   genreId?: number;
   platformId?: number;
   order?: string;
-  search?: string;
 }

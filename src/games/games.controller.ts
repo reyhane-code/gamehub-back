@@ -16,6 +16,7 @@ import { UserInterface } from 'src/users/interfaces/user.interface';
 import { UpdateGameDto } from './dtos/update-game.dto';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { AdminGuard } from 'src/guards/admin.guard';
+import { SearchFilterOptions } from 'src/interfaces/database.interfaces';
 
 @Controller('games')
 export class GamesController {
@@ -26,12 +27,13 @@ export class GamesController {
     return this.gamesService.findOneById(id);
   }
 
-  @Get()
+  @Get('/:search?/:filter?')
   getGames(
-    @Query()
-    query: getGamesQuery,
+    @Query() query: getGamesQuery,
+    @Param('search') search?: SearchFilterOptions[],
+    @Param('filter') filter?: SearchFilterOptions[],
   ) {
-    return this.gamesService.getGames(query);
+    return this.gamesService.getGames(query,search,filter);
   }
 
   @UseGuards(AdminGuard)
