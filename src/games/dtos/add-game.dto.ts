@@ -32,6 +32,21 @@ export class AddGameDto {
   @IsOptional()
   metacritic?: number;
 
+  @Expose()
+  @IsNumber()
+  @IsNotEmpty()
+  platformId: number;
+
+  @Expose()
+  @IsNumber()
+  @IsNotEmpty()
+  publisherId: number;
+
+  @Expose()
+  @IsNumber()
+  @IsNotEmpty()
+  genreId: number;
+
   constructor(partial: Partial<AddGameDto>) {
     Object.assign(this, partial);
   }

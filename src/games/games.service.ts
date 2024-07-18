@@ -16,11 +16,20 @@ import { paginationDefault } from 'src/constance';
 import { AddGameDto } from './dtos/add-game.dto';
 import { UserInterface } from 'src/users/interfaces/user.interface';
 import { UpdateGameDto } from './dtos/update-game.dto';
+import { PlatformGame } from 'models/platform_game.model';
+import { PublisherGame } from 'models/publisher_game.model';
+import { GenreGame } from 'models/genre_game.model';
 
 @Injectable()
 export class GamesService {
   constructor(
     @Inject(Repositories.GAMES) private gamesRepository: typeof Game,
+    @Inject(Repositories.PLATFORM_GAMES)
+    private platformGamesRepository: typeof PlatformGame,
+    @Inject(Repositories.PUBLISHER_GAMES)
+    private publisherGamesRepository: typeof PublisherGame,
+    @Inject(Repositories.GENRE_GAMES)
+    private genreGamesRepository: typeof GenreGame,
   ) {}
 
   async findOneById(id: number) {
@@ -97,11 +106,20 @@ export class GamesService {
     };
   }
   async addGame(
-    { name, description, background_image, rating_top, metacritic }: AddGameDto,
+    {
+      name,
+      description,
+      background_image,
+      rating_top,
+      metacritic,
+      platformId,
+      publisherId,
+      genreId,
+    }: AddGameDto,
     user: UserInterface,
   ) {
     try {
-      return this.gamesRepository.create({
+      const game = await this.gamesRepository.create({
         name,
         slug: name.toLowerCase().replace(/\s+/g, '-'),
         description,
@@ -109,6 +127,37 @@ export class GamesService {
         rating_top,
         metacritic,
         user_id: user.id,
+      });
+      await this.addGameToRelationTables(
+        game.id,
+        platformId,
+        publisherId,
+        genreId,
+      );
+      return game;
+    } catch (error) {
+      throw new BadRequestException('something went wrong');
+    }
+  }
+
+  async addGameToRelationTables(
+    gameId: number,
+    platformId: number,
+    publisherId: number,
+    genreId: number,
+  ) {
+    try {
+      await this.platformGamesRepository.create({
+        game_id: gameId,
+        platform_id: platformId,
+      });
+      await this.publisherGamesRepository.create({
+        game_id: gameId,
+        publisher_id: publisherId,
+      });
+      await this.genreGamesRepository.create({
+        game_id: gameId,
+        genre_id: genreId,
       });
     } catch (error) {
       throw new BadRequestException('something went wrong');
