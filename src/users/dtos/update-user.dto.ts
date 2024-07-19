@@ -4,7 +4,6 @@ import {
   IsOptional,
   IsEmail,
   MinLength,
-  IsNumber,
 } from '../../custom-validator';
 
 export class UpdateUserDto {

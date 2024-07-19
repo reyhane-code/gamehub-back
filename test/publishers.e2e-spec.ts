@@ -9,7 +9,6 @@ import {
 import { Context } from './utils/context';
 import { TableName } from 'src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
-import { MigrationPaths } from './utils/paths.enum';
 import { AddPublisherDto } from 'src/publishers/dtos/add-publisher.dto';
 import { UpdatePublisherDto } from 'src/publishers/dtos/update-publisher.dto';
 
@@ -17,17 +16,12 @@ const DEFAULT_PUBLISHER = 'ubsoft';
 
 let context: Context;
 // all tables names
-const tables = Object.values(MigrationPaths);
 beforeAll(async () => {
-  context = await Context.build(tables);
+  context = await Context.build();
 });
 
 beforeEach(async () => {
   return context.clean(Object.values(TableName));
-});
-
-afterAll(() => {
-  return context.close();
 });
 
 describe('Publishers System (e2e)', () => {

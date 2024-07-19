@@ -9,7 +9,7 @@
   "test": {
     "username": "postgres",
     "password": "rewq4321",
-    "database": "gamehub_db",
+    "database": "gamehub_test_db",
     "host": "postgres",
     "dialect": "postgres",
     "logging": false
