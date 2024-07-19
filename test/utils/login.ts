@@ -46,19 +46,6 @@ export const loginOrRegister = async (
   });
 };
 
-export const loginOrRegisterForAdmin = async (
-  app: NestFastifyApplication,
-  status: number = 201,
-  code: string,
-  validationToken: string,
-) => {
-  await requestSender(app, status, '/auth/login-or-register', {
-    validationToken,
-    code,
-  });
-  //TODO:update user role
-};
-
 export const getValidationDataAndRegister = async (
   app: NestFastifyApplication,
   phone: string = DEFAULT_PHONE,

@@ -39,14 +39,17 @@ export class UsersService {
     return this.usersRepository.update(body, { where: { id: user.id } });
   }
 
-  async updateUserRole(id: number, user: UserInterface, role: Role) {
+  async updateUserRole(user: UserInterface, role: Role, id?: number) {
     if (user.role !== 'super' || process.env.NODE_ENV !== 'test') {
-      throw new UnauthorizedException('yoy can not access this route');
+      throw new UnauthorizedException(
+        'You do not have permission to access this route',
+      );
     }
     try {
-      return this.usersRepository.update({ role }, { where: { id } });
+      const condition = id ? { id } : { id: user.id };
+      return this.usersRepository.update({ role }, { where: condition });
     } catch (error) {
-      throw new BadRequestException('something went wrong!');
+      throw new BadRequestException('Failed to update user role!');
     }
   }
 

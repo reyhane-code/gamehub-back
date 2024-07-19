@@ -29,14 +29,14 @@ export class UsersController {
     return this.usersService.updateUser(user, body);
   }
 
-  @Put('/role/:id')
+  @Put('/role/:id?')
   @UseGuards(AuthGuard)
   updateUserRole(
-    @Param('id') id: number,
     @CurrentUser() user: UserInterface,
     @Body() role: Role,
+    @Param('id') id?: number,
   ) {
-    return this.usersService.updateUserRole(id, user, role);
+    return this.usersService.updateUserRole(user, role, id);
   }
 
   @Get()

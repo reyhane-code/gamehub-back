@@ -13,7 +13,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { Context } from './utils/context';
-import { TableName } from '../src/enums/database.enum';
+import { Role, TableName } from '../src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
 import { MigrationPaths } from './utils/paths.enum';
 
