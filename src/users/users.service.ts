@@ -3,6 +3,7 @@ import {
   ConflictException,
   BadRequestException,
   Inject,
+  UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserInterface } from './interfaces/user.interface';
@@ -38,7 +39,16 @@ export class UsersService {
     return this.usersRepository.update(body, { where: { id: user.id } });
   }
 
-  // async updateUserRole(){}
+  async updateUserRole(id: number, user: UserInterface, role: Role) {
+    if (user.role !== 'super' || process.env.NODE_ENV !== 'test') {
+      throw new UnauthorizedException('yoy can not access this route');
+    }
+    try {
+      return this.usersRepository.update({ role }, { where: { id } });
+    } catch (error) {
+      throw new BadRequestException('something went wrong!');
+    }
+  }
 
   async setUserPassword(user: UserInterface, body: UserPasswordDto) {
     if (user.password?.length > 0) {
