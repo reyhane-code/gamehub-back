@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { QueryTypes } from 'sequelize';
 import { Sequelize } from 'sequelize';
-
+import { join } from 'path';
 export interface PoolOptions {
   database: string;
   username: string;
@@ -46,19 +46,22 @@ export default class SequelizeManager {
     }
   }
   async migrate(pathToMigrationFile: string, schemaName: string) {
+    const queryInterface = this.sequelize.getQueryInterface();
+    const migrationModule = require(join(process.cwd(), pathToMigrationFile));
     try {
-      const queryInterface = this.sequelize.getQueryInterface();
-      const migrationModule = require(pathToMigrationFile);
       await migrationModule.up(queryInterface, this.sequelize, schemaName);
       console.log('Migration successful');
     } catch (error) {
-      console.error('Error running migration:', error);
+      console.error('Error running migration:', migrationModule);
     }
   }
 
   async seed(pathToSeedFile: string) {
     try {
-      const seedScript = fs.readFileSync(pathToSeedFile, 'utf8');
+      const seedScript = fs.readFileSync(
+        join(process.cwd(), pathToSeedFile),
+        'utf8',
+      );
       await this.sequelize.query(seedScript);
       console.log('Seed successful');
     } catch (error) {
@@ -68,8 +71,7 @@ export default class SequelizeManager {
 
   async end(roleName: string) {
     try {
-      await this.sequelize.close();
-      await this.sequelize.authenticate();
+      await this.authenticateAndSync()
 
       await this.sequelize.query(`DROP SCHEMA ${roleName} CASCADE;`, {
         type: QueryTypes.RAW,
