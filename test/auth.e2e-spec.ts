@@ -26,16 +26,16 @@ const DEFAULT_PHONE = '09363080321';
 
 let context: Context;
 beforeAll(async () => {
-  context = await Context.build([MigrationPaths.USERS]);
+  context = await Context.build();
 });
 
 beforeEach(async () => {
   return context.clean([TableName.USERS]);
 });
 
-afterAll(() => {
-  return context.close();
-});
+// afterAll(() => {
+//   return context.close();
+// });
 
 describe('Authentication System (e2e)', () => {
   let app: NestFastifyApplication;

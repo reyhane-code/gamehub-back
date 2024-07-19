@@ -10,7 +10,7 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { paginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { UserPasswordDto } from './dtos/user-password.dto';
 import { User } from '../../models/user.model';
-import { Repositories } from 'src/enums/database.enum';
+import { Repositories, Role } from 'src/enums/database.enum';
 
 @Injectable()
 export class UsersService {
@@ -37,6 +37,8 @@ export class UsersService {
 
     return this.usersRepository.update(body, { where: { id: user.id } });
   }
+
+  // async updateUserRole(){}
 
   async setUserPassword(user: UserInterface, body: UserPasswordDto) {
     if (user.password?.length > 0) {

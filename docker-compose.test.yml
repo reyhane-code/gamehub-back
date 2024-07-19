@@ -52,3 +52,12 @@ services:
     #volumes:
     # - redis:/var/lib/redis/data
     # - ./redis.conf:/usr/local/etc/redis/redis.conf
+
+  migrate:
+    image: mortezahatamikia/base-node
+    working_dir: /gamehub/src/app
+    volumes:
+      - .:/gamehub/src/app
+    depends_on:
+      - postgres
+    command: sh -c "npx sequelize db:migrate"

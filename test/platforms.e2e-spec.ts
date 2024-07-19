@@ -20,16 +20,16 @@ let context: Context;
 // all tables names
 const tables = Object.values(MigrationPaths);
 beforeAll(async () => {
-  context = await Context.build(tables);
+  context = await Context.build();
 });
 
 beforeEach(async () => {
   return context.clean(Object.values(TableName));
 });
 
-afterAll(() => {
-  return context.close();
-});
+// afterAll(() => {
+//   return context.close();
+// });
 
 describe('Platforms System (e2e)', () => {
   let app: NestFastifyApplication;

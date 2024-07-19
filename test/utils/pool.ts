@@ -8,6 +8,7 @@ export interface PoolOptions {
   password: string;
   host: string;
   dialect: 'postgres';
+  logging: boolean;
 }
 
 export default class SequelizeManager {
@@ -45,45 +46,45 @@ export default class SequelizeManager {
       throw error;
     }
   }
-  async migrate(pathToMigrationFile: string, schemaName: string) {
-    const queryInterface = this.sequelize.getQueryInterface();
-    const migrationModule = require(join(process.cwd(), pathToMigrationFile));
-    try {
-      await migrationModule.up(queryInterface, this.sequelize, schemaName);
-      console.log('Migration successful');
-    } catch (error) {
-      console.error('Error running migration:', migrationModule);
-    }
-  }
+  // async migrate(pathToMigrationFile: string, schemaName: string) {
+  //   const queryInterface = this.sequelize.getQueryInterface();
+  //   const migrationModule = require(join(process.cwd(), pathToMigrationFile));
+  //   try {
+  //     await migrationModule.up(queryInterface, this.sequelize, schemaName);
+  //     console.log('Migration successful');
+  //   } catch (error) {
+  //     console.error('Error running migration:', migrationModule);
+  //   }
+  // }
 
-  async seed(pathToSeedFile: string) {
-    try {
-      const seedScript = fs.readFileSync(
-        join(process.cwd(), pathToSeedFile),
-        'utf8',
-      );
-      await this.sequelize.query(seedScript);
-      console.log('Seed successful');
-    } catch (error) {
-      console.error('Error running seed script:', error);
-    }
-  }
+  // async seed(pathToSeedFile: string) {
+  //   try {
+  //     const seedScript = fs.readFileSync(
+  //       join(process.cwd(), pathToSeedFile),
+  //       'utf8',
+  //     );
+  //     await this.sequelize.query(seedScript);
+  //     console.log('Seed successful');
+  //   } catch (error) {
+  //     console.error('Error running seed script:', error);
+  //   }
+  // }
 
-  async end(roleName: string) {
-    try {
-      await this.authenticateAndSync()
+  // async end(roleName: string) {
+  //   try {
+  //     await this.authenticateAndSync()
 
-      await this.sequelize.query(`DROP SCHEMA ${roleName} CASCADE;`, {
-        type: QueryTypes.RAW,
-      });
-      await this.sequelize.query(`DROP ROLE ${roleName};`, {
-        type: QueryTypes.RAW,
-      });
+  //     await this.sequelize.query(`DROP SCHEMA ${roleName} CASCADE;`, {
+  //       type: QueryTypes.RAW,
+  //     });
+  //     await this.sequelize.query(`DROP ROLE ${roleName};`, {
+  //       type: QueryTypes.RAW,
+  //     });
 
-      await this.sequelize.close();
-    } catch (error) {
-      console.error('Error closing context:', error);
-      throw error;
-    }
-  }
+  //     await this.sequelize.close();
+  //   } catch (error) {
+  //     console.error('Error closing context:', error);
+  //     throw error;
+  //   }
+  // }
 }

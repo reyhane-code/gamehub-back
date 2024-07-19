@@ -41,7 +41,8 @@ module.exports = {
       },
       role: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
+        defaultValue: 'user',
       },
       createdAt: {
         type: Sequelize.DATE,
