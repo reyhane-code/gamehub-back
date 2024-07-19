@@ -48,6 +48,13 @@ export class Context {
       dialect: 'postgres',
     });
 
+    await sequelizePool.query(`GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ${roleName} TO postgres;`, { type: QueryTypes.RAW})
+    await sequelizePool.query(
+      `GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ${roleName} TO ${roleName};`,
+      { type: QueryTypes.RAW },
+    );
+    await sequelizePool.authenticateAndSync()
+
     // Run our migrations in the new schema
     for (const tableName of tableNames) {
       await sequelizePool.migrate(tableName, roleName);
@@ -60,16 +67,9 @@ export class Context {
   }
 
   async clean(tableNames: string[]) {
-    await sequelizePool.connect({
-      database: process.env.POSTGRES_DB,
-      host: process.env.POSTGRES_HOST,
-      username: this.roleName,
-      password: this.roleName,
-      dialect: 'postgres',
-    });
     for (const tableName of tableNames) {
       await sequelizePool.query(
-        `TRUNCATE TABLE ${tableName} RESTART IDENTITY CASCADE;`,
+        `TRUNCATE TABLE ${this.roleName}.${tableName} RESTART IDENTITY CASCADE;`,
         { type: QueryTypes.RAW },
       );
     }
