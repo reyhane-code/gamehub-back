@@ -1,3 +1,4 @@
+import { SearchFilterParam } from 'src/interfaces/database.interfaces';
 
 export interface getGamesQuery {
   perPage?: number;
@@ -5,4 +6,5 @@ export interface getGamesQuery {
   genreId?: number;
   platformId?: number;
   order?: string;
+  params?: SearchFilterParam;
 }

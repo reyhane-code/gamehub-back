@@ -18,3 +18,7 @@ export interface SearchFilterOptions {
   value: number | string | Date | number[] | string[] | boolean;
 }
 
+export interface SearchFilterParam {
+  filter?: SearchFilterOptions[];
+  search?: SearchFilterOptions[];
+}
