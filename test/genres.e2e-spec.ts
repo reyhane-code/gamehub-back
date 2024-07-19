@@ -10,10 +10,10 @@ import { Context } from './utils/context';
 import { TableName } from 'src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
 import { MigrationPaths } from './utils/paths.enum';
-import { AddPublisherDto } from 'src/publishers/dtos/add-publisher.dto';
-import { UpdatePublisherDto } from 'src/publishers/dtos/update-publisher.dto';
+import { AddGenreDto } from 'src/genres/dtos/add-genre.dto';
+import { UpdateGenreDto } from 'src/genres/dtos/update-genre.dto';
 
-const DEFAULT_PUBLISHER = 'ubsoft';
+const DEFAULT_GENRE = 'Action';
 
 let context: Context;
 // all tables names
@@ -30,7 +30,7 @@ afterAll(() => {
   return context.close();
 });
 
-describe('Publishers System (e2e)', () => {
+describe('Genres System (e2e)', () => {
   let app: NestFastifyApplication;
 
   beforeEach(async () => {
@@ -46,127 +46,121 @@ describe('Publishers System (e2e)', () => {
     await app.getHttpAdapter().getInstance().ready();
   });
 
-  const addPublisher = async (
-    status: number = 201,
-    { name }: AddPublisherDto,
-  ) => {
+  const addGenre = async (status: number = 201, { name }: AddGenreDto) => {
     const { accessToken } = await getValidationDataAndRegister(app);
     return request(app.getHttpServer())
-      .post('/publishers')
+      .post('/genres')
       .set('authorization', `Bearer ${accessToken}`)
       .send({ name })
       .expect(status)
       .then((res) => res.body);
   };
 
-  const updatePublisher = async (
+  const updateGenre = async (
     status: number = 200,
     id: number,
-    { name }: UpdatePublisherDto,
+    { name }: UpdateGenreDto,
   ) => {
     const { accessToken } = await getValidationDataAndRegister(app);
     return request(app.getHttpServer())
-      .put(`/publishers/${id}`)
+      .put(`/genres/${id}`)
       .set('authorization', `Bearer ${accessToken}`)
       .send({ name })
       .expect(status)
       .then((res) => res.body);
   };
-  const deletePublisher = async (status: number, id: number) => {
+  const deleteGenre = async (status: number, id: number) => {
     const { accessToken } = await getValidationDataAndRegister(app);
     return request(app.getHttpServer())
-      .delete(`/publishers/${id}`)
+      .delete(`/genres/${id}`)
       .set('authorization', `Bearer ${accessToken}`)
       .expect(status)
       .then((res) => res.body);
   };
 
-  const getPublisherById = async (status: number = 200, id: number) => {
+  const getGenreById = async (status: number = 200, id: number) => {
     return request(app.getHttpServer())
-      .get(`/publishers/${id}`)
+      .get(`/genres/${id}`)
       .expect(status)
       .then((res) => res.body);
   };
 
-  const getUserPublishers = async (
-    accessToken: string,
-    status: number = 200,
-  ) => {
+  const getUsergenres = async (accessToken: string, status: number = 200) => {
     return request(app.getHttpServer())
-      .get('/publishers/user')
+      .get('/genres/user')
       .set('authorization', `Bearer ${accessToken}`)
       .expect(status)
       .then((res) => res.body);
   };
 
-  it('adds a new publisher', async () => {
-    const body = await addPublisher(201, { name: DEFAULT_PUBLISHER });
-    expect(body.name).toEqual(DEFAULT_PUBLISHER);
+  it('adds a new genre', async () => {
+    const body = await addGenre(201, { name: DEFAULT_GENRE });
+    expect(body.name).toEqual(DEFAULT_GENRE);
   });
 
-  it('updates an exsisting publisher', async () => {
-    const publisher = await addPublisher(201, { name: DEFAULT_PUBLISHER });
-    const body = await updatePublisher(200, publisher.id, { name: 'new-word' });
+  it('updates an exsisting genre', async () => {
+    const genre = await addGenre(201, { name: DEFAULT_GENRE });
+    const body = await updateGenre(200, genre.id, { name: 'new-word' });
     expect(body.name).toEqual('new-word');
   });
 
   it('returns error while updating with a wrong id', async () => {
-    await updatePublisher(404, 2, { name: 'rubbish' });
+    await updateGenre(404, 2, { name: 'rubbish' });
   });
 
-  it('delete an exsisting publisher', async () => {
-    const publisher = await addPublisher(201, { name: DEFAULT_PUBLISHER });
-    await deletePublisher(200, publisher.id);
+  it('delete an exsisting genre', async () => {
+    const genre = await addGenre(201, { name: DEFAULT_GENRE });
+    await deleteGenre(200, genre.id);
   });
 
-  it('returns error while deleting a non-existing publisher', async () => {
-    await deletePublisher(404, 2);
+  it('returns error while deleting a non-existing genre', async () => {
+    await deleteGenre(404, 2);
   });
 
-  it('finds all publishers', async () => {
-    await addPublisher(201, { name: 'publisher1' });
-    await addPublisher(201, { name: 'publisher2' });
-    await addPublisher(201, { name: 'publisher3' });
-    const publishers = await request(app.getHttpServer())
-      .get('/publishers')
+  it('finds all genres', async () => {
+    await addGenre(201, { name: 'genre1' });
+    await addGenre(201, { name: 'genre2' });
+    await addGenre(201, { name: 'genre3' });
+    const genres = await request(app.getHttpServer())
+      .get('/genres')
       .expect(200)
       .then((res) => res.body);
-    expect(publishers.count).toEqual(3);
-    expect(publishers.data).toBeDefined();
+    expect(genres.count).toEqual(3);
+    expect(genres.data).toBeDefined();
   });
 
-  it('returns error if there is no word when finding publishers', async () => {
+  it('returns error if there is no word when finding genres', async () => {
     return request(app.getHttpServer())
-      .get('/publishers')
+      .get('/genres')
       .expect(404)
       .then((res) => res.body);
   });
 
-  it('finds publisher by Id', async () => {
-    const publisher = await addPublisher(201, { name: 'new-publisher' });
-    await getPublisherById(200, publisher.id);
+  it('finds genre by Id', async () => {
+    const genre = await addGenre(201, { name: 'new-genre' });
+    await getGenreById(200, genre.id);
   });
 
-  it('returns an error if the publisher does not exist when finding by id', async () => {
-    await getPublisherById(404, 23);
+  it('returns an error if the genre does not exist when finding by id', async () => {
+    await getGenreById(404, 23);
   });
 
-  it('returns error if not the correct user when finding user publishers', async () => {
+  it('returns error if not the correct user when finding user genres', async () => {
     const { accessToken } = await getValidationDataAndRegister(app);
-    await addPublisher(201, { name: 'word' });
-    await getUserPublishers(accessToken, 404);
+    await addGenre(201, { name: 'word' });
+    await getUsergenres(accessToken, 404);
   });
 
-  it('finds user publishers', async () => {
+  it('finds user genres', async () => {
     const { accessToken } = await getValidationDataAndRegister(app);
     await request(app.getHttpServer())
-      .post('/publishers')
+      .post('/genres')
       .set('authorization', `Bearer ${accessToken}`)
-      .send({ name: DEFAULT_PUBLISHER })
+      .send({ name: DEFAULT_GENRE })
       .expect(201)
       .then((res) => res.body);
-    const publishers = await getUserPublishers(accessToken, 200);
-    expect(publishers.length).toEqual(1);
-    expect(publishers).toBeDefined();
+    const genres = await getUsergenres(accessToken, 200);
+    expect(genres.length).toEqual(1);
+    expect(genres).toBeDefined();
   });
 });

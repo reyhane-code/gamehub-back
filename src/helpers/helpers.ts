@@ -1,19 +1,34 @@
 import { OperationPositionEnum } from 'src/enums/enums';
-import { SearchFilterOptions } from 'src/interfaces/database.interfaces';
+import {
+  SearchFilterOptions,
+  SearchFilterParam,
+} from 'src/interfaces/database.interfaces';
 
 export const toSlug = (str: string) => {
   return str.toLowerCase().replace(/\s+/g, '-');
 };
-export const setWhereQuery = (
-  operation: string,
-  options: SearchFilterOptions[],
-) => {
-  const query = options
-    .map((item) => `${item.field} ${item.operation} ${item.value}`)
-    .join(operation === OperationPositionEnum.FILTER ? ' AND ' : ' OR ');
+export const setWhereQuery = (params: SearchFilterParam) => {
+  if (!params) {
+    return '';
+  }
+  let query = '';
 
-  return operation === OperationPositionEnum.SEARCH ||
-    operation === OperationPositionEnum.FILTER
-    ? query
-    : '';
+  if (params.filter.length >= 1) {
+    query += generateCondition(params.filter, 'AND');
+  }
+
+  if (params.search.length >= 1) {
+    const searchQuery = generateCondition(params.search, 'OR');
+    query += query && searchQuery ? ` AND (${searchQuery})` : searchQuery;
+  }
+
+  return query;
+};
+const generateCondition = (
+  items: SearchFilterOptions[],
+  joinOperator: string,
+) => {
+  return items
+    .map((item) => `${item.field} ${item.operation} ${item.value}`)
+    .join(` ${joinOperator} `);
 };

@@ -10,10 +10,11 @@ import { Context } from './utils/context';
 import { TableName } from 'src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
 import { MigrationPaths } from './utils/paths.enum';
-import { AddPublisherDto } from 'src/publishers/dtos/add-publisher.dto';
-import { UpdatePublisherDto } from 'src/publishers/dtos/update-publisher.dto';
+import { AddPlatformDto } from 'src/platforms/dtos/add-platform.dto';
+import { UpdatedPlatformDto } from 'src/platforms/dtos/update-platform.dto';
+import { toSlug } from 'src/helpers/helpers';
 
-const DEFAULT_PUBLISHER = 'ubsoft';
+const DEFAULT_PLATFORM = 'PC';
 
 let context: Context;
 // all tables names
@@ -30,7 +31,7 @@ afterAll(() => {
   return context.close();
 });
 
-describe('Publishers System (e2e)', () => {
+describe('Platforms System (e2e)', () => {
   let app: NestFastifyApplication;
 
   beforeEach(async () => {
@@ -46,127 +47,129 @@ describe('Publishers System (e2e)', () => {
     await app.getHttpAdapter().getInstance().ready();
   });
 
-  const addPublisher = async (
+  const addPlatform = async (
     status: number = 201,
-    { name }: AddPublisherDto,
+    { name }: AddPlatformDto,
   ) => {
     const { accessToken } = await getValidationDataAndRegister(app);
     return request(app.getHttpServer())
-      .post('/publishers')
+      .post('/platforms')
       .set('authorization', `Bearer ${accessToken}`)
       .send({ name })
       .expect(status)
       .then((res) => res.body);
   };
 
-  const updatePublisher = async (
+  const updatePlatform = async (
     status: number = 200,
     id: number,
-    { name }: UpdatePublisherDto,
+    { name }: UpdatedPlatformDto,
   ) => {
     const { accessToken } = await getValidationDataAndRegister(app);
     return request(app.getHttpServer())
-      .put(`/publishers/${id}`)
+      .put(`/platforms/${id}`)
       .set('authorization', `Bearer ${accessToken}`)
       .send({ name })
       .expect(status)
       .then((res) => res.body);
   };
-  const deletePublisher = async (status: number, id: number) => {
+  const deletePlatform = async (status: number, id: number) => {
     const { accessToken } = await getValidationDataAndRegister(app);
     return request(app.getHttpServer())
-      .delete(`/publishers/${id}`)
+      .delete(`/platforms/${id}`)
       .set('authorization', `Bearer ${accessToken}`)
       .expect(status)
       .then((res) => res.body);
   };
 
-  const getPublisherById = async (status: number = 200, id: number) => {
+  const getPlatformById = async (status: number = 200, id: number) => {
     return request(app.getHttpServer())
-      .get(`/publishers/${id}`)
+      .get(`/platforms/${id}`)
       .expect(status)
       .then((res) => res.body);
   };
 
-  const getUserPublishers = async (
+  const getUserPlatforms = async (
     accessToken: string,
     status: number = 200,
   ) => {
     return request(app.getHttpServer())
-      .get('/publishers/user')
+      .get('/platforms/user')
       .set('authorization', `Bearer ${accessToken}`)
       .expect(status)
       .then((res) => res.body);
   };
 
-  it('adds a new publisher', async () => {
-    const body = await addPublisher(201, { name: DEFAULT_PUBLISHER });
-    expect(body.name).toEqual(DEFAULT_PUBLISHER);
+  it('adds a new platform', async () => {
+    const body = await addPlatform(201, { name: DEFAULT_PLATFORM });
+    expect(body.name).toEqual(DEFAULT_PLATFORM);
+    expect(body.slug).toBeDefined();
+    expect(body.slug).toEqual(toSlug(DEFAULT_PLATFORM));
   });
 
-  it('updates an exsisting publisher', async () => {
-    const publisher = await addPublisher(201, { name: DEFAULT_PUBLISHER });
-    const body = await updatePublisher(200, publisher.id, { name: 'new-word' });
+  it('updates an exsisting platform', async () => {
+    const platform = await addPlatform(201, { name: DEFAULT_PLATFORM });
+    const body = await updatePlatform(200, platform.id, { name: 'new-word' });
     expect(body.name).toEqual('new-word');
   });
 
   it('returns error while updating with a wrong id', async () => {
-    await updatePublisher(404, 2, { name: 'rubbish' });
+    await updatePlatform(404, 2, { name: 'rubbish' });
   });
 
-  it('delete an exsisting publisher', async () => {
-    const publisher = await addPublisher(201, { name: DEFAULT_PUBLISHER });
-    await deletePublisher(200, publisher.id);
+  it('delete an exsisting platform', async () => {
+    const platform = await addPlatform(201, { name: DEFAULT_PLATFORM });
+    await deletePlatform(200, platform.id);
   });
 
-  it('returns error while deleting a non-existing publisher', async () => {
-    await deletePublisher(404, 2);
+  it('returns error while deleting a non-existing platform', async () => {
+    await deletePlatform(404, 2);
   });
 
-  it('finds all publishers', async () => {
-    await addPublisher(201, { name: 'publisher1' });
-    await addPublisher(201, { name: 'publisher2' });
-    await addPublisher(201, { name: 'publisher3' });
-    const publishers = await request(app.getHttpServer())
-      .get('/publishers')
+  it('finds all platforms', async () => {
+    await addPlatform(201, { name: 'platform1' });
+    await addPlatform(201, { name: 'platform2' });
+    await addPlatform(201, { name: 'platform3' });
+    const platforms = await request(app.getHttpServer())
+      .get('/platforms')
       .expect(200)
       .then((res) => res.body);
-    expect(publishers.count).toEqual(3);
-    expect(publishers.data).toBeDefined();
+    expect(platforms.count).toEqual(3);
+    expect(platforms.data).toBeDefined();
   });
 
-  it('returns error if there is no word when finding publishers', async () => {
+  it('returns error if there is no word when finding platforms', async () => {
     return request(app.getHttpServer())
-      .get('/publishers')
+      .get('/platforms')
       .expect(404)
       .then((res) => res.body);
   });
 
-  it('finds publisher by Id', async () => {
-    const publisher = await addPublisher(201, { name: 'new-publisher' });
-    await getPublisherById(200, publisher.id);
+  it('finds platform by Id', async () => {
+    const platform = await addPlatform(201, { name: 'new-platform' });
+    await getPlatformById(200, platform.id);
   });
 
-  it('returns an error if the publisher does not exist when finding by id', async () => {
-    await getPublisherById(404, 23);
+  it('returns an error if the platform does not exist when finding by id', async () => {
+    await getPlatformById(404, 23);
   });
 
-  it('returns error if not the correct user when finding user publishers', async () => {
+  it('returns error if not the correct user when finding user platforms', async () => {
     const { accessToken } = await getValidationDataAndRegister(app);
-    await addPublisher(201, { name: 'word' });
-    await getUserPublishers(accessToken, 404);
+    await addPlatform(201, { name: 'word' });
+    await getUserPlatforms(accessToken, 404);
   });
 
-  it('finds user publishers', async () => {
+  it('finds user platforms', async () => {
     const { accessToken } = await getValidationDataAndRegister(app);
     await request(app.getHttpServer())
-      .post('/publishers')
+      .post('/platforms')
       .set('authorization', `Bearer ${accessToken}`)
-      .send({ name: DEFAULT_PUBLISHER })
+      .send({ name: DEFAULT_PLATFORM })
       .expect(201)
       .then((res) => res.body);
-    const publishers = await getUserPublishers(accessToken, 200);
-    expect(publishers.length).toEqual(1);
-    expect(publishers).toBeDefined();
+    const platforms = await getUserPlatforms(accessToken, 200);
+    expect(platforms.length).toEqual(1);
+    expect(platforms).toBeDefined();
   });
 });

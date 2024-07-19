@@ -20,7 +20,10 @@ import { PublisherGame } from 'models/publisher_game.model';
 import { GenreGame } from 'models/genre_game.model';
 import { setWhereQuery, toSlug } from 'src/helpers/helpers';
 import { OperationPositionEnum, sortOperation } from 'src/enums/enums';
-import { SearchFilterOptions } from 'src/interfaces/database.interfaces';
+import {
+  SearchFilterOptions,
+  SearchFilterParam,
+} from 'src/interfaces/database.interfaces';
 
 @Injectable()
 export class GamesService {
@@ -42,23 +45,26 @@ export class GamesService {
     return game;
   }
 
-  async getGames(
-    { page, perPage, genreId, platformId, order }: getGamesQuery,
-    search?: SearchFilterOptions[],
-    filter?: SearchFilterOptions[],
-  ) {
-    const query = this.buildGetGamesQuery(
-      {
-        page,
-        perPage,
-        genreId,
-        platformId,
-        order,
-      },
-      search,
-      filter,
-    );
-    const { count, rows } = await this.gamesRepository.findAndCountAll(query);
+  async getGames({
+    page,
+    perPage,
+    genreId,
+    platformId,
+    order,
+    params,
+  }: getGamesQuery) {
+    const query = this.buildGetGamesQuery({
+      page,
+      perPage,
+      genreId,
+      platformId,
+      order,
+      params,
+    });
+    const { count, rows } = await this.gamesRepository.findAndCountAll({
+      ...query,
+      distinct: true,
+    });
     if (rows.length < 1) {
       throw new NotFoundException('NO game was found.');
     }
@@ -72,11 +78,14 @@ export class GamesService {
     };
   }
 
-  buildGetGamesQuery(
-    { page, perPage, genreId, platformId, order }: getGamesQuery,
-    search?: SearchFilterOptions[],
-    filter?: SearchFilterOptions[],
-  ) {
+  buildGetGamesQuery({
+    page,
+    perPage,
+    genreId,
+    platformId,
+    order,
+    params,
+  }: getGamesQuery) {
     const includeClauses = [
       genreId ? { model: Genre, where: { id: genreId } } : { model: Genre },
       platformId
@@ -91,12 +100,8 @@ export class GamesService {
         : `${order} ${sortOperation.ASC}`
       : '';
 
-    let whereClause = '';
-    if (filter.length >= 1) {
-      whereClause = setWhereQuery(OperationPositionEnum.FILTER, filter);
-    } else if (search.length >= 1) {
-      whereClause = setWhereQuery(OperationPositionEnum.SEARCH, search);
-    }
+    const whereClause = setWhereQuery(params);
+
     const pageVal = page || paginationDefault.page;
     const perPageVal = perPage || paginationDefault.perPage;
 
@@ -105,7 +110,9 @@ export class GamesService {
       offset: (pageVal - 1) * perPageVal,
       include: includeClauses || [],
       where: this.gamesRepository.sequelize.literal(whereClause),
-      order: this.gamesRepository.sequelize.literal(orderClause),
+      order: orderClause
+        ? this.gamesRepository.sequelize.literal(orderClause)
+        : [],
     };
   }
   async addGame(

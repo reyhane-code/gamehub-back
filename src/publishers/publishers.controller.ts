@@ -59,7 +59,10 @@ export class PublishersController {
 
   @UseGuards(AdminGuard)
   @Delete('/:id')
-  deletePublisher(@Param('id') id: number, isSoftDelete: boolean = true) {
+  deletePublisher(
+    @Param('id') id: number,
+    @Query() isSoftDelete: boolean = true,
+  ) {
     return this.publisherService.deletePublisher(id, isSoftDelete);
   }
 }
