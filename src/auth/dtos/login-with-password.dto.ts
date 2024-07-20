@@ -8,25 +8,24 @@ import {
 } from 'src/custom-validator';
 
 export class LoginWithPasswordDto {
-
   @Expose()
   @IsNotEmpty()
   @IsString()
   @MinLength(6)
   password: string;
-  
+
   @Expose()
   @ValidateIf((object) => !object.username && !object.email)
   @IsNotEmpty()
   @IsString()
-  phone?: number;
-  
+  phone?: string;
+
   @Expose()
   @ValidateIf((object) => !object.phone && !object.email)
   @IsNotEmpty()
   @IsString()
   username?: string;
-  
+
   @Expose()
   @ValidateIf((object) => !object.phone && !object.username)
   @IsNotEmpty()
