@@ -17,7 +17,7 @@ import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { LoginOrRegisterDto } from './dtos/login-or-register.dto';
 import { LoginWithPasswordDto } from './dtos/login-with-password.dto';
 import { GetValidationTokenDto } from './dtos/get-validation-token.dto';
-import { UserInterface } from 'src/users/interfaces/user.interface';
+import { IUser } from 'src/users/interfaces/user.interface';
 
 @Controller('/auth')
 export class AuthController {
@@ -51,13 +51,13 @@ export class AuthController {
 
   @Get('/identity')
   @UseGuards(AuthGuard)
-  async getIdentity(@CurrentUser() user: UserInterface) {
+  async getIdentity(@CurrentUser() user: IUser) {
     return user;
   }
 
   @Delete('/logout')
   @UseGuards(AuthGuard)
-  logout(@CurrentUser() user: UserInterface, @Headers() headers: any) {
+  logout(@CurrentUser() user: IUser, @Headers() headers: any) {
     const accessToken = headers.authorization.split(' ')[1];
     return this.authService.logout(user, accessToken);
   }

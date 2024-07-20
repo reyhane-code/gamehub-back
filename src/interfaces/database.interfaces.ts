@@ -1,16 +1,16 @@
 import { FilterOperationEnum, sortOperation } from 'src/enums/enums';
 
-export interface paginationQueryOptions {
+export interface IPaginationQueryOptions {
   perPage?: number;
   page?: number;
 }
 
-export interface orderQueryOptions {
+export interface IOrderQueryOptions {
   field?: string;
   opration?: sortOperation;
 }
 
-export interface SearchFilterOptions {
+export interface ISearchFilterOptions {
   field: string;
 
   operation: FilterOperationEnum;
@@ -18,7 +18,7 @@ export interface SearchFilterOptions {
   value: number | string | Date | number[] | string[] | boolean;
 }
 
-export interface SearchFilterParam {
-  filter?: SearchFilterOptions[];
-  search?: SearchFilterOptions[];
+export interface ISearchFilterParam {
+  filter?: ISearchFilterOptions[];
+  search?: ISearchFilterOptions[];
 }

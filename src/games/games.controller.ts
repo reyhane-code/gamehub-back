@@ -10,15 +10,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { GamesService } from './games.service';
-import { getGamesQuery } from './interfaces/games.interface';
+import { IGamesQuery } from './interfaces/games.interface';
 import { AddGameDto } from './dtos/add-game.dto';
-import { UserInterface } from 'src/users/interfaces/user.interface';
+import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdateGameDto } from './dtos/update-game.dto';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { AdminGuard } from 'src/guards/admin.guard';
 import {
-  SearchFilterOptions,
-  SearchFilterParam,
+  ISearchFilterOptions,
+  ISearchFilterParam,
 } from 'src/interfaces/database.interfaces';
 
 @Controller('games')
@@ -31,13 +31,13 @@ export class GamesController {
   }
 
   @Get()
-  getGames(@Query() query: getGamesQuery) {
+  getGames(@Query() query: IGamesQuery) {
     return this.gamesService.getGames(query);
   }
 
   @UseGuards(AdminGuard)
   @Get('/user')
-  getUserGames(@CurrentUser() user: UserInterface) {
+  getUserGames(@CurrentUser() user: IUser) {
     return this.gamesService.findUserGames(user);
   }
 
@@ -49,7 +49,7 @@ export class GamesController {
 
   @UseGuards(AdminGuard)
   @Post()
-  addGame(@Body() body: AddGameDto, @CurrentUser() user: UserInterface) {
+  addGame(@Body() body: AddGameDto, @CurrentUser() user: IUser) {
     return this.gamesService.addGame(body, user);
   }
 

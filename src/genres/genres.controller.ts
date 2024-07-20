@@ -10,11 +10,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { GenresService } from './genres.service';
-import { paginationQueryOptions } from 'src/interfaces/database.interfaces';
+import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { AddGenreDto } from './dtos/add-genre.dto';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
-import { UserInterface } from 'src/users/interfaces/user.interface';
+import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdateGenreDto } from './dtos/update-genre.dto';
 import { paginationDefault } from 'src/constance';
 
@@ -34,20 +34,20 @@ export class GenresController {
 
   @Get('/paginate')
   findGenresWithPaginate(
-    @Query() query: paginationQueryOptions = paginationDefault,
+    @Query() query: IPaginationQueryOptions = paginationDefault,
   ) {
     return this.genresService.findAllWithPaginate(query);
   }
 
   @UseGuards(AdminGuard)
   @Get('/user')
-  getUserGenres(@CurrentUser() user: UserInterface) {
+  getUserGenres(@CurrentUser() user: IUser) {
     return this.genresService.findUserGenres(user);
   }
 
   @UseGuards(AdminGuard)
   @Post()
-  addGenre(@Body() body: AddGenreDto, @CurrentUser() user: UserInterface) {
+  addGenre(@Body() body: AddGenreDto, @CurrentUser() user: IUser) {
     return this.genresService.addGenre(body, user);
   }
 

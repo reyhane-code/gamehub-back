@@ -6,9 +6,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { UserInterface } from './interfaces/user.interface';
+import { IUser } from './interfaces/user.interface';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { paginationQueryOptions } from 'src/interfaces/database.interfaces';
+import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { UserPasswordDto } from './dtos/user-password.dto';
 import { User } from '../../models/user.model';
 import { Repositories, Role } from 'src/enums/database.enum';
@@ -20,7 +20,7 @@ export class UsersService {
     private usersRepository: typeof User,
   ) {}
 
-  async updateUser(user: UserInterface, body: UpdateUserDto) {
+  async updateUser(user: IUser, body: UpdateUserDto) {
     if (body.username && body.username != user.username) {
       const existingUser = await this.usersRepository.findOne({
         where: { username: body.username },
@@ -39,7 +39,7 @@ export class UsersService {
     return this.usersRepository.update(body, { where: { id: user.id } });
   }
 
-  async updateUserRole(user: UserInterface, role: Role, id?: number) {
+  async updateUserRole(user: IUser, role: Role, id?: number) {
     if (user.role !== 'super' || process.env.NODE_ENV !== 'test') {
       throw new UnauthorizedException(
         'You do not have permission to access this route',
@@ -53,7 +53,7 @@ export class UsersService {
     }
   }
 
-  async setUserPassword(user: UserInterface, body: UserPasswordDto) {
+  async setUserPassword(user: IUser, body: UserPasswordDto) {
     if (user.password?.length > 0) {
       if (body?.oldPassword?.length < 1)
         throw new BadRequestException('old password is required');
@@ -78,7 +78,7 @@ export class UsersService {
     }
   }
 
-  async allUsers({ perPage, page }: paginationQueryOptions) {
+  async allUsers({ perPage, page }: IPaginationQueryOptions) {
     const { count, rows } = await this.usersRepository.findAndCountAll({
       attributes: { exclude: ['password'] },
       limit: perPage,
@@ -94,7 +94,7 @@ export class UsersService {
     };
   }
 
-  deleteUser(user: UserInterface) {
+  deleteUser(user: IUser) {
     return this.usersRepository.destroy({ where: { id: user.id } });
   }
 }

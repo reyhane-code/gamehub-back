@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { Genre } from 'models/genre.model';
 import { Repositories } from 'src/enums/database.enum';
-import { paginationQueryOptions } from 'src/interfaces/database.interfaces';
-import { UserInterface } from 'src/users/interfaces/user.interface';
+import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
+import { IUser } from 'src/users/interfaces/user.interface';
 import { AddGenreDto } from './dtos/add-genre.dto';
 import { UpdateGenreDto } from './dtos/update-genre.dto';
 
@@ -17,7 +17,7 @@ export class GenresService {
     @Inject(Repositories.GENRES) private genresRepository: typeof Genre,
   ) {}
 
-  async addGenre({ name }: AddGenreDto, user: UserInterface) {
+  async addGenre({ name }: AddGenreDto, user: IUser) {
     try {
       return this.genresRepository.create({
         name,
@@ -63,7 +63,7 @@ export class GenresService {
     return genres;
   }
 
-  async findAllWithPaginate({ perPage, page }: paginationQueryOptions) {
+  async findAllWithPaginate({ perPage, page }: IPaginationQueryOptions) {
     const { count, rows } = await this.genresRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
@@ -80,7 +80,7 @@ export class GenresService {
     };
   }
 
-  findUserGenres(user: UserInterface) {
+  findUserGenres(user: IUser) {
     return this.genresRepository.findAll({ where: { user_id: user.id } });
   }
 }

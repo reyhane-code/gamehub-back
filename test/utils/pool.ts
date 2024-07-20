@@ -1,8 +1,7 @@
 import fs from 'fs';
 import { QueryTypes } from 'sequelize';
 import { Sequelize } from 'sequelize';
-import { join } from 'path';
-export interface PoolOptions {
+export interface IPoolOptions {
   database: string;
   username: string;
   password: string;
@@ -21,7 +20,7 @@ export default class SequelizeManager {
     await this.sequelize.sync();
   }
 
-  async connect(options:PoolOptions) {
+  async connect(options: IPoolOptions) {
     try {
       this.sequelize = new Sequelize(options);
       await this.authenticateAndSync();

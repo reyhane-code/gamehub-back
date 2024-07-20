@@ -1,6 +1,6 @@
 import { Role } from 'src/enums/database.enum';
 
-export interface UserInterface {
+export interface IUser {
   id: number;
   email: string;
   username?: string;

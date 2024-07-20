@@ -6,9 +6,9 @@ import {
 } from '@nestjs/common';
 import { Platform } from 'models/platform.model';
 import { Repositories } from 'src/enums/database.enum';
-import { paginationQueryOptions } from 'src/interfaces/database.interfaces';
+import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { AddPlatformDto } from './dtos/add-platform.dto';
-import { UserInterface } from 'src/users/interfaces/user.interface';
+import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdatedPlatformDto } from './dtos/update-platform.dto';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class PlatformsService {
     private platformsRepository: typeof Platform,
   ) {}
 
-  async addPlatform({ name }: AddPlatformDto, user: UserInterface) {
+  async addPlatform({ name }: AddPlatformDto, user: IUser) {
     try {
       return this.platformsRepository.create({
         name,
@@ -71,7 +71,7 @@ export class PlatformsService {
     return platforms;
   }
 
-  async findAllWithPaginate({ perPage, page }: paginationQueryOptions) {
+  async findAllWithPaginate({ perPage, page }: IPaginationQueryOptions) {
     const { count, rows } = await this.platformsRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
@@ -88,7 +88,7 @@ export class PlatformsService {
     };
   }
 
-  async findUserPlatforms(user: UserInterface) {
+  async findUserPlatforms(user: IUser) {
     const platforms = await this.platformsRepository.findAll({
       where: { user_id: user.id },
     });
