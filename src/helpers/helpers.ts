@@ -1,13 +1,13 @@
 import { OperationPositionEnum } from 'src/enums/enums';
 import {
-  SearchFilterOptions,
-  SearchFilterParam,
+  ISearchFilterOptions,
+  ISearchFilterParam,
 } from 'src/interfaces/database.interfaces';
 
 export const toSlug = (str: string) => {
   return str.toLowerCase().replace(/\s+/g, '-');
 };
-export const setWhereQuery = (params: SearchFilterParam) => {
+export const setWhereQuery = (params: ISearchFilterParam) => {
   if (!params) {
     return '';
   }
@@ -25,7 +25,7 @@ export const setWhereQuery = (params: SearchFilterParam) => {
   return query;
 };
 const generateCondition = (
-  items: SearchFilterOptions[],
+  items: ISearchFilterOptions[],
   joinOperator: string,
 ) => {
   return items

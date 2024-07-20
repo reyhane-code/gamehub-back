@@ -9,12 +9,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { paginationQueryOptions } from 'src/interfaces/database.interfaces';
+import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { PlatformsService } from './platforms.service';
 import { paginationDefault } from 'src/constance';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
-import { UserInterface } from 'src/users/interfaces/user.interface';
+import { IUser } from 'src/users/interfaces/user.interface';
 import { AddPlatformDto } from './dtos/add-platform.dto';
 import { UpdatedPlatformDto } from './dtos/update-platform.dto';
 
@@ -33,14 +33,14 @@ export class PlatformsController {
   }
   @Get('/paginate')
   findplatformsWithPaginate(
-    @Query() query: paginationQueryOptions = paginationDefault,
+    @Query() query: IPaginationQueryOptions = paginationDefault,
   ) {
     return this.platformsService.findAllWithPaginate(query);
   }
 
   @UseGuards(AdminGuard)
   @Get('/user')
-  findUserPlatforms(@CurrentUser() user: UserInterface) {
+  findUserPlatforms(@CurrentUser() user: IUser) {
     return this.platformsService.findUserPlatforms(user);
   }
 
@@ -48,7 +48,7 @@ export class PlatformsController {
   @Post()
   addPlatform(
     @Body() body: AddPlatformDto,
-    @CurrentUser() user: UserInterface,
+    @CurrentUser() user: IUser,
   ) {
     return this.platformsService.addPlatform(body, user);
   }

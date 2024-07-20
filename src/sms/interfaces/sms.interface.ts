@@ -1,6 +1,6 @@
 import { SmsSenderNumbers } from "../enum/sms.enum";
 
-export interface Sms {
+export interface ISms {
   message: string;
   senderNumber: SmsSenderNumbers;
   recipientList: string[];

@@ -9,11 +9,11 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { paginationQueryOptions } from 'src/interfaces/database.interfaces';
+import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { PublishersService } from './publishers.service';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
-import { UserInterface } from 'src/users/interfaces/user.interface';
+import { IUser } from 'src/users/interfaces/user.interface';
 import { AddPublisherDto } from './dtos/add-publisher.dto';
 import { UpdatePublisherDto } from './dtos/update-publisher.dto';
 
@@ -32,13 +32,13 @@ export class PublishersController {
   }
 
   @Get('/paginate')
-  findpublisherWithPaginate(@Query() query: paginationQueryOptions) {
+  findpublisherWithPaginate(@Query() query: IPaginationQueryOptions) {
     return this.publisherService.findAllWithPaginate(query);
   }
 
   @UseGuards(AdminGuard)
   @Get('/user')
-  findUserPublishers(@CurrentUser() user: UserInterface) {
+  findUserPublishers(@CurrentUser() user: IUser) {
     return this.publisherService.findUserPublishers(user);
   }
 
@@ -46,7 +46,7 @@ export class PublishersController {
   @Post()
   addPublisher(
     @Body() body: AddPublisherDto,
-    @CurrentUser() user: UserInterface,
+    @CurrentUser() user: IUser,
   ) {
     return this.publisherService.addPublisher(body, user);
   }

@@ -1,6 +1,6 @@
-import { paginationQueryOptions } from './interfaces/database.interfaces';
+import { IPaginationQueryOptions } from './interfaces/database.interfaces';
 
-export const paginationDefault: paginationQueryOptions = {
+export const paginationDefault: IPaginationQueryOptions = {
   perPage: 10,
   page: 1,
 };

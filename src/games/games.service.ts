@@ -8,22 +8,17 @@ import { Game } from 'models/game.model';
 import { Genre } from 'models/genre.model';
 import { Platform } from 'models/platform.model';
 import { Repositories } from 'src/enums/database.enum';
-import { getGamesQuery } from './interfaces/games.interface';
-import { Op } from 'sequelize';
+import { IGamesQuery } from './interfaces/games.interface';
 import { Publisher } from 'models/publisher.model';
 import { paginationDefault } from 'src/constance';
 import { AddGameDto } from './dtos/add-game.dto';
-import { UserInterface } from 'src/users/interfaces/user.interface';
+import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdateGameDto } from './dtos/update-game.dto';
 import { PlatformGame } from 'models/platform_game.model';
 import { PublisherGame } from 'models/publisher_game.model';
 import { GenreGame } from 'models/genre_game.model';
 import { setWhereQuery, toSlug } from 'src/helpers/helpers';
 import { OperationPositionEnum, sortOperation } from 'src/enums/enums';
-import {
-  SearchFilterOptions,
-  SearchFilterParam,
-} from 'src/interfaces/database.interfaces';
 
 @Injectable()
 export class GamesService {
@@ -52,8 +47,8 @@ export class GamesService {
     platformId,
     order,
     params,
-  }: getGamesQuery) {
-    const query = this.buildGetGamesQuery({
+  }: IGamesQuery) {
+    const query = this.buildIGamesQuery({
       page,
       perPage,
       genreId,
@@ -78,14 +73,14 @@ export class GamesService {
     };
   }
 
-  buildGetGamesQuery({
+  buildIGamesQuery({
     page,
     perPage,
     genreId,
     platformId,
     order,
     params,
-  }: getGamesQuery) {
+  }: IGamesQuery) {
     const includeClauses = [
       genreId ? { model: Genre, where: { id: genreId } } : { model: Genre },
       platformId
@@ -126,7 +121,7 @@ export class GamesService {
       publisherId,
       genreId,
     }: AddGameDto,
-    user: UserInterface,
+    user: IUser,
   ) {
     try {
       const game = await this.gamesRepository.create({
@@ -213,7 +208,7 @@ export class GamesService {
     }
   }
 
-  findUserGames(user: UserInterface) {
+  findUserGames(user: IUser) {
     return this.gamesRepository.findAll({ where: { user_id: user.id } });
   }
 }

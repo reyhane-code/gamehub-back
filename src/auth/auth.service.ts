@@ -10,7 +10,7 @@ import {
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { UserInterface } from '../users/interfaces/user.interface';
+import { IUser } from '../users/interfaces/user.interface';
 import { Cache } from 'cache-manager';
 import { SmsService } from '../sms/sms.service';
 import { LoginOrRegisterDto } from './dtos/login-or-register.dto';
@@ -276,7 +276,7 @@ export class AuthService {
     );
   }
 
-  async logout(user: UserInterface, accessToken: string) {
+  async logout(user: IUser, accessToken: string) {
     await this.cacheManager.del(`${user.id.toString()}-refresh`);
     await this.cacheManager.set(`block-${user.id}`, accessToken, {
       ttl: 60 * 2,

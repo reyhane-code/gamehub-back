@@ -6,9 +6,9 @@ import {
 } from '@nestjs/common';
 import { Publisher } from 'models/publisher.model';
 import { Repositories } from 'src/enums/database.enum';
-import { paginationQueryOptions } from 'src/interfaces/database.interfaces';
+import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { AddPublisherDto } from './dtos/add-publisher.dto';
-import { UserInterface } from 'src/users/interfaces/user.interface';
+import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdatePublisherDto } from './dtos/update-publisher.dto';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class PublishersService {
     private publishersRepository: typeof Publisher,
   ) {}
 
-  async addPublisher({ name }: AddPublisherDto, user: UserInterface) {
+  async addPublisher({ name }: AddPublisherDto, user: IUser) {
     try {
       return this.publishersRepository.create({ name, user_id: user.id });
     } catch (error) {
@@ -63,7 +63,7 @@ export class PublishersService {
     return publishers;
   }
 
-  async findAllWithPaginate({ perPage, page }: paginationQueryOptions) {
+  async findAllWithPaginate({ perPage, page }: IPaginationQueryOptions) {
     const { count, rows } = await this.publishersRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
@@ -80,7 +80,7 @@ export class PublishersService {
     };
   }
 
-  findUserPublishers(user: UserInterface) {
+  findUserPublishers(user: IUser) {
     try {
       return this.publishersRepository.findAll({ where: { user_id: user.id } });
     } catch (error) {

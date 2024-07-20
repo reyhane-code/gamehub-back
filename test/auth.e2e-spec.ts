@@ -7,7 +7,7 @@ import {
   getValidationDataAndRegister,
 } from './utils/login';
 import * as request from 'supertest';
-import { UserInterface } from '../src/users/interfaces/user.interface';
+import { IUser } from '../src/users/interfaces/user.interface';
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -101,7 +101,7 @@ describe('Authentication System (e2e)', () => {
     phone: string = DEFAULT_PHONE,
     firstName?: string,
     lastName?: string,
-  ): Promise<UserInterface> => {
+  ): Promise<IUser> => {
     const { accessToken } = await getValidationDataAndRegister(app, phone);
     return request(app.getHttpServer())
       .put('/user')
