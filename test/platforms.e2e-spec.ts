@@ -13,12 +13,13 @@ import { MigrationPaths } from './utils/paths.enum';
 import { AddPlatformDto } from 'src/platforms/dtos/add-platform.dto';
 import { UpdatedPlatformDto } from 'src/platforms/dtos/update-platform.dto';
 import { toSlug } from 'src/helpers/helpers';
+import { createAdminUser } from './utils/admin';
 
 const DEFAULT_PLATFORM = 'PC';
 
 let context: Context;
 // all tables names
-const tables = Object.values(MigrationPaths);
+// const tables = Object.values(MigrationPaths);
 beforeAll(async () => {
   context = await Context.build();
 });
@@ -51,7 +52,7 @@ describe('Platforms System (e2e)', () => {
     status: number = 201,
     { name }: AddPlatformDto,
   ) => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const accessToken = await createAdminUser(app);
     return request(app.getHttpServer())
       .post('/platforms')
       .set('authorization', `Bearer ${accessToken}`)
@@ -65,7 +66,7 @@ describe('Platforms System (e2e)', () => {
     id: number,
     { name }: UpdatedPlatformDto,
   ) => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const accessToken = await createAdminUser(app);
     return request(app.getHttpServer())
       .put(`/platforms/${id}`)
       .set('authorization', `Bearer ${accessToken}`)
@@ -74,7 +75,7 @@ describe('Platforms System (e2e)', () => {
       .then((res) => res.body);
   };
   const deletePlatform = async (status: number, id: number) => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const accessToken = await createAdminUser(app);
     return request(app.getHttpServer())
       .delete(`/platforms/${id}`)
       .set('authorization', `Bearer ${accessToken}`)
@@ -109,8 +110,10 @@ describe('Platforms System (e2e)', () => {
 
   it('updates an exsisting platform', async () => {
     const platform = await addPlatform(201, { name: DEFAULT_PLATFORM });
-    const body = await updatePlatform(200, platform.id, { name: 'new-word' });
-    expect(body.name).toEqual('new-word');
+    const body = await updatePlatform(200, platform.id, {
+      name: 'new-platform',
+    });
+    expect(body.name).toEqual('new-platform');
   });
 
   it('returns error while updating with a wrong id', async () => {
@@ -155,13 +158,13 @@ describe('Platforms System (e2e)', () => {
   });
 
   it('returns error if not the correct user when finding user platforms', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
-    await addPlatform(201, { name: 'word' });
+    const accessToken = await createAdminUser(app);
+    await addPlatform(201, { name: 'platform' });
     await getUserPlatforms(accessToken, 404);
   });
 
   it('finds user platforms', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const accessToken = await createAdminUser(app);
     await request(app.getHttpServer())
       .post('/platforms')
       .set('authorization', `Bearer ${accessToken}`)

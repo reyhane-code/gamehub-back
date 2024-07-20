@@ -21,7 +21,7 @@ export default class SequelizeManager {
     await this.sequelize.sync();
   }
 
-  async connect(options: PoolOptions) {
+  async connect(options:PoolOptions) {
     try {
       this.sequelize = new Sequelize(options);
       await this.authenticateAndSync();
