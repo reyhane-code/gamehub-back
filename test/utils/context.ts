@@ -1,5 +1,4 @@
 import { QueryTypes } from 'sequelize';
-import { PoolOptions } from './pool';
 import SequelizeManager from './pool';
 
 const format = require('pg-format');

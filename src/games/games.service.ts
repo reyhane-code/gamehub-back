@@ -211,4 +211,14 @@ export class GamesService {
   findUserGames(user: IUser) {
     return this.gamesRepository.findAll({ where: { user_id: user.id } });
   }
+
+  //todo: add getGameLikes
+
+  async findGameBySlug(slug: string) {
+    const game = this.gamesRepository.findOne({ where: { slug } });
+    if (!game) {
+      throw new NotFoundException('No game was found.');
+    }
+    return game;
+  }
 }

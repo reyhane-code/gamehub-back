@@ -11,7 +11,7 @@ import { AuthGuard } from "../guards/auth.guard";
 import { CurrentUser } from "src/users/decorators/current-user.decorator";
 import { IUser } from "src/users/interfaces/user.interface";
 
-@Controller("like")
+@Controller("likes")
 export class LikesController {
   constructor(private likesService: LikesService) {}
 
