@@ -13,7 +13,7 @@ export class Context {
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       dialect: 'postgres',
-      logging: false,
+      // logging: false,
     });
 
     // await sequelizePool.query(
@@ -35,6 +35,9 @@ export class Context {
     }
   }
 
+  async query(sql: string) {
+    await sequelizePool.query(sql, { type: QueryTypes.RAW });
+  }
   // async close() {
   //   return sequelizePool.end(process.env.POSTGRES_USER);
   // }

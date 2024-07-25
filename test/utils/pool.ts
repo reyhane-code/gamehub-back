@@ -7,7 +7,7 @@ export interface IPoolOptions {
   password: string;
   host: string;
   dialect: 'postgres';
-  logging: boolean;
+  // logging: boolean;
 }
 
 export default class SequelizeManager {
@@ -22,7 +22,7 @@ export default class SequelizeManager {
 
   async connect(options: IPoolOptions) {
     try {
-      this.sequelize = new Sequelize(options);
+      this.sequelize = new Sequelize({ ...options, logging: () => {} });
       await this.authenticateAndSync();
       console.log('Connection to database has been established successfully.');
     } catch (error) {
