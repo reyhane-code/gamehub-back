@@ -1,13 +1,11 @@
-import fs from 'fs';
-import { QueryTypes } from 'sequelize';
-import { Sequelize } from 'sequelize';
+import { QueryTypes, Sequelize } from 'sequelize';
 export interface IPoolOptions {
   database: string;
   username: string;
   password: string;
   host: string;
   dialect: 'postgres';
-  // logging: boolean;
+  logging: (msg: string) => void;
 }
 
 export default class SequelizeManager {
@@ -22,7 +20,9 @@ export default class SequelizeManager {
 
   async connect(options: IPoolOptions) {
     try {
-      this.sequelize = new Sequelize({ ...options, logging: () => {} });
+      this.sequelize = new Sequelize(options.database, options.username, options.password, {
+        ...options
+      });
       await this.authenticateAndSync();
       console.log('Connection to database has been established successfully.');
     } catch (error) {

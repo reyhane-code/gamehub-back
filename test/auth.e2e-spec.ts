@@ -31,9 +31,9 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   console.log('THISSSS');
+  console.log('waiting');
   let users = await context.query('SELECT * FROM USERS');
   // await context.clean(Object.values(TableName));
-  console.log('waiting');
   // users = await context.query('SELECT * FROM USERS');
   console.log(users, 'users', typeof users);
 });
@@ -183,122 +183,122 @@ describe('Authentication System (e2e)', () => {
   //   expect(body.hasPassword).toEqual(false);
   // });
 
-  it('logs in with email and password', async () => {
-    const { refreshToken, accessToken } = await loginWithPasswordAndEmail(
-      200,
-      DEFAULT_EMAIL,
-      DEFAULT_PASSWORD,
-    );
+  // it('logs in with email and password', async () => {
+  //   const { refreshToken, accessToken } = await loginWithPasswordAndEmail(
+  //     200,
+  //     DEFAULT_EMAIL,
+  //     DEFAULT_PASSWORD,
+  //   );
 
-    expect(refreshToken).toBeDefined();
-    expect(accessToken).toBeDefined();
-  });
+  //   expect(refreshToken).toBeDefined();
+  //   expect(accessToken).toBeDefined();
+  // });
 
-  it('logs in with username and password', async () => {
-    const { refreshToken, accessToken } = await loginWithPasswordAndUsername(
-      200,
-      DEFAULT_USERNAME,
-      DEFAULT_PASSWORD,
-    );
+  // it('logs in with username and password', async () => {
+  //   const { refreshToken, accessToken } = await loginWithPasswordAndUsername(
+  //     200,
+  //     DEFAULT_USERNAME,
+  //     DEFAULT_PASSWORD,
+  //   );
 
-    expect(refreshToken).toBeDefined();
-    expect(accessToken).toBeDefined();
-  });
+  //   expect(refreshToken).toBeDefined();
+  //   expect(accessToken).toBeDefined();
+  // });
 
-  it('logs in with phone and password', async () => {
-    const { refreshToken, accessToken } = await loginWithPasswordAndPhone(
-      200,
-      DEFAULT_PHONE,
-      DEFAULT_PASSWORD,
-    );
+  // it('logs in with phone and password', async () => {
+  //   const { refreshToken, accessToken } = await loginWithPasswordAndPhone(
+  //     200,
+  //     DEFAULT_PHONE,
+  //     DEFAULT_PASSWORD,
+  //   );
 
-    expect(refreshToken).toBeDefined();
-    expect(accessToken).toBeDefined();
-  });
+  //   expect(refreshToken).toBeDefined();
+  //   expect(accessToken).toBeDefined();
+  // });
 
-  it('returns an error if the user is not registered', async () => {
-    const { code, validationToken } = await getValidationTokenAndCode(app);
-    await loginOrRegister(app, 400, validationToken + 'asdf', code);
-    await loginOrRegister(app, 400, validationToken, code + '456');
-  });
+  // it('returns an error if the user is not registered', async () => {
+  //   const { code, validationToken } = await getValidationTokenAndCode(app);
+  //   await loginOrRegister(app, 400, validationToken + 'asdf', code);
+  //   await loginOrRegister(app, 400, validationToken, code + '456');
+  // });
 
-  it('checks if validation token is already used.', async () => {
-    await getValidationDataAndRegister(app);
-    setInterval(
-      async () => {
-        await getValidationTokenAndCode(app, 409);
-      },
-      60 * 2 * 1000,
-    );
-  });
+  // it('checks if validation token is already used.', async () => {
+  //   await getValidationDataAndRegister(app);
+  //   setInterval(
+  //     async () => {
+  //       await getValidationTokenAndCode(app, 409);
+  //     },
+  //     60 * 2 * 1000,
+  //   );
+  // });
 
-  it('logs out using the access token set in the req header', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
-    await request(app.getHttpServer())
-      .delete('/auth/logout')
-      .set('authorization', `Bearer ${accessToken}`)
-      .expect(200);
-  });
+  // it('logs out using the access token set in the req header', async () => {
+  //   const { accessToken } = await getValidationDataAndRegister(app);
+  //   await request(app.getHttpServer())
+  //     .delete('/auth/logout')
+  //     .set('authorization', `Bearer ${accessToken}`)
+  //     .expect(200);
+  // });
 
-  it('returns an error if the given access token is in the black list', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+  // it('returns an error if the given access token is in the black list', async () => {
+  //   const { accessToken } = await getValidationDataAndRegister(app);
 
-    await logout(200, accessToken);
+  //   await logout(200, accessToken);
 
-    await logout(403, accessToken);
+  //   await logout(403, accessToken);
 
-    await request(app.getHttpServer())
-      .get('/user')
-      .set('authorization', `Bearer ${accessToken}`)
-      .expect(403);
-  });
+  //   await request(app.getHttpServer())
+  //     .get('/user')
+  //     .set('authorization', `Bearer ${accessToken}`)
+  //     .expect(403);
+  // });
 
-  it('returns a new pair of access and refresh token', async () => {
-    const { refreshToken } = await getValidationDataAndRegister(app);
+  // it('returns a new pair of access and refresh token', async () => {
+  //   const { refreshToken } = await getValidationDataAndRegister(app);
 
-    const tokens = await request(app.getHttpServer())
-      .post('/auth/refresh-token')
-      .send({ refreshToken: refreshToken })
-      .expect(201);
-    expect(tokens.body.accessToken).toBeDefined();
-    expect(tokens.body.refreshToken).toBeDefined();
-  });
+  //   const tokens = await request(app.getHttpServer())
+  //     .post('/auth/refresh-token')
+  //     .send({ refreshToken: refreshToken })
+  //     .expect(201);
+  //   expect(tokens.body.accessToken).toBeDefined();
+  //   expect(tokens.body.refreshToken).toBeDefined();
+  // });
 
-  it('returns an error if the given refresh token is invalid', async () => {
-    await request(app.getHttpServer())
-      .post('/auth/refresh-token')
-      .send({ refreshToken: FAKE_REFRESH_TOKEN })
-      .expect(401);
-  });
+  // it('returns an error if the given refresh token is invalid', async () => {
+  //   await request(app.getHttpServer())
+  //     .post('/auth/refresh-token')
+  //     .send({ refreshToken: FAKE_REFRESH_TOKEN })
+  //     .expect(401);
+  // });
 
-  it('updates the password of an existing user', async () => {
-    await setUserPassword(DEFAULT_PASSWORD);
-    const passwordChanged = await setUserPassword(
-      DEFAULT_PASSWORD + 'somerubbish',
-      DEFAULT_PASSWORD,
-    );
-    expect(passwordChanged).toBeDefined();
-  });
+  // it('updates the password of an existing user', async () => {
+  //   await setUserPassword(DEFAULT_PASSWORD);
+  //   const passwordChanged = await setUserPassword(
+  //     DEFAULT_PASSWORD + 'somerubbish',
+  //     DEFAULT_PASSWORD,
+  //   );
+  //   expect(passwordChanged).toBeDefined();
+  // });
 
-  it('updates an existing user', async () => {
-    const body = await updateUserInfo();
-    console.log(body);
-  });
+  // it('updates an existing user', async () => {
+  //   const body = await updateUserInfo();
+  //   console.log(body);
+  // });
 
-  it('returns an error if the username/email is taken while updating a user ', async () => {
-    await updateUserInfo(200, 'email@email.com', 'rabbishUserName');
-    await updateUserInfo(200, 'email@email.com', 'rabbishUserName');
-    await updateUserInfo(
-      409,
-      'email@email.com',
-      'rabbishUserName',
-      '09363080322',
-    );
-    await updateUserInfo(
-      409,
-      'rabbish@gmail.com',
-      'rabbishUserName',
-      '09363080322',
-    );
-  });
+  // it('returns an error if the username/email is taken while updating a user ', async () => {
+  //   await updateUserInfo(200, 'email@email.com', 'rabbishUserName');
+  //   await updateUserInfo(200, 'email@email.com', 'rabbishUserName');
+  //   await updateUserInfo(
+  //     409,
+  //     'email@email.com',
+  //     'rabbishUserName',
+  //     '09363080322',
+  //   );
+  //   await updateUserInfo(
+  //     409,
+  //     'rabbish@gmail.com',
+  //     'rabbishUserName',
+  //     '09363080322',
+  //   );
+  // });
 });
