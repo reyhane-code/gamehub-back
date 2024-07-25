@@ -1,12 +1,14 @@
 import { QueryTypes } from 'sequelize';
 import SequelizeManager from './pool';
 
-const format = require('pg-format');
-
-const sequelizePool = new SequelizeManager();
-
 export class Context {
+  private sequelizePool: SequelizeManager;
+
+  constructor(sequelizePool) {
+    this.sequelizePool = sequelizePool;
+  }
   static async build() {
+    const sequelizePool: SequelizeManager = new SequelizeManager();
     await sequelizePool.connect({
       database: process.env.POSTGRES_DB,
       host: process.env.POSTGRES_HOST,
@@ -14,34 +16,40 @@ export class Context {
       password: process.env.POSTGRES_PASSWORD,
       dialect: 'postgres',
       logging: (msg) => {
-        console.log(
-          'loggingggggggggggg :',
-          process.env.POSTGRES_DB,
-          msg,
-        );
+        console.log('loggingggggggggggg :', process.env.POSTGRES_DB, msg);
       },
     });
 
-    // await sequelizePool.query(
+    // await this.sequelizePool.query(
     //   `GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA TO ${process.env.POSTGRES_USER};`,
     //   { type: QueryTypes.RAW },
     // );
 
     await sequelizePool.authenticateAndSync();
 
-    return new Context();
+    return new Context(sequelizePool);
   }
 
   async clean(tableNames: string[]) {
     for (const tableName of tableNames) {
-      await this.query(`TRUNCATE TABLE ${tableName} RESTART IDENTITY CASCADE;`);
+      try {
+        await this.query(
+          `TRUNCATE TABLE ${tableName} RESTART IDENTITY CASCADE;`,
+        );
+      } catch (e) {
+        console.log('e', e);
+      }
     }
   }
 
   async query(sql: string) {
-    await sequelizePool.query(sql, { type: QueryTypes.RAW });
+    try {
+      await this.sequelizePool.query(sql, { type: QueryTypes.RAW });
+    } catch (e) {
+      console.log('e', e);
+    }
   }
   // async close() {
-  //   return sequelizePool.end(process.env.POSTGRES_USER);
+  //   return this.sequelizePool.end(process.env.POSTGRES_USER);
   // }
 }

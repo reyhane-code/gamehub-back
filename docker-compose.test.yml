@@ -18,9 +18,10 @@ services:
       VALIDATION_TOKEN_SECRET: '1385723409yfdshgpsdfhigtiwpri0958342952yujkldshgnjfkjdl923248939'
 
     depends_on:
+      - migrate
       - postgres
       - redis
-    command: 'npm run test:e2e --detectOpenHandles'
+    command: 'npm run test:e2e'
 
   postgres:
     image: 'postgres'
