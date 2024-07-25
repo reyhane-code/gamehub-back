@@ -1,166 +1,166 @@
-// import { Test, TestingModule } from '@nestjs/testing';
-// import { AppModule } from 'src/app.module';
-// import { getValidationDataAndRegister } from './utils/login';
-// import * as request from 'supertest';
-// import {
-//   FastifyAdapter,
-//   NestFastifyApplication,
-// } from '@nestjs/platform-fastify';
-// import { Context } from './utils/context';
-// import { TableName } from 'src/enums/database.enum';
-// import { ValidationPipe } from '@nestjs/common';
-// import { AddPublisherDto } from 'src/publishers/dtos/add-publisher.dto';
-// import { UpdatePublisherDto } from 'src/publishers/dtos/update-publisher.dto';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AppModule } from 'src/app.module';
+import { getValidationDataAndRegister } from './utils/login';
+import * as request from 'supertest';
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
+import { Context } from './utils/context';
+import { TableName } from 'src/enums/database.enum';
+import { ValidationPipe } from '@nestjs/common';
+import { AddPublisherDto } from 'src/publishers/dtos/add-publisher.dto';
+import { UpdatePublisherDto } from 'src/publishers/dtos/update-publisher.dto';
 
-// const DEFAULT_PUBLISHER = 'ubsoft';
+const DEFAULT_PUBLISHER = 'ubsoft';
 
-// let context: Context;
-// // all tables names
-// beforeAll(async () => {
-//   context = await Context.build();
-// });
+let context: Context;
+// all tables names
+beforeAll(async () => {
+  context = await Context.build();
+});
 
-// beforeEach(async () => {
-//   return context.clean(Object.values(TableName));
-// });
+beforeEach(async () => {
+  return context.clean(Object.values(TableName));
+});
 
-// describe('Publishers System (e2e)', () => {
-//   let app: NestFastifyApplication;
+describe('Publishers System (e2e)', () => {
+  let app: NestFastifyApplication;
 
-//   beforeEach(async () => {
-//     const moduleFixture: TestingModule = await Test.createTestingModule({
-//       imports: [AppModule],
-//     }).compile();
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
 
-//     app = moduleFixture.createNestApplication<NestFastifyApplication>(
-//       new FastifyAdapter(),
-//     );
-//     app.useGlobalPipes(new ValidationPipe());
-//     await app.init();
-//     await app.getHttpAdapter().getInstance().ready();
-//   });
+    app = moduleFixture.createNestApplication<NestFastifyApplication>(
+      new FastifyAdapter(),
+    );
+    app.useGlobalPipes(new ValidationPipe());
+    await app.init();
+    await app.getHttpAdapter().getInstance().ready();
+  });
 
-//   const addPublisher = async (
-//     status: number = 201,
-//     { name }: AddPublisherDto,
-//   ) => {
-//     const { accessToken } = await getValidationDataAndRegister(app);
-//     return request(app.getHttpServer())
-//       .post('/publishers')
-//       .set('authorization', `Bearer ${accessToken}`)
-//       .send({ name })
-//       .expect(status)
-//       .then((res) => res.body);
-//   };
+  const addPublisher = async (
+    status: number = 201,
+    { name }: AddPublisherDto,
+  ) => {
+    const { accessToken } = await getValidationDataAndRegister(app);
+    return request(app.getHttpServer())
+      .post('/publishers')
+      .set('authorization', `Bearer ${accessToken}`)
+      .send({ name })
+      .expect(status)
+      .then((res) => res.body);
+  };
 
-//   const updatePublisher = async (
-//     status: number = 200,
-//     id: number,
-//     { name }: UpdatePublisherDto,
-//   ) => {
-//     const { accessToken } = await getValidationDataAndRegister(app);
-//     return request(app.getHttpServer())
-//       .put(`/publishers/${id}`)
-//       .set('authorization', `Bearer ${accessToken}`)
-//       .send({ name })
-//       .expect(status)
-//       .then((res) => res.body);
-//   };
-//   const deletePublisher = async (status: number, id: number) => {
-//     const { accessToken } = await getValidationDataAndRegister(app);
-//     return request(app.getHttpServer())
-//       .delete(`/publishers/${id}`)
-//       .set('authorization', `Bearer ${accessToken}`)
-//       .expect(status)
-//       .then((res) => res.body);
-//   };
+  const updatePublisher = async (
+    status: number = 200,
+    id: number,
+    { name }: UpdatePublisherDto,
+  ) => {
+    const { accessToken } = await getValidationDataAndRegister(app);
+    return request(app.getHttpServer())
+      .put(`/publishers/${id}`)
+      .set('authorization', `Bearer ${accessToken}`)
+      .send({ name })
+      .expect(status)
+      .then((res) => res.body);
+  };
+  const deletePublisher = async (status: number, id: number) => {
+    const { accessToken } = await getValidationDataAndRegister(app);
+    return request(app.getHttpServer())
+      .delete(`/publishers/${id}`)
+      .set('authorization', `Bearer ${accessToken}`)
+      .expect(status)
+      .then((res) => res.body);
+  };
 
-//   const getPublisherById = async (status: number = 200, id: number) => {
-//     return request(app.getHttpServer())
-//       .get(`/publishers/${id}`)
-//       .expect(status)
-//       .then((res) => res.body);
-//   };
+  const getPublisherById = async (status: number = 200, id: number) => {
+    return request(app.getHttpServer())
+      .get(`/publishers/${id}`)
+      .expect(status)
+      .then((res) => res.body);
+  };
 
-//   const getUserPublishers = async (
-//     accessToken: string,
-//     status: number = 200,
-//   ) => {
-//     return request(app.getHttpServer())
-//       .get('/publishers/user')
-//       .set('authorization', `Bearer ${accessToken}`)
-//       .expect(status)
-//       .then((res) => res.body);
-//   };
+  const getUserPublishers = async (
+    accessToken: string,
+    status: number = 200,
+  ) => {
+    return request(app.getHttpServer())
+      .get('/publishers/user')
+      .set('authorization', `Bearer ${accessToken}`)
+      .expect(status)
+      .then((res) => res.body);
+  };
 
-//   it('adds a new publisher', async () => {
-//     const body = await addPublisher(201, { name: DEFAULT_PUBLISHER });
-//     expect(body.name).toEqual(DEFAULT_PUBLISHER);
-//   });
+  it('adds a new publisher', async () => {
+    const body = await addPublisher(201, { name: DEFAULT_PUBLISHER });
+    expect(body.name).toEqual(DEFAULT_PUBLISHER);
+  });
 
-//   it('updates an exsisting publisher', async () => {
-//     const publisher = await addPublisher(201, { name: DEFAULT_PUBLISHER });
-//     const body = await updatePublisher(200, publisher.id, { name: 'new-word' });
-//     expect(body.name).toEqual('new-word');
-//   });
+  it('updates an exsisting publisher', async () => {
+    const publisher = await addPublisher(201, { name: DEFAULT_PUBLISHER });
+    const body = await updatePublisher(200, publisher.id, { name: 'new-word' });
+    expect(body.name).toEqual('new-word');
+  });
 
-//   it('returns error while updating with a wrong id', async () => {
-//     await updatePublisher(404, 2, { name: 'rubbish' });
-//   });
+  it('returns error while updating with a wrong id', async () => {
+    await updatePublisher(404, 2, { name: 'rubbish' });
+  });
 
-//   it('delete an exsisting publisher', async () => {
-//     const publisher = await addPublisher(201, { name: DEFAULT_PUBLISHER });
-//     await deletePublisher(200, publisher.id);
-//   });
+  it('delete an exsisting publisher', async () => {
+    const publisher = await addPublisher(201, { name: DEFAULT_PUBLISHER });
+    await deletePublisher(200, publisher.id);
+  });
 
-//   it('returns error while deleting a non-existing publisher', async () => {
-//     await deletePublisher(404, 2);
-//   });
+  it('returns error while deleting a non-existing publisher', async () => {
+    await deletePublisher(404, 2);
+  });
 
-//   it('finds all publishers', async () => {
-//     await addPublisher(201, { name: 'publisher1' });
-//     await addPublisher(201, { name: 'publisher2' });
-//     await addPublisher(201, { name: 'publisher3' });
-//     const publishers = await request(app.getHttpServer())
-//       .get('/publishers')
-//       .expect(200)
-//       .then((res) => res.body);
-//     expect(publishers.count).toEqual(3);
-//     expect(publishers.data).toBeDefined();
-//   });
+  it('finds all publishers', async () => {
+    await addPublisher(201, { name: 'publisher1' });
+    await addPublisher(201, { name: 'publisher2' });
+    await addPublisher(201, { name: 'publisher3' });
+    const publishers = await request(app.getHttpServer())
+      .get('/publishers')
+      .expect(200)
+      .then((res) => res.body);
+    expect(publishers.count).toEqual(3);
+    expect(publishers.data).toBeDefined();
+  });
 
-//   it('returns error if there is no word when finding publishers', async () => {
-//     return request(app.getHttpServer())
-//       .get('/publishers')
-//       .expect(404)
-//       .then((res) => res.body);
-//   });
+  it('returns error if there is no word when finding publishers', async () => {
+    return request(app.getHttpServer())
+      .get('/publishers')
+      .expect(404)
+      .then((res) => res.body);
+  });
 
-//   it('finds publisher by Id', async () => {
-//     const publisher = await addPublisher(201, { name: 'new-publisher' });
-//     await getPublisherById(200, publisher.id);
-//   });
+  it('finds publisher by Id', async () => {
+    const publisher = await addPublisher(201, { name: 'new-publisher' });
+    await getPublisherById(200, publisher.id);
+  });
 
-//   it('returns an error if the publisher does not exist when finding by id', async () => {
-//     await getPublisherById(404, 23);
-//   });
+  it('returns an error if the publisher does not exist when finding by id', async () => {
+    await getPublisherById(404, 23);
+  });
 
-//   it('returns error if not the correct user when finding user publishers', async () => {
-//     const { accessToken } = await getValidationDataAndRegister(app);
-//     await addPublisher(201, { name: 'word' });
-//     await getUserPublishers(accessToken, 404);
-//   });
+  it('returns error if not the correct user when finding user publishers', async () => {
+    const { accessToken } = await getValidationDataAndRegister(app);
+    await addPublisher(201, { name: 'word' });
+    await getUserPublishers(accessToken, 404);
+  });
 
-//   it('finds user publishers', async () => {
-//     const { accessToken } = await getValidationDataAndRegister(app);
-//     await request(app.getHttpServer())
-//       .post('/publishers')
-//       .set('authorization', `Bearer ${accessToken}`)
-//       .send({ name: DEFAULT_PUBLISHER })
-//       .expect(201)
-//       .then((res) => res.body);
-//     const publishers = await getUserPublishers(accessToken, 200);
-//     expect(publishers.length).toEqual(1);
-//     expect(publishers).toBeDefined();
-//   });
-// });
+  it('finds user publishers', async () => {
+    const { accessToken } = await getValidationDataAndRegister(app);
+    await request(app.getHttpServer())
+      .post('/publishers')
+      .set('authorization', `Bearer ${accessToken}`)
+      .send({ name: DEFAULT_PUBLISHER })
+      .expect(201)
+      .then((res) => res.body);
+    const publishers = await getUserPublishers(accessToken, 200);
+    expect(publishers.length).toEqual(1);
+    expect(publishers).toBeDefined();
+  });
+});
