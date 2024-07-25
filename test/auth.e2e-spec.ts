@@ -30,12 +30,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  console.log('THISSSS');
-  let users = await context.query('SELECT * FROM USERS');
-  console.log('waiting', users);
   await context.clean(Object.values(TableName));
-  users = await context.query('SELECT * FROM USERS');
-  console.log(users, 'users', typeof users);
 });
 // afterAll(() => {
 //   return context.close();

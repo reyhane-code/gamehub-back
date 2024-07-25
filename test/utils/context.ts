@@ -16,7 +16,6 @@ export class Context {
       password: process.env.POSTGRES_PASSWORD,
       dialect: 'postgres',
       logging: (msg) => {
-        console.log('loggingggggggggggg :', process.env.POSTGRES_DB, msg);
       },
     });
 
@@ -44,7 +43,7 @@ export class Context {
 
   async query(sql: string) {
     try {
-      await this.sequelizePool.query(sql, { type: QueryTypes.RAW });
+      return this.sequelizePool.query(sql, { type: QueryTypes.RAW });
     } catch (e) {
       console.log('e', e);
     }
