@@ -13,7 +13,7 @@ services:
       REDIS_PASSWORD: 'eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81'
       POSTGRES_PASSWORD: 'rewq4321'
       POSTGRES_USER: 'postgres'
-      POSTGRES_DB: 'gamehub_db'
+      POSTGRES_DB: 'gamehub_test_db'
       POSTGRES_HOST: 'postgres'
       VALIDATION_TOKEN_SECRET: '1385723409yfdshgpsdfhigtiwpri0958342952yujkldshgnjfkjdl923248939'
 
@@ -30,9 +30,11 @@ services:
     volumes:
       - ./postgres-data:/var/lib/postgres
     environment:
+      STAGE: 'test'
+      NODE_ENV: 'test'
       POSTGRES_PASSWORD: 'rewq4321'
       POSTGRES_USER: 'postgres'
-      POSTGRES_DB: 'gamehub_db'
+      POSTGRES_DB: 'gamehub_test_db'
       POSTGRES_HOST: 'postgres'
     restart: unless-stopped
 
@@ -56,6 +58,9 @@ services:
   migrate:
     image: mortezahatamikia/base-node
     working_dir: /gamehub/src/app
+    environment:
+      STAGE: 'test'
+      NODE_ENV: 'test'
     volumes:
       - .:/gamehub/src/app
     depends_on:

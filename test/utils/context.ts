@@ -13,7 +13,13 @@ export class Context {
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       dialect: 'postgres',
-      // logging: false,
+      logging: (msg) => {
+        console.log(
+          'loggingggggggggggg :',
+          process.env.POSTGRES_DB,
+          msg,
+        );
+      },
     });
 
     // await sequelizePool.query(
@@ -28,10 +34,7 @@ export class Context {
 
   async clean(tableNames: string[]) {
     for (const tableName of tableNames) {
-      await sequelizePool.query(
-        `TRUNCATE TABLE ${tableName} RESTART IDENTITY CASCADE;`,
-        { type: QueryTypes.RAW },
-      );
+      await this.query(`TRUNCATE TABLE ${tableName} RESTART IDENTITY CASCADE;`);
     }
   }
 
