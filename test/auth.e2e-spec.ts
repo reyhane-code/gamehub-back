@@ -13,9 +13,8 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { Context } from './utils/context';
-import { Role, TableName } from '../src/enums/database.enum';
+import { TableName } from '../src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
-import { MigrationPaths } from './utils/paths.enum';
 
 const DEFAULT_EMAIL = 'test@email.com';
 const DEFAULT_PASSWORD = 'thispassisastring';
@@ -30,9 +29,8 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  return context.clean([TableName.USERS]);
+  return context.clean(Object.values(TableName));
 });
-
 // afterAll(() => {
 //   return context.close();
 // });

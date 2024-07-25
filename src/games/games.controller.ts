@@ -16,18 +16,14 @@ import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdateGameDto } from './dtos/update-game.dto';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { AdminGuard } from 'src/guards/admin.guard';
-import {
-  ISearchFilterOptions,
-  ISearchFilterParam,
-} from 'src/interfaces/database.interfaces';
 
 @Controller('games')
 export class GamesController {
   constructor(private gamesService: GamesService) {}
 
-  @Get('/:id')
-  getGame(@Param('id') id: number) {
-    return this.gamesService.findOneById(id);
+  @Get('/:slug')
+  getGame(@Param('slug') slug: string) {
+    return this.gamesService.findGameBySlug(slug);
   }
 
   @Get()
