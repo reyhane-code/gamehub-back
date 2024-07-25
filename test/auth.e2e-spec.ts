@@ -25,11 +25,17 @@ const DEFAULT_PHONE = '09363080321';
 
 let context: Context;
 beforeAll(async () => {
+  console.log('before allllllllllllllllllllllllllllllllllllllllllllllll');
   context = await Context.build();
 });
 
 beforeEach(async () => {
-  return context.clean(Object.values(TableName));
+  console.log('THISSSS');
+  let users = await context.query('SELECT * FROM USERS');
+  // await context.clean(Object.values(TableName));
+  console.log('waiting');
+  // users = await context.query('SELECT * FROM USERS');
+  console.log(users, 'users', typeof users);
 });
 // afterAll(() => {
 //   return context.close();
