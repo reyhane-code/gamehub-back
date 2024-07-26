@@ -18,10 +18,8 @@ import { createAdminUser } from './utils/admin';
 const DEFAULT_PLATFORM = 'PC';
 
 let context: Context;
-// all tables names
-// const tables = Object.values(MigrationPaths);
 beforeAll(async () => {
-  context = await Context.build();
+  context = await Context.getInstance();
 });
 
 beforeEach(async () => {

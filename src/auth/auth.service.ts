@@ -145,7 +145,7 @@ export class AuthService {
   }
 
   async findUserByField(field: string, value: string) {
-    return await this.usersRepository.findOne({
+    return this.usersRepository.findOne({
       where: { [field]: value },
     });
   }
