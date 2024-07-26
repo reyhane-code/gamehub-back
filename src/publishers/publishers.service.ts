@@ -27,6 +27,7 @@ export class PublishersService {
   }
 
   async deletePublisher(id: number, isSoftDelete: boolean) {
+    await this.findOneById(id);
     if (isSoftDelete) {
       return this.publishersRepository.destroy({ where: { id } });
     } else {
@@ -38,6 +39,7 @@ export class PublishersService {
   }
 
   async updatePublisher(id: number, { name }: UpdatePublisherDto) {
+    await this.findOneById(id);
     try {
       return this.publishersRepository.update({ name }, { where: { id } });
     } catch (error) {
@@ -68,7 +70,7 @@ export class PublishersService {
       limit: perPage,
       offset: perPage * (page - 1),
     });
-    if (rows.length < 1) {
+    if (count < 1) {
       throw new NotFoundException('No publishers was found!');
     }
     return {

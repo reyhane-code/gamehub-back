@@ -18,7 +18,7 @@ export class CurrentUserMiddleware implements NestMiddleware {
     private configService: ConfigService,
     private jwtService: JwtService,
     @Inject(CACHE_MANAGER) protected cacheManager: Cache,
-    @Inject(Repositories.USERS) private userModel: typeof User,
+    @Inject(Repositories.USERS) private userRepository: typeof User,
   ) {}
 
   async use(req: Request, _: Response, next: NextFunction) {
@@ -36,7 +36,7 @@ export class CurrentUserMiddleware implements NestMiddleware {
       if (blockData && blockData == token) {
         throw new UnauthorizedException();
       }
-      const user = await this.userModel.findOne({
+      const user = await this.userRepository.findOne({
         where: {
           id: verifyData.aud,
         },

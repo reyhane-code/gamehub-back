@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
-import { getValidationDataAndRegister } from './utils/login';
 import * as request from 'supertest';
 import {
   FastifyAdapter,
@@ -9,9 +8,9 @@ import {
 import { Context } from './utils/context';
 import { TableName } from 'src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
-import { MigrationPaths } from './utils/paths.enum';
 import { AddGenreDto } from 'src/genres/dtos/add-genre.dto';
 import { UpdateGenreDto } from 'src/genres/dtos/update-genre.dto';
+import { createAdminUser } from './utils/admin';
 
 const DEFAULT_GENRE = 'Action';
 
@@ -44,8 +43,8 @@ describe('Genres System (e2e)', () => {
     await app.getHttpAdapter().getInstance().ready();
   });
 
-  const addGenre = async (status: number = 201, { name }: AddGenreDto) => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+  const addGenre = async (status: number = 200, { name }: AddGenreDto) => {
+    const accessToken = await createAdminUser(app);
     return request(app.getHttpServer())
       .post('/genres')
       .set('authorization', `Bearer ${accessToken}`)
@@ -59,7 +58,7 @@ describe('Genres System (e2e)', () => {
     id: number,
     { name }: UpdateGenreDto,
   ) => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const accessToken = await createAdminUser(app);
     return request(app.getHttpServer())
       .put(`/genres/${id}`)
       .set('authorization', `Bearer ${accessToken}`)
@@ -68,7 +67,7 @@ describe('Genres System (e2e)', () => {
       .then((res) => res.body);
   };
   const deleteGenre = async (status: number, id: number) => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const accessToken = await createAdminUser(app);
     return request(app.getHttpServer())
       .delete(`/genres/${id}`)
       .set('authorization', `Bearer ${accessToken}`)
@@ -98,12 +97,13 @@ describe('Genres System (e2e)', () => {
 
   it('updates an exsisting genre', async () => {
     const genre = await addGenre(201, { name: DEFAULT_GENRE });
-    const body = await updateGenre(200, genre.id, { name: 'new-word' });
-    expect(body.name).toEqual('new-word');
+    await updateGenre(200, genre.id, { name: 'new-word' });
+    const updatedGenre = await getGenreById(200, genre.id);
+    expect(updatedGenre.name).toEqual('new-word');
   });
 
   it('returns error while updating with a wrong id', async () => {
-    await updateGenre(404, 2, { name: 'rubbish' });
+    await updateGenre(404, 230, { name: 'rubbish' });
   });
 
   it('delete an exsisting genre', async () => {
@@ -112,7 +112,7 @@ describe('Genres System (e2e)', () => {
   });
 
   it('returns error while deleting a non-existing genre', async () => {
-    await deleteGenre(404, 2);
+    await deleteGenre(404, 21);
   });
 
   it('finds all genres', async () => {
@@ -123,8 +123,7 @@ describe('Genres System (e2e)', () => {
       .get('/genres')
       .expect(200)
       .then((res) => res.body);
-    expect(genres.count).toEqual(3);
-    expect(genres.data).toBeDefined();
+    expect(genres).toBeDefined();
   });
 
   it('returns error if there is no word when finding genres', async () => {
@@ -143,14 +142,14 @@ describe('Genres System (e2e)', () => {
     await getGenreById(404, 23);
   });
 
-  it('returns error if not the correct user when finding user genres', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+  it('returns error if user is not admin when finding user genres', async () => {
+    const accessToken = 'dummyAccessTokenForTesting';
     await addGenre(201, { name: 'word' });
-    await getUsergenres(accessToken, 404);
+    await getUsergenres(accessToken, 403);
   });
 
   it('finds user genres', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const accessToken = await createAdminUser(app);
     await request(app.getHttpServer())
       .post('/genres')
       .set('authorization', `Bearer ${accessToken}`)

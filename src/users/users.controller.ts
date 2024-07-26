@@ -33,10 +33,10 @@ export class UsersController {
   @UseGuards(AuthGuard)
   updateUserRole(
     @CurrentUser() user: IUser,
-    @Body() role: Role,
+    @Body() body: { role: Role },
     @Param('id') id?: number,
   ) {
-    return this.usersService.updateUserRole(user, role, id);
+    return this.usersService.updateUserRole(user, body.role, id);
   }
 
   @Get()
@@ -52,10 +52,7 @@ export class UsersController {
   }
   @UseGuards(AuthGuard)
   @Put('/password')
-  setPassword(
-    @CurrentUser() user: IUser,
-    @Body() body: UserPasswordDto,
-  ) {
+  setPassword(@CurrentUser() user: IUser, @Body() body: UserPasswordDto) {
     return this.usersService.setUserPassword(user, body);
   }
 }

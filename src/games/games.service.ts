@@ -18,7 +18,7 @@ import { PlatformGame } from 'models/platform_game.model';
 import { PublisherGame } from 'models/publisher_game.model';
 import { GenreGame } from 'models/genre_game.model';
 import { setWhereQuery, toSlug } from 'src/helpers/helpers';
-import { OperationPositionEnum, sortOperation } from 'src/enums/enums';
+import { sortOperation } from 'src/enums/enums';
 
 @Injectable()
 export class GamesService {

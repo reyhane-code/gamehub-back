@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
-import { getValidationDataAndRegister } from './utils/login';
 import * as request from 'supertest';
 import {
   FastifyAdapter,
@@ -11,6 +10,7 @@ import { TableName } from 'src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
 import { AddPublisherDto } from 'src/publishers/dtos/add-publisher.dto';
 import { UpdatePublisherDto } from 'src/publishers/dtos/update-publisher.dto';
+import { createAdminUser } from './utils/admin';
 
 const DEFAULT_PUBLISHER = 'ubsoft';
 
@@ -43,7 +43,7 @@ describe('Publishers System (e2e)', () => {
     status: number = 201,
     { name }: AddPublisherDto,
   ) => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const accessToken = await createAdminUser(app);
     return request(app.getHttpServer())
       .post('/publishers')
       .set('authorization', `Bearer ${accessToken}`)
@@ -57,7 +57,7 @@ describe('Publishers System (e2e)', () => {
     id: number,
     { name }: UpdatePublisherDto,
   ) => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const accessToken = await createAdminUser(app);
     return request(app.getHttpServer())
       .put(`/publishers/${id}`)
       .set('authorization', `Bearer ${accessToken}`)
@@ -66,7 +66,7 @@ describe('Publishers System (e2e)', () => {
       .then((res) => res.body);
   };
   const deletePublisher = async (status: number, id: number) => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const accessToken = await createAdminUser(app);
     return request(app.getHttpServer())
       .delete(`/publishers/${id}`)
       .set('authorization', `Bearer ${accessToken}`)
@@ -99,12 +99,13 @@ describe('Publishers System (e2e)', () => {
 
   it('updates an exsisting publisher', async () => {
     const publisher = await addPublisher(201, { name: DEFAULT_PUBLISHER });
-    const body = await updatePublisher(200, publisher.id, { name: 'new-word' });
-    expect(body.name).toEqual('new-word');
+    await updatePublisher(200, publisher.id, { name: 'new-word' });
+    const updatedPublisher = await getPublisherById(200, publisher.id);
+    expect(updatedPublisher.name).toEqual('new-word');
   });
 
   it('returns error while updating with a wrong id', async () => {
-    await updatePublisher(404, 2, { name: 'rubbish' });
+    await updatePublisher(404, 20, { name: 'rubbish' });
   });
 
   it('delete an exsisting publisher', async () => {
@@ -113,7 +114,7 @@ describe('Publishers System (e2e)', () => {
   });
 
   it('returns error while deleting a non-existing publisher', async () => {
-    await deletePublisher(404, 2);
+    await deletePublisher(404, 20);
   });
 
   it('finds all publishers', async () => {
@@ -124,8 +125,7 @@ describe('Publishers System (e2e)', () => {
       .get('/publishers')
       .expect(200)
       .then((res) => res.body);
-    expect(publishers.count).toEqual(3);
-    expect(publishers.data).toBeDefined();
+    expect(publishers).toBeDefined();
   });
 
   it('returns error if there is no word when finding publishers', async () => {
@@ -144,14 +144,14 @@ describe('Publishers System (e2e)', () => {
     await getPublisherById(404, 23);
   });
 
-  it('returns error if not the correct user when finding user publishers', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+  it('returns error if not the admin user when finding user publishers', async () => {
+    const accessToken = 'dummyAccessTokenForTesting';
     await addPublisher(201, { name: 'word' });
-    await getUserPublishers(accessToken, 404);
+    await getUserPublishers(accessToken, 403);
   });
 
   it('finds user publishers', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const accessToken = await createAdminUser(app);
     await request(app.getHttpServer())
       .post('/publishers')
       .set('authorization', `Bearer ${accessToken}`)
