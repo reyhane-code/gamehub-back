@@ -15,9 +15,8 @@ import { UpdatePublisherDto } from 'src/publishers/dtos/update-publisher.dto';
 const DEFAULT_PUBLISHER = 'ubsoft';
 
 let context: Context;
-// all tables names
 beforeAll(async () => {
-  context = await Context.build();
+  context = await Context.getInstance();
 });
 
 beforeEach(async () => {

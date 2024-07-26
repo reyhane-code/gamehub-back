@@ -25,8 +25,7 @@ const DEFAULT_PHONE = '09363080321';
 
 let context: Context;
 beforeAll(async () => {
-  console.log('before allllllllllllllllllllllllllllllllllllllllllllllll');
-  context = await Context.build();
+  context = await Context.getInstance();
 });
 
 beforeEach(async () => {

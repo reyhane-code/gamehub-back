@@ -9,9 +9,17 @@ export interface IPoolOptions {
 }
 
 export default class SequelizeManager {
+  private static instance: SequelizeManager;
   private sequelize: Sequelize;
 
-  constructor() {}
+  private constructor() {}
+
+  public static getInstance(): SequelizeManager {
+    if (!SequelizeManager.instance) {
+      SequelizeManager.instance = new SequelizeManager();
+    }
+    return SequelizeManager.instance;
+  }
 
   async authenticateAndSync() {
     await this.sequelize.authenticate();
@@ -20,9 +28,14 @@ export default class SequelizeManager {
 
   async connect(options: IPoolOptions) {
     try {
-      this.sequelize = new Sequelize(options.database, options.username, options.password, {
-        ...options
-      });
+      this.sequelize = new Sequelize(
+        options.database,
+        options.username,
+        options.password,
+        {
+          ...options,
+        },
+      );
       await this.authenticateAndSync();
       console.log('Connection to database has been established successfully.');
     } catch (error) {
@@ -41,10 +54,10 @@ export default class SequelizeManager {
       });
       return result;
     } catch (error) {
-      console.error('Error executing query:', error);
       throw error;
     }
   }
+
   // async migrate(pathToMigrationFile: string, schemaName: string) {
   //   const queryInterface = this.sequelize.getQueryInterface();
   //   const migrationModule = require(join(process.cwd(), pathToMigrationFile));

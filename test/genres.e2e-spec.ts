@@ -16,10 +16,8 @@ import { UpdateGenreDto } from 'src/genres/dtos/update-genre.dto';
 const DEFAULT_GENRE = 'Action';
 
 let context: Context;
-// all tables names
-const tables = Object.values(MigrationPaths);
 beforeAll(async () => {
-  context = await Context.build();
+  context = await Context.getInstance();
 });
 
 beforeEach(async () => {

@@ -1,0 +1,1 @@
+docker logs gamehub-container-test 2>&1 | grep -v -e "Executing (default)" -e "at Sequelize.log" -e "at async Promise.all" -e "console\.log$" -e "^$" | sed '/●/{x;p;x;}' | sed '/expected/{x;p;x;}'
