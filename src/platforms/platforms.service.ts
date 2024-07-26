@@ -10,6 +10,7 @@ import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { AddPlatformDto } from './dtos/add-platform.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdatedPlatformDto } from './dtos/update-platform.dto';
+import { toSlug } from 'src/helpers/helpers';
 
 @Injectable()
 export class PlatformsService {
@@ -31,6 +32,7 @@ export class PlatformsService {
   }
 
   async deletePlatform(id: number, isSoftDelete: boolean) {
+    await this.findOneById(id);
     if (isSoftDelete) {
       return this.platformsRepository.destroy({ where: { id } });
     } else {
@@ -41,12 +43,12 @@ export class PlatformsService {
     }
   }
   async updatePlatform(id: number, { name }: UpdatedPlatformDto) {
+    await this.findOneById(id);
     try {
-      await this.findOneById(id);
       return this.platformsRepository.update(
         {
           name,
-          slug: name.toLowerCase().replace(/\s+/g, '-'),
+          slug: toSlug(name),
         },
         { where: { id } },
       );
@@ -76,7 +78,7 @@ export class PlatformsService {
       limit: perPage,
       offset: perPage * (page - 1),
     });
-    if (rows.length < 1) {
+    if (count < 1) {
       throw new NotFoundException('No platforms was found!');
     }
     return {

@@ -17,7 +17,7 @@ export const createAdminUser = async (
         role,
       })
       .expect(status)
-      .then((res) => res.body);
+      // .then((res) => res.body);
     return accessToken;
   } catch (error) {
     console.log('error', error);

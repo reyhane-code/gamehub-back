@@ -29,6 +29,7 @@ export class GenresService {
   }
 
   async deleteGenre(genreId: number, isSoftDelete: boolean) {
+    await this.findOneById(genreId);
     if (isSoftDelete) {
       return this.genresRepository.destroy({ where: { id: genreId } });
     } else {
@@ -40,6 +41,7 @@ export class GenresService {
   }
 
   async updateGenre(genreId: number, { name }: UpdateGenreDto) {
+    await this.findOneById(genreId);
     try {
       return this.genresRepository.update({ name }, { where: { id: genreId } });
     } catch (error) {
@@ -68,7 +70,7 @@ export class GenresService {
       limit: perPage,
       offset: perPage * (page - 1),
     });
-    if (rows.length < 1) {
+    if (count < 1) {
       throw new NotFoundException('No genres was found!');
     }
     return {
