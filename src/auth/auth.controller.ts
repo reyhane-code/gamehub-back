@@ -45,7 +45,6 @@ export class AuthController {
 
   @Post('/get-validation-token')
   async getValidationToken(@Body() body: GetValidationTokenDto) {
-    // TODO: fix what if data null ???
     return this.authService.getValidationToken(body);
   }
 

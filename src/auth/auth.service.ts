@@ -269,11 +269,15 @@ export class AuthService {
     tryNumber,
     forceSendSms,
   }: GetValidationTokenDto) {
-    return this.generateValidationTokenAndSendCode(
-      phone,
-      forceSendSms,
-      tryNumber,
-    );
+    try {
+      return this.generateValidationTokenAndSendCode(
+        phone,
+        forceSendSms,
+        tryNumber,
+      );
+    } catch (error) {
+      throw new BadRequestException('Something went wrong!');
+    }
   }
 
   async logout(user: IUser, accessToken: string) {
