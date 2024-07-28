@@ -33,7 +33,8 @@ export class Like extends Model {
   @DeletedAt
   deletedAt?: Date | null;
 
-  @BelongsTo(()=>Game)
+  @BelongsTo(() => Game)
+  game: Game;
 
   @BeforeUpdate
   static updateTimestamp(instance: Like) {

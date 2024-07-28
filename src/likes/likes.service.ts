@@ -10,8 +10,8 @@ export class LikesService {
     @Inject(Repositories.LIKES) private likesRepository: typeof Like
   ) {}
 
-  async likeGame(gameId: number, user: IUser) {
-    return this.likesRepository.create({ user_id: user.id, game_id: gameId });
+  async likeGame(gameId: string, user: IUser) {
+    return this.likesRepository.create({ user_id: user.id, game_id: parseInt(gameId) });
   }
 
   removeLike(gameId: number, user: IUser) {
