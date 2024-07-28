@@ -9,6 +9,7 @@ import {
   BelongsToMany,
   DeletedAt,
   ForeignKey,
+  HasMany,
 } from 'sequelize-typescript';
 import { TableName } from 'src/enums/database.enum';
 import { Genre } from './genre.model';
@@ -18,6 +19,7 @@ import { GenreGame } from './genre_game.model';
 import { PlatformGame } from './platform_game.model';
 import { PublisherGame } from './publisher_game.model';
 import { User } from './user.model';
+import { Like } from './like.model';
 
 @Table({ tableName: TableName.GAMES })
 export class Game extends Model {
@@ -51,6 +53,9 @@ export class Game extends Model {
 
   @DeletedAt
   deletedAt?: Date | null;
+
+  @HasMany(() => Like)
+  likes: Like[];
 
   @BelongsToMany(() => Genre, () => GenreGame)
   genres: Genre[];

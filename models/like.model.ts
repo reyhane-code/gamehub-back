@@ -8,6 +8,7 @@ import {
   ForeignKey,
   BeforeUpdate,
   DeletedAt,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { TableName } from 'src/enums/database.enum';
 import { User } from './user.model';
@@ -31,6 +32,8 @@ export class Like extends Model {
 
   @DeletedAt
   deletedAt?: Date | null;
+
+  @BelongsTo(()=>Game)
 
   @BeforeUpdate
   static updateTimestamp(instance: Like) {
