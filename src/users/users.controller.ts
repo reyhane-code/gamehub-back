@@ -55,4 +55,17 @@ export class UsersController {
   setPassword(@CurrentUser() user: IUser, @Body() body: UserPasswordDto) {
     return this.usersService.setUserPassword(user, body);
   }
+
+  @Get('/identity')
+  @UseGuards(AuthGuard)
+  async getIdentity(@CurrentUser() user: IUser) {
+    return {
+      id: user.id,
+      username: user.username,
+      phone: user.phone,
+      email: user.email,
+      first_name: user.firstName,
+      last_name: user.lastName,
+    };
+  }
 }

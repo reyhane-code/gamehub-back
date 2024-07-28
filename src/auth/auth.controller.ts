@@ -18,6 +18,7 @@ import { LoginOrRegisterDto } from './dtos/login-or-register.dto';
 import { LoginWithPasswordDto } from './dtos/login-with-password.dto';
 import { GetValidationTokenDto } from './dtos/get-validation-token.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
+import { AdminGuard } from 'src/guards/admin.guard';
 
 @Controller('/auth')
 export class AuthController {
@@ -49,7 +50,7 @@ export class AuthController {
   }
 
   @Get('/identity')
-  @UseGuards(AuthGuard)
+  @UseGuards(AdminGuard)
   async getIdentity(@CurrentUser() user: IUser) {
     return user;
   }

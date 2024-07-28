@@ -19,6 +19,7 @@ import { PublisherGame } from 'models/publisher_game.model';
 import { GenreGame } from 'models/genre_game.model';
 import { setWhereQuery, toSlug } from 'src/helpers/helpers';
 import { sortOperation } from 'src/enums/enums';
+import { Like } from 'models/like.model';
 
 @Injectable()
 export class GamesService {
@@ -87,6 +88,7 @@ export class GamesService {
         ? { model: Platform, where: { id: platformId } }
         : { model: Platform },
       { model: Publisher },
+      { model: Like },
     ];
 
     const orderClause = order
@@ -212,10 +214,16 @@ export class GamesService {
     return this.gamesRepository.findAll({ where: { user_id: user.id } });
   }
 
-  //todo: add getGameLikes
-
   async findGameBySlug(slug: string) {
-    const game = this.gamesRepository.findOne({ where: { slug } });
+    const game = this.gamesRepository.findOne({
+      where: { slug },
+      include: [
+        { model: Genre },
+        { model: Publisher },
+        { model: Platform },
+        { model: Like },
+      ],
+    });
     if (!game) {
       throw new NotFoundException('No game was found.');
     }
