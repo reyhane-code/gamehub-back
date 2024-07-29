@@ -132,7 +132,7 @@ describe('Games System (e2e)', () => {
       background_image: 'bullshiturl5',
     });
     await updateGame(200, game.id, { name: 'new-gameName' });
-    const updatedgame = await getGameBySlug(200, game.slug);
+    const updatedgame = await getGameBySlug(200, toSlug('new-gameName'));
     expect(updatedgame.name).toEqual('new-gameName');
   });
 
