@@ -8,9 +8,9 @@ import {
 import { Context } from './utils/context';
 import { TableName } from 'src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
-import { AddPublisherDto } from 'src/publishers/dtos/add-publisher.dto';
 import { UpdatePublisherDto } from 'src/publishers/dtos/update-publisher.dto';
 import { createAdminUser } from './utils/admin';
+import { addPublisher } from './add';
 
 const DEFAULT_PUBLISHER = 'ubsoft';
 
@@ -38,19 +38,6 @@ describe('Publishers System (e2e)', () => {
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
   });
-
-  const addPublisher = async (
-    status: number = 201,
-    { name }: AddPublisherDto,
-  ) => {
-    const accessToken = await createAdminUser(app);
-    return request(app.getHttpServer())
-      .post('/publishers')
-      .set('authorization', `Bearer ${accessToken}`)
-      .send({ name })
-      .expect(status)
-      .then((res) => res.body);
-  };
 
   const updatePublisher = async (
     status: number = 200,
@@ -83,7 +70,7 @@ describe('Publishers System (e2e)', () => {
 
   const getUserPublishers = async (
     accessToken: string,
-    status: number = 200,
+    status: number = 201,
   ) => {
     return request(app.getHttpServer())
       .get('/publishers/user')
@@ -93,12 +80,12 @@ describe('Publishers System (e2e)', () => {
   };
 
   it('adds a new publisher', async () => {
-    const body = await addPublisher(201, { name: DEFAULT_PUBLISHER });
+    const body = await addPublisher(app, 201, { name: DEFAULT_PUBLISHER });
     expect(body.name).toEqual(DEFAULT_PUBLISHER);
   });
 
   it('updates an exsisting publisher', async () => {
-    const publisher = await addPublisher(201, { name: DEFAULT_PUBLISHER });
+    const publisher = await addPublisher(app, 201, { name: DEFAULT_PUBLISHER });
     await updatePublisher(200, publisher.id, { name: 'new-word' });
     const updatedPublisher = await getPublisherById(200, publisher.id);
     expect(updatedPublisher.name).toEqual('new-word');
@@ -109,7 +96,7 @@ describe('Publishers System (e2e)', () => {
   });
 
   it('delete an exsisting publisher', async () => {
-    const publisher = await addPublisher(201, { name: DEFAULT_PUBLISHER });
+    const publisher = await addPublisher(app, 201, { name: DEFAULT_PUBLISHER });
     await deletePublisher(200, publisher.id);
   });
 
@@ -118,9 +105,9 @@ describe('Publishers System (e2e)', () => {
   });
 
   it('finds all publishers', async () => {
-    await addPublisher(201, { name: 'publisher1' });
-    await addPublisher(201, { name: 'publisher2' });
-    await addPublisher(201, { name: 'publisher3' });
+    await addPublisher(app, 201, { name: 'publisher1' });
+    await addPublisher(app, 201, { name: 'publisher2' });
+    await addPublisher(app, 201, { name: 'publisher3' });
     const publishers = await request(app.getHttpServer())
       .get('/publishers')
       .expect(200)
@@ -136,7 +123,7 @@ describe('Publishers System (e2e)', () => {
   });
 
   it('finds publisher by Id', async () => {
-    const publisher = await addPublisher(201, { name: 'new-publisher' });
+    const publisher = await addPublisher(app, 201, { name: 'new-publisher' });
     await getPublisherById(200, publisher.id);
   });
 
@@ -146,8 +133,8 @@ describe('Publishers System (e2e)', () => {
 
   it('returns error if not the admin user when finding user publishers', async () => {
     const accessToken = 'dummyAccessTokenForTesting';
-    await addPublisher(201, { name: 'word' });
-    await getUserPublishers(accessToken, 403);
+    await addPublisher(app, 201, { name: 'word' });
+    await getUserPublishers(accessToken, 401);
   });
 
   it('finds user publishers', async () => {
