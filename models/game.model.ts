@@ -20,6 +20,7 @@ import { PlatformGame } from './platform_game.model';
 import { PublisherGame } from './publisher_game.model';
 import { User } from './user.model';
 import { Like } from './like.model';
+import { GameFile } from './game_file.model';
 
 @Table({ tableName: TableName.GAMES })
 export class Game extends Model {
@@ -56,6 +57,9 @@ export class Game extends Model {
 
   @HasMany(() => Like)
   likes: Like[];
+
+  @HasMany(() => GameFile)
+  files: GameFile[];
 
   @BelongsToMany(() => Genre, () => GenreGame)
   genres: Genre[];
