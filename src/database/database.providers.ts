@@ -1,4 +1,5 @@
 import { Game } from 'models/game.model';
+import { GameFile } from 'models/game_file.model';
 import { Genre } from 'models/genre.model';
 import { GenreGame } from 'models/genre_game.model';
 import { Like } from 'models/like.model';
@@ -31,6 +32,7 @@ export const databaseProviders = [
         PlatformGame,
         PublisherGame,
         Like,
+        GameFile,
       ]);
       await sequelize.sync();
       return sequelize;

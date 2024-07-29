@@ -1,21 +1,23 @@
-import { MiddlewareConsumer, Module, RequestMethod } from "@nestjs/common";
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
-import { UsersModule } from "./users/users.module";
-import { ThrottlerModule } from "@nestjs/throttler";
-import configuration from "./config/configuration";
-import { ConfigModule } from "@nestjs/config";
-import { AuthModule } from "./auth/auth.module";
-import { APP_FILTER } from "@nestjs/core";
-import { AllExceptionsFilter } from "./custom-exceptions/all-exception-filter";
-import { DatabaseModule } from "./database/database.module";
-import { LangMiddleware } from "./middlewares/lang-middleware";
-import { GamesModule } from "./games/games.module";
-import { GenresModule } from "./genres/genres.module";
-import { PlatformsModule } from "./platforms/platforms.module";
-import { PublishersModule } from "./publishers/publishers.module";
-import { SmsModule } from "./sms/sms.module";
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { UsersModule } from './users/users.module';
+import { ThrottlerModule } from '@nestjs/throttler';
+import configuration from './config/configuration';
+import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './custom-exceptions/all-exception-filter';
+import { DatabaseModule } from './database/database.module';
+import { LangMiddleware } from './middlewares/lang-middleware';
+import { GamesModule } from './games/games.module';
+import { GenresModule } from './genres/genres.module';
+import { PlatformsModule } from './platforms/platforms.module';
+import { PublishersModule } from './publishers/publishers.module';
+import { SmsModule } from './sms/sms.module';
 import { LikesModule } from './likes/likes.module';
+import { FilesModule } from './files/files.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -25,7 +27,7 @@ import { LikesModule } from './likes/likes.module';
     ThrottlerModule.forRoot({
       throttlers: [
         {
-          name: "medium",
+          name: 'medium',
           ttl: 60000,
           limit: 30,
         },
@@ -35,12 +37,16 @@ import { LikesModule } from './likes/likes.module';
       load: [configuration],
       isGlobal: true,
     }),
+    MulterModule.register({
+      dest: './files',
+    }),
     GamesModule,
     GenresModule,
     PlatformsModule,
     PublishersModule,
     SmsModule,
     LikesModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [
@@ -55,6 +61,6 @@ export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LangMiddleware)
-      .forRoutes({ path: "*", method: RequestMethod.ALL });
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }
