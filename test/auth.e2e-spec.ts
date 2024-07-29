@@ -239,12 +239,12 @@ describe('Authentication System (e2e)', () => {
 
     await logout(200, accessToken);
 
-    await logout(403, accessToken);
+    await logout(401, accessToken);
 
     await request(app.getHttpServer())
       .get('/user')
       .set('authorization', `Bearer ${accessToken}`)
-      .expect(403);
+      .expect(401);
   });
 
   it('returns a new pair of access and refresh token', async () => {

@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
-import { getValidationDataAndRegister } from './utils/login';
 import * as request from 'supertest';
 import {
   FastifyAdapter,
@@ -9,11 +8,10 @@ import {
 import { Context } from './utils/context';
 import { TableName } from 'src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
-import { MigrationPaths } from './utils/paths.enum';
-import { AddPlatformDto } from 'src/platforms/dtos/add-platform.dto';
 import { UpdatedPlatformDto } from 'src/platforms/dtos/update-platform.dto';
 import { toSlug } from 'src/helpers/helpers';
 import { createAdminUser } from './utils/admin';
+import { addPlatform } from './add';
 
 const DEFAULT_PLATFORM = 'PC';
 
@@ -45,19 +43,6 @@ describe('Platforms System (e2e)', () => {
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
   });
-
-  const addPlatform = async (
-    status: number = 201,
-    { name }: AddPlatformDto,
-  ) => {
-    const accessToken = await createAdminUser(app);
-    return request(app.getHttpServer())
-      .post('/platforms')
-      .set('authorization', `Bearer ${accessToken}`)
-      .send({ name })
-      .expect(status)
-      .then((res) => res.body);
-  };
 
   const updatePlatform = async (
     status: number = 200,
@@ -100,14 +85,14 @@ describe('Platforms System (e2e)', () => {
   };
 
   it('adds a new platform', async () => {
-    const body = await addPlatform(201, { name: DEFAULT_PLATFORM });
+    const body = await addPlatform(app, 201, { name: DEFAULT_PLATFORM });
     expect(body.name).toEqual(DEFAULT_PLATFORM);
     expect(body.slug).toBeDefined();
     expect(body.slug).toEqual(toSlug(DEFAULT_PLATFORM));
   });
 
   it('updates an exsisting platform', async () => {
-    const platform = await addPlatform(201, { name: DEFAULT_PLATFORM });
+    const platform = await addPlatform(app, 201, { name: DEFAULT_PLATFORM });
     await updatePlatform(200, platform.id, {
       name: 'new-platform',
     });
@@ -120,7 +105,7 @@ describe('Platforms System (e2e)', () => {
   });
 
   it('delete an exsisting platform', async () => {
-    const platform = await addPlatform(201, { name: DEFAULT_PLATFORM });
+    const platform = await addPlatform(app, 201, { name: DEFAULT_PLATFORM });
     await deletePlatform(200, platform.id);
   });
 
@@ -129,9 +114,9 @@ describe('Platforms System (e2e)', () => {
   });
 
   it('finds all platforms', async () => {
-    await addPlatform(201, { name: 'platform1' });
-    await addPlatform(201, { name: 'platform2' });
-    await addPlatform(201, { name: 'platform3' });
+    await addPlatform(app, 201, { name: 'platform1' });
+    await addPlatform(app, 201, { name: 'platform2' });
+    await addPlatform(app, 201, { name: 'platform3' });
     const platforms = await request(app.getHttpServer())
       .get('/platforms')
       .expect(200)
@@ -147,7 +132,7 @@ describe('Platforms System (e2e)', () => {
   });
 
   it('finds platform by Id', async () => {
-    const platform = await addPlatform(201, { name: 'new-platform' });
+    const platform = await addPlatform(app, 201, { name: 'new-platform' });
     await getPlatformById(200, platform.id);
   });
 
@@ -157,8 +142,8 @@ describe('Platforms System (e2e)', () => {
 
   it('returns error if not admin user when finding user platforms', async () => {
     const accessToken = 'dummyAccessTokenForTesting';
-    await addPlatform(201, { name: 'platform' });
-    await getUserPlatforms(accessToken, 403);
+    await addPlatform(app, 201, { name: 'platform' });
+    await getUserPlatforms(accessToken, 401);
   });
 
   it('finds user platforms', async () => {

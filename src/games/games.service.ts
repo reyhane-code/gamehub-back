@@ -61,7 +61,7 @@ export class GamesService {
       ...query,
       distinct: true,
     });
-    if (rows.length < 1) {
+    if (count < 1) {
       throw new NotFoundException('NO game was found.');
     }
 
@@ -172,6 +172,7 @@ export class GamesService {
   }
 
   async deleteGame(gameId: number, isSoftDelete: boolean) {
+    await this.findOneById(gameId);
     if (isSoftDelete) {
       return this.gamesRepository.destroy({ where: { id: gameId } });
     } else {
@@ -192,9 +193,9 @@ export class GamesService {
     }: UpdateGameDto,
     id: number,
   ) {
+    const foundGame = await this.findOneById(id);
     try {
-      const foundGame = await this.findOneById(id);
-      return this.gamesRepository.update(
+      await this.gamesRepository.update(
         {
           name,
           slug: name ? toSlug(name) : foundGame.slug,
@@ -215,7 +216,7 @@ export class GamesService {
   }
 
   async findGameBySlug(slug: string) {
-    const game = this.gamesRepository.findOne({
+    const game = await this.gamesRepository.findOne({
       where: { slug },
       include: [
         { model: Genre },

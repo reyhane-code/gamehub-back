@@ -8,10 +8,9 @@ import {
 import { Context } from './utils/context';
 import { TableName } from 'src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
-import { AddGenreDto } from 'src/genres/dtos/add-genre.dto';
 import { UpdateGenreDto } from 'src/genres/dtos/update-genre.dto';
 import { createAdminUser } from './utils/admin';
-
+import { addGenre } from './add';
 const DEFAULT_GENRE = 'Action';
 
 let context: Context;
@@ -42,16 +41,6 @@ describe('Genres System (e2e)', () => {
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
   });
-
-  const addGenre = async (status: number = 200, { name }: AddGenreDto) => {
-    const accessToken = await createAdminUser(app);
-    return request(app.getHttpServer())
-      .post('/genres')
-      .set('authorization', `Bearer ${accessToken}`)
-      .send({ name })
-      .expect(status)
-      .then((res) => res.body);
-  };
 
   const updateGenre = async (
     status: number = 200,
@@ -91,12 +80,12 @@ describe('Genres System (e2e)', () => {
   };
 
   it('adds a new genre', async () => {
-    const body = await addGenre(201, { name: DEFAULT_GENRE });
+    const body = await addGenre(app, 201, { name: DEFAULT_GENRE });
     expect(body.name).toEqual(DEFAULT_GENRE);
   });
 
   it('updates an exsisting genre', async () => {
-    const genre = await addGenre(201, { name: DEFAULT_GENRE });
+    const genre = await addGenre(app, 201, { name: DEFAULT_GENRE });
     await updateGenre(200, genre.id, { name: 'new-word' });
     const updatedGenre = await getGenreById(200, genre.id);
     expect(updatedGenre.name).toEqual('new-word');
@@ -107,7 +96,7 @@ describe('Genres System (e2e)', () => {
   });
 
   it('delete an exsisting genre', async () => {
-    const genre = await addGenre(201, { name: DEFAULT_GENRE });
+    const genre = await addGenre(app, 201, { name: DEFAULT_GENRE });
     await deleteGenre(200, genre.id);
   });
 
@@ -116,9 +105,9 @@ describe('Genres System (e2e)', () => {
   });
 
   it('finds all genres', async () => {
-    await addGenre(201, { name: 'genre1' });
-    await addGenre(201, { name: 'genre2' });
-    await addGenre(201, { name: 'genre3' });
+    await addGenre(app, 201, { name: 'genre1' });
+    await addGenre(app, 201, { name: 'genre2' });
+    await addGenre(app, 201, { name: 'genre3' });
     const genres = await request(app.getHttpServer())
       .get('/genres')
       .expect(200)
@@ -134,7 +123,7 @@ describe('Genres System (e2e)', () => {
   });
 
   it('finds genre by Id', async () => {
-    const genre = await addGenre(201, { name: 'new-genre' });
+    const genre = await addGenre(app, 201, { name: 'new-genre' });
     await getGenreById(200, genre.id);
   });
 
@@ -144,8 +133,8 @@ describe('Genres System (e2e)', () => {
 
   it('returns error if user is not admin when finding user genres', async () => {
     const accessToken = 'dummyAccessTokenForTesting';
-    await addGenre(201, { name: 'word' });
-    await getUsergenres(accessToken, 403);
+    await addGenre(app, 201, { name: 'genre' });
+    await getUsergenres(accessToken, 401);
   });
 
   it('finds user genres', async () => {
