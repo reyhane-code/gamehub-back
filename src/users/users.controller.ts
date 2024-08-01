@@ -64,6 +64,7 @@ export class UsersController {
       username: user.username,
       phone: user.phone,
       email: user.email,
+      password: user.password,
       first_name: user.firstName,
       last_name: user.lastName,
     };
