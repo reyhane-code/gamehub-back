@@ -25,13 +25,8 @@ import { MulterModule } from '@nestjs/platform-express';
     AuthModule,
     UsersModule,
     ThrottlerModule.forRoot({
-      throttlers: [
-        {
-          name: 'medium',
-          ttl: 60000,
-          limit: 30,
-        },
-      ],
+      ttl: 60,
+      limit: 10,
     }),
     ConfigModule.forRoot({
       load: [configuration],

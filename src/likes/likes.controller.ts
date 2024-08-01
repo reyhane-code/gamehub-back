@@ -18,7 +18,6 @@ export class LikesController {
   @UseGuards(AuthGuard)
   @Post('/:id')
   likeGame(@Param('id') id: string, @CurrentUser() user: IUser) {
-    console.log('this is the given id', id,'   ', parseInt(id));
     return this.likesService.likeGame(id, user);
   }
 

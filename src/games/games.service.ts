@@ -49,7 +49,7 @@ export class GamesService {
     order,
     params,
   }: IGamesQuery) {
-    const query = this.buildIGamesQuery({
+    const query = this.buildGamesQuery({
       page,
       perPage,
       genreId,
@@ -74,7 +74,7 @@ export class GamesService {
     };
   }
 
-  buildIGamesQuery({
+  buildGamesQuery({
     page,
     perPage,
     genreId,
@@ -222,8 +222,11 @@ export class GamesService {
         { model: Genre },
         { model: Publisher },
         { model: Platform },
-        { model: Like },
+        {
+          model: Like,
+        },
       ],
+      group: ['games.id'], // Group by the game ID to ensure correct counting
     });
     if (!game) {
       throw new NotFoundException('No game was found.');
