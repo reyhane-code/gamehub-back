@@ -1,4 +1,5 @@
 import { Game } from 'models/game.model';
+import { GameFile } from 'models/game_file.model';
 import { GenreGame } from 'models/genre_game.model';
 import { PlatformGame } from 'models/platform_game.model';
 import { PublisherGame } from 'models/publisher_game.model';
@@ -20,5 +21,9 @@ export const gamesProviders = [
   {
     provide: Repositories.GENRE_GAMES,
     useValue: GenreGame,
+  },
+  {
+    provide: Repositories.GAME_FILES,
+    useValue: GameFile,
   },
 ];

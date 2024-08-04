@@ -60,12 +60,10 @@ import { diskStorage } from 'multer';
 import { v4 as uuid } from 'uuid';
 import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 
-
 // Multer upload options
 export const multerOptions = {
   // Check the mimetypes to allow for upload
   fileFilter: (req: any, file: any, cb: any) => {
-
     if (file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
       // Allow storage of file
       cb(null, true);
@@ -112,11 +110,7 @@ export const multerOptions = {
   }),
 };
 
-export const checkFilesMimetype = (imageFa: Express.Multer.File | undefined, imageEn: Express.Multer.File | undefined) => {
-  if (imageFa || imageEn) {
-    if (!(imageFa?.mimetype.match(/\/(jpg|jpeg|png|gif)$/)
-      || imageEn?.mimetype.match(/\/(jpg|jpeg|png|gif)$/)))
-      throw new BadRequestException('Unsupported file type!')
-  }
-
-}
+export const checkFilesMimetype = (mimetype: string) => {
+  if (!mimetype.match(/\/(jpg|jpeg|png|gif)$/))
+    throw new BadRequestException('Unsupported file type!');
+};
