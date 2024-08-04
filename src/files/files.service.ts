@@ -39,7 +39,7 @@ export class FilesService {
       },
     });
     if (!foundFile) new NotFoundException('file not found');
-    if (foundFile?.type == fileType.IMAGE) {
+    if (foundFile?.file_type == fileType.IMAGE) {
       return this.getImageFile(file, query, res);
     }
     // TODO: handel other type of file

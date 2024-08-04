@@ -14,7 +14,7 @@ import { Game } from './game.model';
 import { User } from './user.model';
 import { Meta } from '../src/interfaces/meta.interface';
 
-@Table({ tableName: TableName.PLATFORM_GAMES })
+@Table({ tableName: TableName.GAME_FILES })
 export class GameFile extends Model {
   @ForeignKey(() => Game)
   @Column(DataType.INTEGER)
@@ -25,7 +25,7 @@ export class GameFile extends Model {
   user_id: number;
 
   @Column(DataType.STRING)
-  type: string;
+  file_type: string;
 
   @Column(DataType.JSONB)
   meta: Meta;

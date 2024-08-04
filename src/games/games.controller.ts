@@ -7,7 +7,9 @@ import {
   Post,
   Put,
   Query,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { GamesService } from './games.service';
 import { IGamesQuery } from './interfaces/games.interface';
@@ -16,6 +18,8 @@ import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdateGameDto } from './dtos/update-game.dto';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { AdminGuard } from 'src/guards/admin.guard';
+import { FileFieldsFastifyInterceptor } from 'fastify-file-interceptor';
+import { multerOptions } from 'src/helpers/file/multer-options';
 
 @Controller('games')
 export class GamesController {
@@ -44,9 +48,21 @@ export class GamesController {
   }
 
   @UseGuards(AdminGuard)
+  @UseInterceptors(
+    FileFieldsFastifyInterceptor(
+      [{ name: 'image', maxCount: 1 }],
+      multerOptions,
+    ),
+  )
   @Post()
-  addGame(@Body() body: AddGameDto, @CurrentUser() user: IUser) {
-    return this.gamesService.addGame(body, user);
+  addGame(
+    @Body() body: AddGameDto,
+    @CurrentUser() user: IUser,
+    @UploadedFiles()
+    image?: { image?: Express.Multer.File[] },
+  ) {
+    const imageFile = image?.image ? image.image[0] : null;
+    return this.gamesService.addGame(body, user, imageFile);
   }
 
   @UseGuards(AdminGuard)

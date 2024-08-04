@@ -18,6 +18,11 @@ export class AddGameDto {
   description?: string;
 
   @Expose()
+  @IsString()
+  @IsNotEmpty()
+  background_image: string;
+
+  @Expose()
   @IsNumber()
   @IsOptional()
   rating_top?: number;
@@ -41,11 +46,6 @@ export class AddGameDto {
   @IsNumber()
   @IsNotEmpty()
   genreId: number;
-
-  @Expose()
-  @IsString()
-  @IsOptional()
-  image_alt?: string;
 
   constructor(partial: Partial<AddGameDto>) {
     Object.assign(this, partial);

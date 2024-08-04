@@ -19,16 +19,16 @@ module.exports = {
         allowNull: false,
         references: { model: 'users', key: 'id' },
       },
-      type: {
-        type: DataTypes.STRING,
+      file_type: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
       meta: {
-        type: DataTypes.JSONB, // Use JSONB for PostgreSQL
+        type: Sequelize.JSONB, // Use JSONB for PostgreSQL
         allowNull: false,
       },
       hash_key: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: false,
         unique: true,
       },

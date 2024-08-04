@@ -20,6 +20,9 @@ import { GenreGame } from 'models/genre_game.model';
 import { setWhereQuery, toSlug } from 'src/helpers/helpers';
 import { sortOperation } from 'src/enums/enums';
 import { Like } from 'models/like.model';
+import { GameFile } from 'models/game_file.model';
+import { checkFilesMimetype } from 'src/helpers/image-storage';
+import { fileType } from 'src/enums/file-type.enum';
 
 @Injectable()
 export class GamesService {
@@ -31,6 +34,8 @@ export class GamesService {
     private publisherGamesRepository: typeof PublisherGame,
     @Inject(Repositories.GENRE_GAMES)
     private genreGamesRepository: typeof GenreGame,
+    @Inject(Repositories.GAME_FILES)
+    private gameFilesRepository: typeof GameFile,
   ) {}
 
   async findOneById(id: number) {
@@ -116,34 +121,74 @@ export class GamesService {
     {
       name,
       description,
-      background_image,
       rating_top,
       metacritic,
       platformId,
       publisherId,
       genreId,
+      image_alt,
     }: AddGameDto,
     user: IUser,
+    imageFile?: Express.Multer.File,
   ) {
     try {
+      if (imageFile) {
+        checkFilesMimetype(imageFile.mimetype);
+      }
+      const hashKey = imageFile.filename;
+
       const game = await this.gamesRepository.create({
         name,
         slug: toSlug(name),
         description,
-        background_image,
+        background_image: hashKey,
         rating_top,
         metacritic,
         user_id: user.id,
       });
+
       await this.addGameToRelationTables(
         game.id,
         platformId,
         publisherId,
         genreId,
       );
+
+      if (imageFile)
+        await this.saveGameImageDataToDB(
+          imageFile,
+          game.id,
+          user.id,
+          image_alt,
+          hashKey,
+        );
       return game;
     } catch (error) {
       throw new BadRequestException('something went wrong');
+    }
+  }
+
+  saveGameImageDataToDB(
+    image: Express.Multer.File,
+    gameId: number,
+    userId: number,
+    alt: string,
+    hashKey: string,
+  ) {
+    try {
+      return this.gameFilesRepository.create<GameFile>({
+        user_id: userId,
+        game_id: gameId,
+        file_type: fileType.IMAGE,
+        meta: {
+          size: Number(image.size),
+          alt,
+          blurHash: '',
+        },
+        hash_key: hashKey,
+      });
+    } catch (error) {
+      throw new BadRequestException('something went wrong while saving image!');
     }
   }
 
@@ -226,7 +271,6 @@ export class GamesService {
           model: Like,
         },
       ],
-      group: ['games.id'], // Group by the game ID to ensure correct counting
     });
     if (!game) {
       throw new NotFoundException('No game was found.');
