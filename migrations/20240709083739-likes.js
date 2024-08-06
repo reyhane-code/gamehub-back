@@ -16,8 +16,17 @@ module.exports = {
       },
       game_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: { model: 'games', key: 'id' },
+      },
+      comment_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: { model: 'comments', key: 'id' },
+      },
+      entity_type: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       createdAt: {
         type: Sequelize.DATE,

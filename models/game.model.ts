@@ -21,6 +21,8 @@ import { PublisherGame } from './publisher_game.model';
 import { User } from './user.model';
 import { Like } from './like.model';
 import { GameFile } from './game_file.model';
+import { Comment } from './comment.model';
+import { Bookmark } from './bookmark.model';
 
 @Table({ tableName: TableName.GAMES })
 export class Game extends Model {
@@ -57,6 +59,12 @@ export class Game extends Model {
 
   @HasMany(() => Like)
   likes: Like[];
+
+  @HasMany(() => Comment)
+  comments: Comment[];
+
+  @HasMany(() => Bookmark)
+  bookmarks: Bookmark[];
 
   @HasMany(() => GameFile)
   files: GameFile[];
