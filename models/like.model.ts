@@ -13,6 +13,7 @@ import {
 import { TableName } from 'src/enums/database.enum';
 import { User } from './user.model';
 import { Game } from './game.model';
+import { Comment } from './comment.model';
 
 @Table({ tableName: TableName.LIKES })
 export class Like extends Model {
@@ -23,6 +24,13 @@ export class Like extends Model {
   @ForeignKey(() => Game)
   @Column(DataType.INTEGER)
   game_id: number;
+
+  @ForeignKey(() => Comment)
+  @Column(DataType.INTEGER)
+  comment_id: number;
+
+  @Column(DataType.STRING)
+  entity_type: string;
 
   @CreatedAt
   createdAt: Date;

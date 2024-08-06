@@ -10,26 +10,46 @@ import { LikesService } from './likes.service';
 import { AuthGuard } from '../guards/auth.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { IUser } from 'src/users/interfaces/user.interface';
+import { LikeAbleEntity } from 'src/enums/database.enum';
 
 @Controller('likes')
 export class LikesController {
   constructor(private likesService: LikesService) {}
 
   @UseGuards(AuthGuard)
-  @Post('/:id')
-  likeGame(@Param('id') id: string, @CurrentUser() user: IUser) {
-    return this.likesService.likeGame(id, user);
+  @Post('/:entityType/:entityId')
+  async like(
+    @Param('entityType') entityType: LikeAbleEntity,
+    @Param('entityId') entityId: number,
+    @CurrentUser() user: IUser,
+  ) {
+    return this.likesService.likeEntity(user.id, entityId, entityType);
   }
 
   @UseGuards(AuthGuard)
-  @Delete('/:id')
-  removeLike(@Param('id') id: number, @CurrentUser() user: IUser) {
-    return this.likesService.removeLike(id, user);
+  @Delete('/:entityType/:entityId')
+  async unlike(
+    @Param('entityType') entityType: LikeAbleEntity,
+    @Param('entityId') entityId: number,
+    @CurrentUser() user: IUser,
+  ) {
+    return this.likesService.unlikeEntity(user.id, entityId, entityType);
+  }
+
+  @Get('/:entityType/:entityId')
+  async getLikes(
+    @Param('entityType') entityType: LikeAbleEntity,
+    @Param('entityId') entityId: number,
+  ) {
+    return this.likesService.getLikes(entityId, entityType);
   }
 
   @UseGuards(AuthGuard)
-  @Get('/user')
-  getUserLikedGames(@CurrentUser() user: IUser) {
-    return this.likesService.userLikedGames(user);
+  @Get('/user/:entityType')
+  async getUserLikes(
+    @Param('entityType') entityType: LikeAbleEntity,
+    @CurrentUser() user: IUser,
+  ) {
+    return this.likesService.findUserLikedEntity(user.id, entityType);
   }
 }
