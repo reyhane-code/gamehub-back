@@ -7,7 +7,7 @@ import {
 import { Game } from 'models/game.model';
 import { Genre } from 'models/genre.model';
 import { Platform } from 'models/platform.model';
-import { Repositories } from 'src/enums/database.enum';
+import { Repository } from 'src/enums/database.enum';
 import { IGamesQuery } from './interfaces/games.interface';
 import { Publisher } from 'models/publisher.model';
 import { paginationDefault } from 'src/constance';
@@ -27,14 +27,14 @@ import { fileType } from 'src/enums/file-type.enum';
 @Injectable()
 export class GamesService {
   constructor(
-    @Inject(Repositories.GAMES) private gamesRepository: typeof Game,
-    @Inject(Repositories.PLATFORM_GAMES)
+    @Inject(Repository.GAMES) private gamesRepository: typeof Game,
+    @Inject(Repository.PLATFORM_GAMES)
     private platformGamesRepository: typeof PlatformGame,
-    @Inject(Repositories.PUBLISHER_GAMES)
+    @Inject(Repository.PUBLISHER_GAMES)
     private publisherGamesRepository: typeof PublisherGame,
-    @Inject(Repositories.GENRE_GAMES)
+    @Inject(Repository.GENRE_GAMES)
     private genreGamesRepository: typeof GenreGame,
-    @Inject(Repositories.GAME_FILES)
+    @Inject(Repository.GAME_FILES)
     private gameFilesRepository: typeof GameFile,
   ) {}
 

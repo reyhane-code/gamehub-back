@@ -3,27 +3,27 @@ import { GameFile } from 'models/game_file.model';
 import { GenreGame } from 'models/genre_game.model';
 import { PlatformGame } from 'models/platform_game.model';
 import { PublisherGame } from 'models/publisher_game.model';
-import { Repositories } from 'src/enums/database.enum';
+import { Repository } from 'src/enums/database.enum';
 
 export const gamesProviders = [
   {
-    provide: Repositories.GAMES,
+    provide: Repository.GAMES,
     useValue: Game,
   },
   {
-    provide: Repositories.PLATFORM_GAMES,
+    provide: Repository.PLATFORM_GAMES,
     useValue: PlatformGame,
   },
   {
-    provide: Repositories.PUBLISHER_GAMES,
+    provide: Repository.PUBLISHER_GAMES,
     useValue: PublisherGame,
   },
   {
-    provide: Repositories.GENRE_GAMES,
+    provide: Repository.GENRE_GAMES,
     useValue: GenreGame,
   },
   {
-    provide: Repositories.GAME_FILES,
+    provide: Repository.GAME_FILES,
     useValue: GameFile,
   },
 ];

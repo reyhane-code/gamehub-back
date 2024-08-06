@@ -18,6 +18,7 @@ import { SmsModule } from './sms/sms.module';
 import { LikesModule } from './likes/likes.module';
 import { FilesModule } from './files/files.module';
 import { MulterModule } from '@nestjs/platform-express';
+import { BookmarksModule } from './bookmarks/bookmarks.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { MulterModule } from '@nestjs/platform-express';
     SmsModule,
     LikesModule,
     FilesModule,
+    BookmarksModule,
   ],
   controllers: [AppController],
   providers: [

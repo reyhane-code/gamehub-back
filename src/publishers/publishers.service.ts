@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Publisher } from 'models/publisher.model';
-import { Repositories } from 'src/enums/database.enum';
+import { Repository } from 'src/enums/database.enum';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { AddPublisherDto } from './dtos/add-publisher.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
@@ -14,7 +14,7 @@ import { UpdatePublisherDto } from './dtos/update-publisher.dto';
 @Injectable()
 export class PublishersService {
   constructor(
-    @Inject(Repositories.PUBLISHERS)
+    @Inject(Repository.PUBLISHERS)
     private publishersRepository: typeof Publisher,
   ) {}
 

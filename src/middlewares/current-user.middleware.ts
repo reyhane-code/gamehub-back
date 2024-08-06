@@ -10,7 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { User } from 'models/user.model';
-import { Repositories } from 'src/enums/database.enum';
+import { Repository } from 'src/enums/database.enum';
 
 @Injectable()
 export class CurrentUserMiddleware implements NestMiddleware {
@@ -18,7 +18,7 @@ export class CurrentUserMiddleware implements NestMiddleware {
     private configService: ConfigService,
     private jwtService: JwtService,
     @Inject(CACHE_MANAGER) protected cacheManager: Cache,
-    @Inject(Repositories.USERS) private userRepository: typeof User,
+    @Inject(Repository.USERS) private userRepository: typeof User,
   ) {}
 
   async use(req: Request, _: Response, next: NextFunction) {
