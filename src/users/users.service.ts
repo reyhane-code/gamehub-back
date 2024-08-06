@@ -11,12 +11,12 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { UserPasswordDto } from './dtos/user-password.dto';
 import { User } from '../../models/user.model';
-import { Repositories, Role } from 'src/enums/database.enum';
+import { Repository, Role } from 'src/enums/database.enum';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @Inject(Repositories.USERS)
+    @Inject(Repository.USERS)
     private usersRepository: typeof User,
   ) {}
 

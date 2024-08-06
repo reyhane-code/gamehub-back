@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { createReadStream, ReadStream } from 'fs';
 import { join } from 'path';
-import { Repositories } from '../enums/database.enum';
+import { Repository } from '../enums/database.enum';
 import { changeProperties } from '../helpers/sharp-helper';
 import { GetFileQueryDto } from './dtos/get-file-query.dto';
 import { fileType } from './enums/file-type.enum';
@@ -15,7 +15,7 @@ import { GameFile } from 'models/game_file.model';
 @Injectable()
 export class FilesService {
   constructor(
-    @Inject(Repositories.GAME_FILES)
+    @Inject(Repository.GAME_FILES)
     private gameFilesRepository: typeof GameFile,
   ) {}
 

@@ -9,9 +9,10 @@ export enum TableName {
   PLATFORM_GAMES = 'platform_games',
   LIKES = 'likes',
   GAME_FILES = 'game_files',
+  BOOKMARKS = 'bookmarks',
 }
 
-export enum Repositories {
+export enum Repository {
   USERS = 'USERS_REPOSITORY',
   GAMES = 'GAMES_REPOSITORY',
   PUBLISHERS = 'PUBLISHERS_REPOSITORY',
@@ -22,6 +23,7 @@ export enum Repositories {
   PLATFORM_GAMES = 'PLATFORM_GAMES_REPOSITORY',
   LIKES = 'LIKES_REPOSITORY',
   GAME_FILES = 'GAME_FILES_REPOSITORY',
+  BOOKMARKS = 'BOOKMARKS_REPOSITORY',
 }
 
 export enum Role {
@@ -29,3 +31,4 @@ export enum Role {
   ADMIN = 'admin',
   USER = 'user',
 }
+

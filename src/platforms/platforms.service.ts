@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Platform } from 'models/platform.model';
-import { Repositories } from 'src/enums/database.enum';
+import { Repository } from 'src/enums/database.enum';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { AddPlatformDto } from './dtos/add-platform.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
@@ -15,7 +15,7 @@ import { toSlug } from 'src/helpers/helpers';
 @Injectable()
 export class PlatformsService {
   constructor(
-    @Inject(Repositories.PLATFORMS)
+    @Inject(Repository.PLATFORMS)
     private platformsRepository: typeof Platform,
   ) {}
 

@@ -1,13 +1,13 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { Game } from "models/game.model";
 import { Like } from "models/like.model";
-import { Repositories } from "src/enums/database.enum";
+import { Repository } from "src/enums/database.enum";
 import { IUser } from "src/users/interfaces/user.interface";
 
 @Injectable()
 export class LikesService {
   constructor(
-    @Inject(Repositories.LIKES) private likesRepository: typeof Like
+    @Inject(Repository.LIKES) private likesRepository: typeof Like
   ) {}
 
   async likeGame(gameId: string, user: IUser) {

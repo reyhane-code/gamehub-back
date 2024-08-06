@@ -1,9 +1,9 @@
 import { User } from 'models/user.model';
-import { Repositories } from 'src/enums/database.enum';
+import { Repository } from 'src/enums/database.enum';
 
 export const authProviders = [
   {
-    provide: Repositories.USERS,
+    provide: Repository.USERS,
     useValue: User,
   },
 ];

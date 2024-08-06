@@ -1,9 +1,9 @@
 import { Genre } from "models/genre.model";
-import { Repositories } from "src/enums/database.enum";
+import { Repository } from "src/enums/database.enum";
 
 export const genresProviders = [
   {
-    provide: Repositories.GENRES,
+    provide: Repository.GENRES,
     useValue: Genre,
   },
 ];

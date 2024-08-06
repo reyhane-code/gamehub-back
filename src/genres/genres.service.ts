@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Genre } from 'models/genre.model';
-import { Repositories } from 'src/enums/database.enum';
+import { Repository } from 'src/enums/database.enum';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { AddGenreDto } from './dtos/add-genre.dto';
@@ -14,7 +14,7 @@ import { UpdateGenreDto } from './dtos/update-genre.dto';
 @Injectable()
 export class GenresService {
   constructor(
-    @Inject(Repositories.GENRES) private genresRepository: typeof Genre,
+    @Inject(Repository.GENRES) private genresRepository: typeof Genre,
   ) {}
 
   async addGenre({ name }: AddGenreDto, user: IUser) {

@@ -1,9 +1,9 @@
 import { Platform } from "models/platform.model";
-import { Repositories } from "src/enums/database.enum";
+import { Repository } from "src/enums/database.enum";
 
 export const platformsProviders = [
   {
-    provide: Repositories.PLATFORMS,
+    provide: Repository.PLATFORMS,
     useValue: Platform,
   },
 ];

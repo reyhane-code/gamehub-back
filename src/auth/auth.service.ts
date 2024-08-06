@@ -19,7 +19,7 @@ import { LoginWithPasswordDto } from './dtos/login-with-password.dto';
 import { GetValidationTokenDto } from './dtos/get-validation-token.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { User } from 'models/user.model';
-import { Repositories } from '../enums/database.enum';
+import { Repository } from '../enums/database.enum';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +29,7 @@ export class AuthService {
     private smsService: SmsService,
 
     @Inject(CACHE_MANAGER) protected cacheManager: Cache,
-    @Inject(Repositories.USERS) private usersRepository: typeof User,
+    @Inject(Repository.USERS) private usersRepository: typeof User,
   ) {}
 
   private async verifyRefreshTokenAndGetUserId(
