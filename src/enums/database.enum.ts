@@ -10,6 +10,7 @@ export enum TableName {
   LIKES = 'likes',
   GAME_FILES = 'game_files',
   BOOKMARKS = 'bookmarks',
+  COMMENTS = 'comments',
 }
 
 export enum Repository {
@@ -24,6 +25,7 @@ export enum Repository {
   LIKES = 'LIKES_REPOSITORY',
   GAME_FILES = 'GAME_FILES_REPOSITORY',
   BOOKMARKS = 'BOOKMARKS_REPOSITORY',
+  COMMENTS = 'COMMENTS_REPOSITORY',
 }
 
 export enum Role {
@@ -32,3 +34,15 @@ export enum Role {
   USER = 'user',
 }
 
+export enum BookmarkAbleEntity {
+  GAME = 'game',
+}
+
+export enum CommentAbleEntity {
+  GAME = 'game',
+}
+
+export enum LikeAbleEntity {
+  GAME = 'game',
+  COMMENT = 'comment',
+}

@@ -17,7 +17,7 @@ export class BookmarksController {
 
   @UseGuards(AuthGuard)
   @Post('/:entityType/:entityId')
-  async like(
+  async bookmark(
     @Param('entityType') entityType: string,
     @Param('entityId') entityId: number,
     @CurrentUser() user: IUser,
@@ -27,7 +27,7 @@ export class BookmarksController {
 
   @UseGuards(AuthGuard)
   @Delete('/:entityType/:entityId')
-  async unlike(
+  async removeBookmark(
     @Param('entityType') entityType: string,
     @Param('entityId') entityId: number,
     @CurrentUser() user: IUser,
@@ -36,7 +36,7 @@ export class BookmarksController {
   }
 
   @Get('/:entityType/:entityId')
-  async getLikes(
+  async getBookmarks(
     @Param('entityType') entityType: string,
     @Param('entityId') entityId: number,
   ) {
@@ -45,7 +45,7 @@ export class BookmarksController {
 
   @UseGuards(AuthGuard)
   @Get('/user/:entityType')
-  async getUserLikes(
+  async getUserBookmarkedEntities(
     @Param('entityType') entityType: string,
     @CurrentUser() user: IUser,
   ) {

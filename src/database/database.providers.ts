@@ -1,4 +1,5 @@
 import { Bookmark } from 'models/bookmark.model';
+import { Comment } from 'models/comments.model';
 import { Game } from 'models/game.model';
 import { GameFile } from 'models/game_file.model';
 import { Genre } from 'models/genre.model';
@@ -35,6 +36,7 @@ export const databaseProviders = [
         Like,
         GameFile,
         Bookmark,
+        Comment,
       ]);
       await sequelize.sync();
       return sequelize;
