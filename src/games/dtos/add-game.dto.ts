@@ -28,19 +28,19 @@ export class AddGameDto {
   metacritic?: number;
 
   @Expose()
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  platformId: number;
+  platformId: string;
 
   @Expose()
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  publisherId: number;
+  publisherId: string;
 
   @Expose()
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  genreId: number;
+  genreId: string;
 
   @Expose()
   @IsString()

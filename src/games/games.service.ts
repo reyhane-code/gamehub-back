@@ -194,22 +194,22 @@ export class GamesService {
 
   async addGameToRelationTables(
     gameId: number,
-    platformId: number,
-    publisherId: number,
-    genreId: number,
+    platformId: string,
+    publisherId: string,
+    genreId: string,
   ) {
     try {
       await this.platformGamesRepository.create({
         game_id: gameId,
-        platform_id: platformId,
+        platform_id: Number(platformId),
       });
       await this.publisherGamesRepository.create({
         game_id: gameId,
-        publisher_id: publisherId,
+        publisher_id: Number(publisherId),
       });
       await this.genreGamesRepository.create({
         game_id: gameId,
-        genre_id: genreId,
+        genre_id: Number(genreId),
       });
     } catch (error) {
       throw new BadRequestException('something went wrong');
