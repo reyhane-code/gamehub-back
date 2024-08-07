@@ -1,5 +1,5 @@
 import { Bookmark } from 'models/bookmark.model';
-import { Comment } from 'models/comments.model';
+import { Comment } from 'models/comment.model';
 import { Game } from 'models/game.model';
 import { GameFile } from 'models/game_file.model';
 import { Genre } from 'models/genre.model';

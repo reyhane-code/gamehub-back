@@ -1,5 +1,5 @@
 import { AddGenreDto } from 'src/genres/dtos/add-genre.dto';
-import { createAdminUser } from './utils/admin';
+import { createAdminUser } from './admin';
 import * as request from 'supertest';
 import { AddPlatformDto } from 'src/platforms/dtos/add-platform.dto';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
@@ -43,6 +43,39 @@ export const addPublisher = async (
     .post('/publishers')
     .set('authorization', `Bearer ${accessToken}`)
     .send({ name })
+    .expect(status)
+    .then((res) => res.body);
+};
+
+interface Game {
+  name: string;
+  description?: string;
+  background_image: string;
+  rating_top?: number;
+  metacritic?: number;
+}
+
+export const addGame = async (
+  app: NestFastifyApplication,
+  status: number = 201,
+  { name, description, background_image, metacritic }: Game,
+) => {
+  const genre = await addGenre(app, 201, { name: 'new-genre' });
+  const platform = await addPlatform(app, 201, { name: 'new-platform' });
+  const publisher = await addPublisher(app, 201, { name: 'new-publisher' });
+  const accessToken = await createAdminUser(app);
+  return request(app.getHttpServer())
+    .post('/games')
+    .set('authorization', `Bearer ${accessToken}`)
+    .send({
+      name,
+      description,
+      background_image,
+      metacritic,
+      publisherId: publisher.id,
+      genreId: genre.id,
+      platformId: platform.id,
+    })
     .expect(status)
     .then((res) => res.body);
 };

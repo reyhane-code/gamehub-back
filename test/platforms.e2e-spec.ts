@@ -11,7 +11,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { UpdatedPlatformDto } from 'src/platforms/dtos/update-platform.dto';
 import { toSlug } from 'src/helpers/helpers';
 import { createAdminUser } from './utils/admin';
-import { addPlatform } from './add';
+import { addPlatform } from './utils/add';
 
 const DEFAULT_PLATFORM = 'PC';
 
