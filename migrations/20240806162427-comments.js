@@ -33,7 +33,7 @@ module.exports = {
         allowNull: false,
       },
       rate: {
-        type: Sequelize.TINYINT,
+        type: Sequelize.INTEGER,
         allowNull: true,
       },
       createdAt: {

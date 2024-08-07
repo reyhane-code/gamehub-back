@@ -10,7 +10,7 @@ import { TableName } from 'src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
 import { UpdateGenreDto } from 'src/genres/dtos/update-genre.dto';
 import { createAdminUser } from './utils/admin';
-import { addGenre } from './add';
+import { addGenre } from './utils/add';
 const DEFAULT_GENRE = 'Action';
 
 let context: Context;

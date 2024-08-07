@@ -32,7 +32,7 @@ export class Comment extends Model {
   @Column(DataType.TEXT)
   content: string;
 
-  @Column({ type: DataType.TINYINT, allowNull: true })
+  @Column({ type: DataType.INTEGER, allowNull: true })
   rate: Rate;
 
   @ForeignKey(() => Comment)

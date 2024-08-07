@@ -1,4 +1,4 @@
-import { Comment } from 'models/comments.model';
+import { Comment } from 'models/comment.model';
 import { Repository } from 'src/enums/database.enum';
 
 export const commentsProviders = [

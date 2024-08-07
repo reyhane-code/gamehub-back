@@ -11,7 +11,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { createAdminUser } from './utils/admin';
 import { toSlug } from 'src/helpers/helpers';
 import { UpdateGameDto } from 'src/games/dtos/update-game.dto';
-import { addGenre, addPlatform, addPublisher } from './add';
+import { addGenre, addPlatform, addPublisher, addGame } from './utils/add';
 
 const DEFAULT_GAME = {
   name: 'GAME default',
@@ -57,30 +57,6 @@ describe('Games System (e2e)', () => {
     await app.getHttpAdapter().getInstance().ready();
   });
 
-  const addGame = async (
-    status: number = 201,
-    { name, description, background_image, metacritic }: Game,
-  ) => {
-    const genre = await addGenre(app, 201, { name: 'new-genre' });
-    const platform = await addPlatform(app, 201, { name: 'new-platform' });
-    const publisher = await addPublisher(app, 201, { name: 'new-publisher' });
-    const accessToken = await createAdminUser(app);
-    return request(app.getHttpServer())
-      .post('/games')
-      .set('authorization', `Bearer ${accessToken}`)
-      .send({
-        name,
-        description,
-        background_image,
-        metacritic,
-        publisherId: publisher.id,
-        genreId: genre.id,
-        platformId: platform.id,
-      })
-      .expect(status)
-      .then((res) => res.body);
-  };
-
   const updateGame = async (
     status: number = 200,
     id: number,
@@ -120,12 +96,12 @@ describe('Games System (e2e)', () => {
   };
 
   it('adds a new game', async () => {
-    const body = await addGame(201, DEFAULT_GAME);
+    const body = await addGame(app, 201, DEFAULT_GAME);
     expect(body.name).toEqual(DEFAULT_GAME.name);
   });
 
   it('updates an exsisting game', async () => {
-    const game = await addGame(201, {
+    const game = await addGame(app, 201, {
       name: 'game5',
       description: 'desc5',
       metacritic: 500,
@@ -141,7 +117,7 @@ describe('Games System (e2e)', () => {
   });
 
   it('delete an exsisting game', async () => {
-    const game = await addGame(201, DEFAULT_GAME);
+    const game = await addGame(app, 201, DEFAULT_GAME);
     await deleteGame(200, game.id);
   });
 
@@ -150,19 +126,19 @@ describe('Games System (e2e)', () => {
   });
 
   it('finds all games', async () => {
-    await addGame(201, {
+    await addGame(app, 201, {
       name: 'game1',
       description: 'desc1',
       metacritic: 200,
       background_image: 'bullshiturl1',
     });
-    await addGame(201, {
+    await addGame(app, 201, {
       name: 'game2',
       description: 'desc2',
       metacritic: 200,
       background_image: 'bullshiturl2',
     });
-    await addGame(201, {
+    await addGame(app, 201, {
       name: 'game3',
       description: 'desc3',
       metacritic: 200,
@@ -183,7 +159,7 @@ describe('Games System (e2e)', () => {
   });
 
   it('finds game by slug', async () => {
-    const game = await addGame(201, {
+    const game = await addGame(app, 201, {
       name: 'game4',
       description: 'desc4',
       metacritic: 200,
@@ -198,7 +174,7 @@ describe('Games System (e2e)', () => {
 
   it('returns error if user is not admin when finding user games', async () => {
     const accessToken = 'dummyAccessTokenForTesting';
-    await addGame(201, DEFAULT_GAME);
+    await addGame(app, 201, DEFAULT_GAME);
     await getUsergames(accessToken, 401);
   });
 

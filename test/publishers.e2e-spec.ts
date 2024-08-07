@@ -10,7 +10,7 @@ import { TableName } from 'src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
 import { UpdatePublisherDto } from 'src/publishers/dtos/update-publisher.dto';
 import { createAdminUser } from './utils/admin';
-import { addPublisher } from './add';
+import { addPublisher } from './utils/add';
 
 const DEFAULT_PUBLISHER = 'ubsoft';
 
