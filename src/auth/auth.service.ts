@@ -184,25 +184,25 @@ export class AuthService {
 
       const message = `با سلام کد تایید شما در بیس پروژه : ${code}`;
 
-      let number: SmsSenderNumbers = SmsSenderNumbers.NUMBER_3500;
-      if (+tryNumber > 0) {
-        number =
-          +tryNumber % 2 == 0
-            ? SmsSenderNumbers.NUMBER_9000
-            : SmsSenderNumbers.NUMBER_1000;
-      }
+      // let number: SmsSenderNumbers = SmsSenderNumbers.NUMBER_3500;
+      // if (+tryNumber > 0) {
+      //   number =
+      //     +tryNumber % 2 == 0
+      //       ? SmsSenderNumbers.NUMBER_9000
+      //       : SmsSenderNumbers.NUMBER_1000;
+      // }
 
-      const sendSmsStatus = await this.smsService.sendSms({
-        message,
-        senderNumber: number,
-        recipientList: [phone],
-      });
+      // const sendSmsStatus = await this.smsService.sendSms({
+      //   message,
+      //   senderNumber: number,
+      //   recipientList: [phone],
+      // });
 
       return {
         validationToken,
         code, // todo: must be remove
         hasPassword,
-        sendSmsStatus: SmsStatus.SUCCESS, // must be change to sendSmsStatus from smsService.sendSms
+        // sendSmsStatus: SmsStatus.SUCCESS, // must be change to sendSmsStatus from smsService.sendSms
       };
     }
 

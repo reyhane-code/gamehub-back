@@ -50,7 +50,6 @@ export const addPublisher = async (
 interface Game {
   name: string;
   description?: string;
-  background_image: string;
   rating_top?: number;
   metacritic?: number;
 }
@@ -58,7 +57,7 @@ interface Game {
 export const addGame = async (
   app: NestFastifyApplication,
   status: number = 201,
-  { name, description, background_image, metacritic }: Game,
+  { name, description, metacritic }: Game,
 ) => {
   const genre = await addGenre(app, 201, { name: 'new-genre' });
   const platform = await addPlatform(app, 201, { name: 'new-platform' });
@@ -70,7 +69,6 @@ export const addGame = async (
     .send({
       name,
       description,
-      background_image,
       metacritic,
       publisherId: publisher.id,
       genreId: genre.id,

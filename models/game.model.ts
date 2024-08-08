@@ -35,7 +35,7 @@ export class Game extends Model {
   @Column({ type: DataType.STRING, allowNull: false })
   slug: string;
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column({ type: DataType.STRING, allowNull: true })
   background_image: string;
 
   @Column({ type: DataType.STRING, allowNull: true })

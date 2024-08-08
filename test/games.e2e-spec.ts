@@ -16,14 +16,12 @@ import { addGenre, addPlatform, addPublisher, addGame } from './utils/add';
 const DEFAULT_GAME = {
   name: 'GAME default',
   description: 'description for the default game',
-  background_image: 'fakeurlforgamebackgroundimage',
   metacritic: 20,
 };
 
 interface Game {
   name: string;
   description?: string;
-  background_image: string;
   rating_top?: number;
   metacritic?: number;
 }
@@ -105,7 +103,6 @@ describe('Games System (e2e)', () => {
       name: 'game5',
       description: 'desc5',
       metacritic: 500,
-      background_image: 'bullshiturl5',
     });
     await updateGame(200, game.id, { name: 'new-gameName' });
     const updatedgame = await getGameBySlug(200, toSlug('new-gameName'));
@@ -130,19 +127,16 @@ describe('Games System (e2e)', () => {
       name: 'game1',
       description: 'desc1',
       metacritic: 200,
-      background_image: 'bullshiturl1',
     });
     await addGame(app, 201, {
       name: 'game2',
       description: 'desc2',
       metacritic: 200,
-      background_image: 'bullshiturl2',
     });
     await addGame(app, 201, {
       name: 'game3',
       description: 'desc3',
       metacritic: 200,
-      background_image: 'bullshiturl3',
     });
     const games = await request(app.getHttpServer())
       .get('/games')
@@ -163,7 +157,6 @@ describe('Games System (e2e)', () => {
       name: 'game4',
       description: 'desc4',
       metacritic: 200,
-      background_image: 'bullshiturl4',
     });
     await getGameBySlug(200, game.slug);
   });
@@ -190,7 +183,6 @@ describe('Games System (e2e)', () => {
         name: 'game1',
         description: 'desc1',
         metacritic: 200,
-        background_image: 'bullshiturl1',
         platformId: platform.id,
         genreId: genre.id,
         publisherId: publisher.id,

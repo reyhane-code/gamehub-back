@@ -6,10 +6,17 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { Context } from './utils/context';
-import { LikeAbleEntity, TableName } from 'src/enums/database.enum';
+import { CommentAbleEntity, TableName } from 'src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
 import { addGame } from './utils/add';
 import { getValidationDataAndRegister } from './utils/login';
+import { AddCommentDto } from 'src/comments/dtos/add-comment.dto';
+import { UpdateCommentDto } from 'src/comments/dtos/update-comment.dto';
+
+const DEFAULT_COMMENT = {
+  content: 'the comment content',
+  rete: 5,
+};
 
 let context: Context;
 beforeAll(async () => {
@@ -24,7 +31,7 @@ beforeEach(async () => {
 //   return context.close();
 // });
 
-describe('Likes System (e2e)', () => {
+describe('Comments System (e2e)', () => {
   let app: NestFastifyApplication;
 
   beforeEach(async () => {
@@ -40,119 +47,125 @@ describe('Likes System (e2e)', () => {
     await app.getHttpAdapter().getInstance().ready();
   });
 
-  const like = async (
+  const addComment = async (
     status: number = 201,
-    entityType: LikeAbleEntity,
+    entityType: CommentAbleEntity,
     entityId: number,
+    body: AddCommentDto = DEFAULT_COMMENT,
   ) => {
     const { accessToken } = await getValidationDataAndRegister(app);
     return request(app.getHttpServer())
-      .post(`/likes/${entityType}/${entityId}`)
+      .post(`/comments/${entityType}/${entityId}`)
       .set('authorization', `Bearer ${accessToken}`)
+      .send(body)
       .expect(status)
       .then((res) => res.body);
   };
 
-  const unlike = async (
+  const deleteComment = async (
     status: number = 200,
-    entityType: LikeAbleEntity,
     entityId: number,
     accessToken: string,
   ) => {
     return request(app.getHttpServer())
-      .delete(`/likes/${entityType}/${entityId}`)
+      .delete(`/comments/${entityId}`)
       .set('authorization', `Bearer ${accessToken}`)
       .expect(status)
       .then((res) => res.body);
   };
 
-  const getLikes = async (
+  const updateComment = async (
     status: number = 200,
-    entityType: LikeAbleEntity,
+    entityId: number,
+    body: UpdateCommentDto,
+    accessToken: string,
+  ) => {
+    return request(app.getHttpServer())
+      .put(`/comments/${entityId}`)
+      .set('authorization', `Bearer ${accessToken}`)
+      .send(body)
+      .expect(status)
+      .then((res) => res.body);
+  };
+
+  const getComments = async (
+    status: number = 200,
+    entityType: CommentAbleEntity,
     entityId: number,
   ) => {
     return request(app.getHttpServer())
-      .get(`/likes/${entityType}/${entityId}`)
+      .get(`/comments/${entityType}/${entityId}`)
       .expect(status)
       .then((res) => res.body);
   };
 
-  const getUserLikes = async (
+  const getUserComments = async (
     accessToken: string,
     status: number = 200,
-    entityType: LikeAbleEntity,
+    entityType: CommentAbleEntity,
   ) => {
     return request(app.getHttpServer())
-      .get(`/likes/user/${entityType}`)
+      .get(`/bookmarks/user/${entityType}`)
       .set('authorization', `Bearer ${accessToken}`)
       .expect(status)
       .then((res) => res.body);
   };
 
-  it('likes a game', async () => {
+  it('comments on a game', async () => {
     const game = await addGame(app, 201, {
       name: 'game1',
       description: 'desc1',
       metacritic: 200,
     });
-    await like(201, LikeAbleEntity.GAME, game.id);
+    await addComment(201, CommentAbleEntity.GAME, game.id);
   });
 
-  it('returns confilct when liking more than once', async () => {
-    const game = await addGame(app, 201, {
-      name: 'game1',
-      description: 'desc1',
-      metacritic: 200,
-    });
-    await like(201, LikeAbleEntity.GAME, game.id);
-    await like(409, LikeAbleEntity.GAME, game.id);
-  });
-
-  it('unlikes a game', async () => {
+  it('deletes comment on a game', async () => {
     const game = await addGame(app, 201, {
       name: 'game1',
       description: 'desc1',
       metacritic: 200,
     });
     const { accessToken } = await getValidationDataAndRegister(app);
-    await request(app.getHttpServer())
-      .post(`/likes/game/${game.id}`)
-      .set('authorization', `Bearer ${accessToken}`)
-      .expect(201)
-      .then((res) => res.body);
 
-    unlike(200, LikeAbleEntity.GAME, game.id, accessToken);
+    const comment = await addComment(
+      201,
+      CommentAbleEntity.GAME,
+      game.id,
+      DEFAULT_COMMENT,
+    );
+    deleteComment(200, comment.id, accessToken);
   });
 
-  it('returns error while deleting a non-existing game', async () => {
+  it('returns error while deleting a non-existing comment', async () => {
     const { accessToken } = await getValidationDataAndRegister(app);
-    await unlike(404, LikeAbleEntity.GAME, 21, accessToken);
+    await deleteComment(404, 21, accessToken);
   });
 
-  it('finds all likes for a game', async () => {
+  it('finds all comments for a game', async () => {
     const game = await addGame(app, 201, {
       name: 'game1',
       description: 'desc1',
       metacritic: 200,
     });
 
-    await like(201, LikeAbleEntity.GAME, game.id);
-    await like(201, LikeAbleEntity.GAME, game.id);
-    await like(201, LikeAbleEntity.GAME, game.id);
-    await like(201, LikeAbleEntity.GAME, game.id);
-    const likes = await getLikes(200, LikeAbleEntity.GAME, game.id);
-    expect(likes).toBeDefined();
+    await addComment(201, CommentAbleEntity.GAME, game.id);
+    await addComment(201, CommentAbleEntity.GAME, game.id);
+    await addComment(201, CommentAbleEntity.GAME, game.id);
+    await addComment(201, CommentAbleEntity.GAME, game.id);
+    const comments = await getComments(200, CommentAbleEntity.GAME, game.id);
+    expect(comments).toBeDefined();
   });
 
-  it('returns error if game has no likes', async () => {
+  it('returns error if game has no comments', async () => {
     return request(app.getHttpServer())
-      .get('/likes/game/258')
+      .get('/comments/game/258')
       .expect(404)
       .then((res) => res.body);
   });
 
-  it('finds user liked games', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+  it('finds user commentes', async () => {
+    const accessToken = await getValidationDataAndRegister(app);
     const game = await addGame(app, 201, {
       name: 'game1',
       description: 'desc1',
@@ -165,29 +178,36 @@ describe('Likes System (e2e)', () => {
     });
 
     await request(app.getHttpServer())
-      .post(`/likes/${LikeAbleEntity}/${game.id}`)
+      .post(`/comments/${CommentAbleEntity.GAME}/${game.id}`)
       .set('authorization', `Bearer ${accessToken}`)
+      .send(DEFAULT_COMMENT)
       .expect(201)
       .then((res) => res.body);
 
     await request(app.getHttpServer())
-      .post(`/likes/${LikeAbleEntity}/${game2.id}`)
+      .post(`/comments/${CommentAbleEntity.GAME}/${game2.id}`)
       .set('authorization', `Bearer ${accessToken}`)
+      .send(DEFAULT_COMMENT)
       .expect(201)
       .then((res) => res.body);
 
     await request(app.getHttpServer())
-      .get('/games')
+      .post(`/comments/${CommentAbleEntity.GAME}/${game.id}`)
       .set('authorization', `Bearer ${accessToken}`)
-      .expect(200)
+      .send({ content: 'new comment', rate: 2 })
+      .expect(201)
       .then((res) => res.body);
 
-    const likes = await getUserLikes(accessToken, 200, LikeAbleEntity.GAME);
-    expect(likes).toBeDefined();
+    const comments = await getUserComments(
+      accessToken,
+      200,
+      CommentAbleEntity.GAME,
+    );
+    expect(comments).toBeDefined();
   });
 
-  it('it returns error if user didnt like any game while getting user likes', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
-    await getUserLikes(accessToken, 404, LikeAbleEntity.GAME);
+  it('it returns error if user didnt like any game while getting user comments', async () => {
+    const accessToken = await getValidationDataAndRegister(app);
+    await getUserComments(accessToken, 404, CommentAbleEntity.GAME);
   });
 });
