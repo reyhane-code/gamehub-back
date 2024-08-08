@@ -23,7 +23,7 @@ module.exports = {
       },
       background_image: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       rating_top: {
         type: Sequelize.INTEGER,

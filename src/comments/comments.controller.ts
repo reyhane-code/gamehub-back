@@ -43,7 +43,7 @@ export class CommentsController {
   }
 
   @Get('/:entityType/:entityId')
-  async getBookmarks(
+  async getComments(
     @Param('entityType') entityType: CommentAbleEntity,
     @Param('entityId') entityId: number,
   ) {

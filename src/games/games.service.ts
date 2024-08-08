@@ -23,6 +23,7 @@ import { Like } from 'models/like.model';
 import { GameFile } from 'models/game_file.model';
 import { checkFilesMimetype } from 'src/helpers/image-storage';
 import { fileType } from 'src/enums/file-type.enum';
+import { generateHashKey } from 'src/helpers/file.helper';
 
 @Injectable()
 export class GamesService {
@@ -135,13 +136,13 @@ export class GamesService {
       if (imageFile) {
         checkFilesMimetype(imageFile.mimetype);
       }
-      const hashKey = imageFile.filename;
+      const hashKey = generateHashKey(35);
 
       const game = await this.gamesRepository.create({
         name,
         slug: toSlug(name),
         description,
-        background_image: hashKey,
+        background_image: imageFile ? hashKey : null,
         rating_top,
         metacritic,
         user_id: user.id,
@@ -194,9 +195,9 @@ export class GamesService {
 
   async addGameToRelationTables(
     gameId: number,
-    platformId: string,
-    publisherId: string,
-    genreId: string,
+    platformId: number,
+    publisherId: number,
+    genreId: number,
   ) {
     try {
       await this.platformGamesRepository.create({

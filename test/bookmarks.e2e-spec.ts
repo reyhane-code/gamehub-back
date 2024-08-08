@@ -6,7 +6,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { Context } from './utils/context';
-import { LikeAbleEntity, TableName } from 'src/enums/database.enum';
+import { BookmarkAbleEntity, TableName } from 'src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
 import { addGame } from './utils/add';
 import { getValidationDataAndRegister } from './utils/login';
@@ -24,7 +24,7 @@ beforeEach(async () => {
 //   return context.close();
 // });
 
-describe('Likes System (e2e)', () => {
+describe('Bookmarks System (e2e)', () => {
   let app: NestFastifyApplication;
 
   beforeEach(async () => {
@@ -40,75 +40,75 @@ describe('Likes System (e2e)', () => {
     await app.getHttpAdapter().getInstance().ready();
   });
 
-  const like = async (
+  const bookmark = async (
     status: number = 201,
-    entityType: LikeAbleEntity,
+    entityType: BookmarkAbleEntity,
     entityId: number,
   ) => {
     const { accessToken } = await getValidationDataAndRegister(app);
     return request(app.getHttpServer())
-      .post(`/likes/${entityType}/${entityId}`)
+      .post(`/bookmarks/${entityType}/${entityId}`)
       .set('authorization', `Bearer ${accessToken}`)
       .expect(status)
       .then((res) => res.body);
   };
 
-  const unlike = async (
+  const removeBookmark = async (
     status: number = 200,
-    entityType: LikeAbleEntity,
+    entityType: BookmarkAbleEntity,
     entityId: number,
     accessToken: string,
   ) => {
     return request(app.getHttpServer())
-      .delete(`/likes/${entityType}/${entityId}`)
+      .delete(`/bookmarks/${entityType}/${entityId}`)
       .set('authorization', `Bearer ${accessToken}`)
       .expect(status)
       .then((res) => res.body);
   };
 
-  const getLikes = async (
+  const getBookmarks = async (
     status: number = 200,
-    entityType: LikeAbleEntity,
+    entityType: BookmarkAbleEntity,
     entityId: number,
   ) => {
     return request(app.getHttpServer())
-      .get(`/likes/${entityType}/${entityId}`)
+      .get(`/bookmarks/${entityType}/${entityId}`)
       .expect(status)
       .then((res) => res.body);
   };
 
-  const getUserLikes = async (
+  const getUserBookmars = async (
     accessToken: string,
     status: number = 200,
-    entityType: LikeAbleEntity,
+    entityType: BookmarkAbleEntity,
   ) => {
     return request(app.getHttpServer())
-      .get(`/likes/user/${entityType}`)
+      .get(`/bookmarks/user/${entityType}`)
       .set('authorization', `Bearer ${accessToken}`)
       .expect(status)
       .then((res) => res.body);
   };
 
-  it('likes a game', async () => {
+  it('bookmarks a game', async () => {
     const game = await addGame(app, 201, {
       name: 'game1',
       description: 'desc1',
       metacritic: 200,
     });
-    await like(201, LikeAbleEntity.GAME, game.id);
+    await bookmark(201, BookmarkAbleEntity.GAME, game.id);
   });
 
-  it('returns confilct when liking more than once', async () => {
+  it('returns confilct when bookmarking more than once', async () => {
     const game = await addGame(app, 201, {
       name: 'game1',
       description: 'desc1',
       metacritic: 200,
     });
-    await like(201, LikeAbleEntity.GAME, game.id);
-    await like(409, LikeAbleEntity.GAME, game.id);
+    await bookmark(201, BookmarkAbleEntity.GAME, game.id);
+    await bookmark(409, BookmarkAbleEntity.GAME, game.id);
   });
 
-  it('unlikes a game', async () => {
+  it('unbookmarks a game', async () => {
     const game = await addGame(app, 201, {
       name: 'game1',
       description: 'desc1',
@@ -116,42 +116,42 @@ describe('Likes System (e2e)', () => {
     });
     const { accessToken } = await getValidationDataAndRegister(app);
     await request(app.getHttpServer())
-      .post(`/likes/game/${game.id}`)
+      .post(`/bookmarks/game/${game.id}`)
       .set('authorization', `Bearer ${accessToken}`)
       .expect(201)
       .then((res) => res.body);
 
-    unlike(200, LikeAbleEntity.GAME, game.id, accessToken);
+    removeBookmark(200, BookmarkAbleEntity.GAME, game.id, accessToken);
   });
 
   it('returns error while deleting a non-existing game', async () => {
     const { accessToken } = await getValidationDataAndRegister(app);
-    await unlike(404, LikeAbleEntity.GAME, 21, accessToken);
+    await removeBookmark(404, BookmarkAbleEntity.GAME, 21, accessToken);
   });
 
-  it('finds all likes for a game', async () => {
+  it('finds all bookmarks for a game', async () => {
     const game = await addGame(app, 201, {
       name: 'game1',
       description: 'desc1',
       metacritic: 200,
     });
 
-    await like(201, LikeAbleEntity.GAME, game.id);
-    await like(201, LikeAbleEntity.GAME, game.id);
-    await like(201, LikeAbleEntity.GAME, game.id);
-    await like(201, LikeAbleEntity.GAME, game.id);
-    const likes = await getLikes(200, LikeAbleEntity.GAME, game.id);
-    expect(likes).toBeDefined();
+    await bookmark(201, BookmarkAbleEntity.GAME, game.id);
+    await bookmark(201, BookmarkAbleEntity.GAME, game.id);
+    await bookmark(201, BookmarkAbleEntity.GAME, game.id);
+    await bookmark(201, BookmarkAbleEntity.GAME, game.id);
+    const bookmarks = await getBookmarks(200, BookmarkAbleEntity.GAME, game.id);
+    expect(bookmarks).toBeDefined();
   });
 
-  it('returns error if game has no likes', async () => {
+  it('returns error if game has no bookmarks', async () => {
     return request(app.getHttpServer())
-      .get('/likes/game/258')
+      .get('/bookmarks/game/258')
       .expect(404)
       .then((res) => res.body);
   });
 
-  it('finds user liked games', async () => {
+  it('finds user bookmarked games', async () => {
     const { accessToken } = await getValidationDataAndRegister(app);
     const game = await addGame(app, 201, {
       name: 'game1',
@@ -165,13 +165,13 @@ describe('Likes System (e2e)', () => {
     });
 
     await request(app.getHttpServer())
-      .post(`/likes/${LikeAbleEntity}/${game.id}`)
+      .post(`/bookmarks/${BookmarkAbleEntity}/${game.id}`)
       .set('authorization', `Bearer ${accessToken}`)
       .expect(201)
       .then((res) => res.body);
 
     await request(app.getHttpServer())
-      .post(`/likes/${LikeAbleEntity}/${game2.id}`)
+      .post(`/bookmarks/${BookmarkAbleEntity}/${game2.id}`)
       .set('authorization', `Bearer ${accessToken}`)
       .expect(201)
       .then((res) => res.body);
@@ -182,12 +182,16 @@ describe('Likes System (e2e)', () => {
       .expect(200)
       .then((res) => res.body);
 
-    const likes = await getUserLikes(accessToken, 200, LikeAbleEntity.GAME);
-    expect(likes).toBeDefined();
+    const bookmarks = await getUserBookmars(
+      accessToken,
+      200,
+      BookmarkAbleEntity.GAME,
+    );
+    expect(bookmarks).toBeDefined();
   });
 
-  it('it returns error if user didnt like any game while getting user likes', async () => {
+  it('it returns error if user didnt like any game while getting user bookmarks', async () => {
     const { accessToken } = await getValidationDataAndRegister(app);
-    await getUserLikes(accessToken, 404, LikeAbleEntity.GAME);
+    await getUserBookmars(accessToken, 404, BookmarkAbleEntity.GAME);
   });
 });
