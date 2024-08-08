@@ -15,6 +15,7 @@ import { User } from './user.model';
 import { Rate } from 'src/comments/enums/rate.enum';
 import { Like } from './like.model';
 import { Game } from './game.model';
+import { Article } from './article.model';
 
 @Table({ tableName: TableName.COMMENTS })
 export class Comment extends Model {
@@ -25,6 +26,10 @@ export class Comment extends Model {
   @ForeignKey(() => Game)
   @Column(DataType.INTEGER)
   game_id: number;
+
+  @ForeignKey(() => Article)
+  @Column(DataType.INTEGER)
+  article_id: number;
 
   @Column(DataType.STRING)
   entity_type: string;

@@ -5,32 +5,33 @@ import {
   CreatedAt,
   UpdatedAt,
   DataType,
-  ForeignKey,
   BeforeUpdate,
+  ForeignKey,
   DeletedAt,
-  BelongsTo,
 } from 'sequelize-typescript';
-import { TableName } from 'src/enums/database.enum';
+import { TableName } from '../src/enums/database.enum';
 import { User } from './user.model';
-import { Game } from './game.model';
+import { Meta } from '../src/interfaces/meta.interface';
 import { Article } from './article.model';
 
-@Table({ tableName: TableName.BOOKMARKS })
-export class Bookmark extends Model {
-  @ForeignKey(() => User)
-  @Column(DataType.INTEGER)
-  user_id: number;
-
-  @ForeignKey(() => Game)
-  @Column(DataType.INTEGER)
-  game_id: number;
-
+@Table({ tableName: TableName.GAME_FILES })
+export class ArticleFile extends Model {
   @ForeignKey(() => Article)
   @Column(DataType.INTEGER)
   article_id: number;
 
+  @ForeignKey(() => User)
+  @Column(DataType.INTEGER)
+  user_id: number;
+
   @Column(DataType.STRING)
-  entity_type: string;
+  file_type: string;
+
+  @Column(DataType.JSONB)
+  meta: Meta;
+
+  @Column(DataType.STRING)
+  hash_key: string;
 
   @CreatedAt
   createdAt: Date;
@@ -42,7 +43,7 @@ export class Bookmark extends Model {
   deletedAt?: Date | null;
 
   @BeforeUpdate
-  static updateTimestamp(instance: Bookmark) {
+  static updateTimestamp(instance: ArticleFile) {
     instance.updatedAt = new Date();
   }
 }

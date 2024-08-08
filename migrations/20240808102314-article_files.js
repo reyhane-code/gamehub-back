@@ -3,30 +3,34 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.createTable('bookmarks', {
+    return queryInterface.createTable('game_files', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      user_id: {
+      article_id: {
         type: Sequelize.INTEGER,
+        allowNull: false,
+        references: { model: 'articles', key: 'id' },
+      },
+      user_id: {
+        ype: Sequelize.INTEGER,
         allowNull: false,
         references: { model: 'users', key: 'id' },
       },
-      game_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: { model: 'games', key: 'id' },
-      },
-      article_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: { model: 'articles', key: 'id' },
-      },
-      entity_type: {
+      file_type: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      meta: {
+        type: Sequelize.JSONB, // Use JSONB for PostgreSQL
+        allowNull: false,
+      },
+      hash_key: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -46,6 +50,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('bookmarks');
+    return queryInterface.dropTable('game_files');
   },
 };

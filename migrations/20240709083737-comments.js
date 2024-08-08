@@ -19,6 +19,11 @@ module.exports = {
         allowNull: true,
         references: { model: 'games', key: 'id' },
       },
+      article_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: { model: 'articles', key: 'id' },
+      },
       parent_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
