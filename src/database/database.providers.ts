@@ -1,3 +1,5 @@
+import { Article } from 'models/article.model';
+import { ArticleFile } from 'models/article_file';
 import { Bookmark } from 'models/bookmark.model';
 import { Comment } from 'models/comment.model';
 import { Game } from 'models/game.model';
@@ -37,6 +39,8 @@ export const databaseProviders = [
         GameFile,
         Bookmark,
         Comment,
+        Article,
+        ArticleFile,
       ]);
       await sequelize.sync();
       return sequelize;
