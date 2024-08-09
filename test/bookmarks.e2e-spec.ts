@@ -54,7 +54,7 @@ describe('Bookmarks System (e2e)', () => {
   };
 
   const removeBookmark = async (
-    status: number = 200,
+    status: number,
     entityType: BookmarkAbleEntity,
     entityId: number,
     accessToken: string,
@@ -124,9 +124,9 @@ describe('Bookmarks System (e2e)', () => {
     removeBookmark(200, BookmarkAbleEntity.GAME, game.id, accessToken);
   });
 
-  it('returns error while deleting a non-existing game', async () => {
+  it('returns error while removing bookmark of sth user did not bookmark', async () => {
     const { accessToken } = await getValidationDataAndRegister(app);
-    await removeBookmark(404, BookmarkAbleEntity.GAME, 21, accessToken);
+    await removeBookmark(401, BookmarkAbleEntity.GAME, 21, accessToken);
   });
 
   it('finds all bookmarks for a game', async () => {
@@ -137,11 +137,9 @@ describe('Bookmarks System (e2e)', () => {
     });
 
     await bookmark(201, BookmarkAbleEntity.GAME, game.id);
-    await bookmark(201, BookmarkAbleEntity.GAME, game.id);
-    await bookmark(201, BookmarkAbleEntity.GAME, game.id);
-    await bookmark(201, BookmarkAbleEntity.GAME, game.id);
     const bookmarks = await getBookmarks(200, BookmarkAbleEntity.GAME, game.id);
-    expect(bookmarks).toBeDefined();
+    expect(bookmarks.data).toBeDefined();
+    expect(bookmarks.count).toEqual(1);
   });
 
   it('returns error if game has no bookmarks', async () => {
@@ -165,21 +163,15 @@ describe('Bookmarks System (e2e)', () => {
     });
 
     await request(app.getHttpServer())
-      .post(`/bookmarks/${BookmarkAbleEntity}/${game.id}`)
+      .post(`/bookmarks/${BookmarkAbleEntity.GAME}/${game.id}`)
       .set('authorization', `Bearer ${accessToken}`)
       .expect(201)
       .then((res) => res.body);
 
     await request(app.getHttpServer())
-      .post(`/bookmarks/${BookmarkAbleEntity}/${game2.id}`)
+      .post(`/bookmarks/${BookmarkAbleEntity.GAME}/${game2.id}`)
       .set('authorization', `Bearer ${accessToken}`)
       .expect(201)
-      .then((res) => res.body);
-
-    await request(app.getHttpServer())
-      .get('/games')
-      .set('authorization', `Bearer ${accessToken}`)
-      .expect(200)
       .then((res) => res.body);
 
     const bookmarks = await getUserBookmars(
@@ -187,10 +179,11 @@ describe('Bookmarks System (e2e)', () => {
       200,
       BookmarkAbleEntity.GAME,
     );
-    expect(bookmarks).toBeDefined();
+    expect(bookmarks.data).toBeDefined();
+    expect(bookmarks.count).toEqual(2);
   });
 
-  it('it returns error if user didnt like any game while getting user bookmarks', async () => {
+  it('it returns error if user didnt bookmark any game while getting user bookmarks', async () => {
     const { accessToken } = await getValidationDataAndRegister(app);
     await getUserBookmars(accessToken, 404, BookmarkAbleEntity.GAME);
   });
