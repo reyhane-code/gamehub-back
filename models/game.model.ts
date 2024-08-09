@@ -20,7 +20,6 @@ import { PlatformGame } from './platform_game.model';
 import { PublisherGame } from './publisher_game.model';
 import { User } from './user.model';
 import { Like } from './like.model';
-import { GameFile } from './game_file.model';
 import { Comment } from './comment.model';
 import { Bookmark } from './bookmark.model';
 
@@ -65,9 +64,6 @@ export class Game extends Model {
 
   @HasMany(() => Bookmark)
   bookmarks: Bookmark[];
-
-  @HasMany(() => GameFile)
-  files: GameFile[];
 
   @BelongsToMany(() => Genre, () => GenreGame)
   genres: Genre[];

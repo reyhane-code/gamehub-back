@@ -15,7 +15,6 @@ import { Like } from './like.model';
 import { Platform } from './platform.model';
 import { Genre } from './genre.model';
 import { Publisher } from './publisher.model';
-import { GameFile } from './game_file.model';
 
 @Table({ tableName: TableName.USERS })
 export class User extends Model {
@@ -66,9 +65,6 @@ export class User extends Model {
 
   @HasMany(() => Publisher)
   publishers: Publisher[];
-
-  @HasMany(() => GameFile)
-  gameFiles: GameFile[];
 
   @BeforeUpdate
   static updateTimestamp(instance: User) {

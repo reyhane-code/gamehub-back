@@ -1,3 +1,4 @@
+import { fileType } from 'src/enums/file-type.enum';
 import { v4 as uuidv4 } from 'uuid';
 
 export const generateHashKey = (desiredLength: number = 15) => {
@@ -19,4 +20,8 @@ export const generateHashKey = (desiredLength: number = 15) => {
   const finalHashKey = base64StringWithoutPadding.substring(0, desiredLength);
 
   return finalHashKey.toLowerCase();
+};
+
+export const isImage = (filename: string): boolean => {
+  return /^(jpg|jpeg|png|gif)$/.test(filename);
 };

@@ -6,51 +6,72 @@ import {
 } from '@nestjs/common';
 import { createReadStream, ReadStream } from 'fs';
 import { join } from 'path';
-import { Repository } from '../enums/database.enum';
 import { changeProperties } from '../helpers/sharp-helper';
 import { GetFileQueryDto } from './dtos/get-file-query.dto';
-import { fileType } from './enums/file-type.enum';
-import { GameFile } from 'models/game_file.model';
+import { Repository } from 'src/enums/database.enum';
+import { File } from 'models/file.model';
+import { isImage } from 'src/helpers/file.helper';
 
 @Injectable()
 export class FilesService {
-  constructor() {}
+  constructor(@Inject(Repository.FILES) private filesRepository: typeof File) {}
 
   async readAndSetFileProperties(
     query: GetFileQueryDto,
     res: Response,
   ): Promise<StreamableFile> {
     const { hashKey } = query;
-    let file: ReadStream;
-    try {
-      const dist = join(`${process.cwd()}/files/`, hashKey);
-      file = createReadStream(dist);
-      if (!file) new NotFoundException('file not found');
-    } catch (e) {
-      console.log(e);
-      throw new NotFoundException('file not found');
+    const foundFile = await this.filesRepository.findOne({
+      where: { hash_key: hashKey },
+    });
+  
+    if (!foundFile) {
+      throw new NotFoundException('File not found');
     }
-    //TODO : check file type for image
-    return this.getImageFile(file, query, res);
-
-    // TODO: handel other type of file
-    // return new StreamableFile(file);
+  
+    const dist = this.getFilePath(hashKey, foundFile.file_type);
+    const file = this.getFileStream(dist);
+  
+    if (isImage(`${hashKey}.${foundFile.file_type}`)) {
+      return this.getImageFile(file, query, res, foundFile.file_type);
+    }
+  
+    // TODO: Handle other types of files
+    return new StreamableFile(file);
   }
+  
+  private getFilePath(hashKey: string, fileType: string): string {
+    const filesDirectory = `${process.cwd()}/files/`;
+    return join(filesDirectory, `${hashKey}.${fileType}`);
+  }
+  
+  private getFileStream(filePath: string): ReadStream {
+    try {
+      const file = createReadStream(filePath);
+      if (!file) {
+        throw new NotFoundException('File not found');
+      }
+      return file;
+    } catch (error) {
+      console.error(error);
+      throw new NotFoundException('File not found');
+    }
+  }
+  
 
   async getImageFile(
     file: ReadStream,
     query: GetFileQueryDto,
     res: any,
+    fileType: string,
   ): Promise<StreamableFile> {
     const { hashKey } = query;
-    const hashKeySplited = hashKey.split('.');
-    const mimeTypeHashKey = hashKeySplited[hashKeySplited.length - 1];
-    const type = query.format ?? mimeTypeHashKey;
+    const type = query.format ?? fileType;
     res.header('Content-Type', type);
     res.header('ETag', hashKey);
     res.header(
       'Content-Disposition',
-      `attachment; filename="${hashKeySplited}.${type}"`,
+      `attachment; filename="${hashKey}.${type}"`,
     );
     return new Promise<StreamableFile>((resolve, reject) => {
       const datas = [] as any[];

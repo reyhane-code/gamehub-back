@@ -1,5 +1,5 @@
+import { File } from 'models/file.model';
 import { Game } from 'models/game.model';
-import { GameFile } from 'models/game_file.model';
 import { GenreGame } from 'models/genre_game.model';
 import { PlatformGame } from 'models/platform_game.model';
 import { PublisherGame } from 'models/publisher_game.model';
@@ -23,7 +23,7 @@ export const gamesProviders = [
     useValue: GenreGame,
   },
   {
-    provide: Repository.GAME_FILES,
-    useValue: GameFile,
+    provide: Repository.FILES,
+    useValue: File,
   },
 ];

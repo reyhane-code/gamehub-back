@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Inject,
   Injectable,
   NotFoundException,
@@ -12,16 +13,14 @@ import { Repository } from 'src/enums/database.enum';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { Like } from 'models/like.model';
 import { Comment } from 'models/comment.model';
-import { ArticleFile } from 'models/article_file';
-import { fileType } from 'src/enums/file-type.enum';
 import { paginationDefault } from 'src/constance';
+import { File } from 'models/file.model';
 
 @Injectable()
 export class ArticlesService {
   constructor(
     @Inject(Repository.ARTICLES) private articlesRepository: typeof Article,
-    @Inject(Repository.ARTICLE_FILES)
-    private articlesFilesRepository: typeof ArticleFile,
+    @Inject(Repository.FILES) private filesRepository: typeof File,
   ) {}
 
   async createArticle(
@@ -29,9 +28,15 @@ export class ArticlesService {
     user: IUser,
     imageFile?: Express.Multer.File,
   ) {
-    console.log('in the article service');
+    const foundArticle = await this.articlesRepository.findOne({
+      where: { title: body.title },
+    });
+    if (foundArticle) {
+      throw new ConflictException('This article is already created!');
+    }
     try {
-      const hashKey = imageFile ? imageFile.filename : null;
+      const [hashKey = null, fileExtension] =
+        imageFile?.filename?.split('.') || [];
 
       const article = await this.articlesRepository.create({
         title: body.title,
@@ -43,10 +48,9 @@ export class ArticlesService {
       if (imageFile) {
         await this.saveArticleImageDataToDB(
           imageFile,
-          article.id,
-          user.id,
           body.imageAlt,
           hashKey,
+          fileExtension,
         );
       }
       return article;
@@ -56,21 +60,18 @@ export class ArticlesService {
   }
   saveArticleImageDataToDB(
     image: Express.Multer.File,
-    articleId: number,
-    userId: number,
     alt: string,
     hashKey: string,
+    fileType: string,
   ) {
     try {
-      return this.articlesFilesRepository.create<ArticleFile>({
-        user_id: userId,
-        article_id: articleId,
-        file_type: fileType.IMAGE,
+      return this.filesRepository.create({
         meta: {
           size: Number(image.size),
           alt,
           blurHash: '',
         },
+        file_type: fileType,
         hash_key: hashKey,
       });
     } catch (error) {

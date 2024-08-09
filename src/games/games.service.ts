@@ -20,8 +20,9 @@ import { GenreGame } from 'models/genre_game.model';
 import { setWhereQuery, toSlug } from 'src/helpers/helpers';
 import { sortOperation } from 'src/enums/enums';
 import { Like } from 'models/like.model';
-import { GameFile } from 'models/game_file.model';
 import { fileType } from 'src/enums/file-type.enum';
+import { File } from 'models/file.model';
+import { ImageFormat } from 'src/files/enums/image-format';
 
 @Injectable()
 export class GamesService {
@@ -33,8 +34,7 @@ export class GamesService {
     private publisherGamesRepository: typeof PublisherGame,
     @Inject(Repository.GENRE_GAMES)
     private genreGamesRepository: typeof GenreGame,
-    @Inject(Repository.GAME_FILES)
-    private gameFilesRepository: typeof GameFile,
+    @Inject(Repository.FILES) private filesRepository: typeof File,
   ) {}
 
   async findOneById(id: number) {
@@ -131,7 +131,7 @@ export class GamesService {
     imageFile?: Express.Multer.File,
   ) {
     try {
-      const hashKey = imageFile ? imageFile.filename : null;
+      const [hashKey = null, fileExtension] = imageFile?.filename?.split('.') || [];
 
       const game = await this.gamesRepository.create({
         name,
@@ -153,10 +153,9 @@ export class GamesService {
       if (imageFile)
         await this.saveGameImageDataToDB(
           imageFile,
-          game.id,
-          user.id,
           image_alt,
           hashKey,
+          fileExtension,
         );
       return game;
     } catch (error) {
@@ -166,16 +165,13 @@ export class GamesService {
 
   saveGameImageDataToDB(
     image: Express.Multer.File,
-    gameId: number,
-    userId: number,
     alt: string,
     hashKey: string,
+    fileType: string,
   ) {
     try {
-      return this.gameFilesRepository.create<GameFile>({
-        user_id: userId,
-        game_id: gameId,
-        file_type: fileType.IMAGE,
+      return this.filesRepository.create<File>({
+        file_type: fileType,
         meta: {
           size: Number(image.size),
           alt,

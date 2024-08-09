@@ -1,5 +1,5 @@
 import { Article } from 'models/article.model';
-import { ArticleFile } from 'models/article_file';
+import { File } from 'models/file.model';
 import { Repository } from 'src/enums/database.enum';
 
 export const articlesProviders = [
@@ -8,7 +8,7 @@ export const articlesProviders = [
     useValue: Article,
   },
   {
-    provide: Repository.ARTICLE_FILES,
-    useValue: ArticleFile,
+    provide: Repository.FILES,
+    useValue: File,
   },
 ];

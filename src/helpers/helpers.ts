@@ -1,4 +1,3 @@
-import { OperationPositionEnum } from 'src/enums/enums';
 import {
   ISearchFilterOptions,
   ISearchFilterParam,
