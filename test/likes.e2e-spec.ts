@@ -44,8 +44,8 @@ describe('Likes System (e2e)', () => {
     status: number = 201,
     entityType: LikeAbleEntity,
     entityId: number,
+    accessToken: string,
   ) => {
-    const { accessToken } = await getValidationDataAndRegister(app);
     return request(app.getHttpServer())
       .post(`/likes/${entityType}/${entityId}`)
       .set('authorization', `Bearer ${accessToken}`)
@@ -54,7 +54,7 @@ describe('Likes System (e2e)', () => {
   };
 
   const unlike = async (
-    status: number = 200,
+    status: number,
     entityType: LikeAbleEntity,
     entityId: number,
     accessToken: string,
@@ -95,7 +95,8 @@ describe('Likes System (e2e)', () => {
       description: 'desc1',
       metacritic: 200,
     });
-    await like(201, LikeAbleEntity.GAME, game.id);
+    const { accessToken } = await getValidationDataAndRegister(app);
+    await like(201, LikeAbleEntity.GAME, game.id, accessToken);
   });
 
   it('returns confilct when liking more than once', async () => {
@@ -104,8 +105,9 @@ describe('Likes System (e2e)', () => {
       description: 'desc1',
       metacritic: 200,
     });
-    await like(201, LikeAbleEntity.GAME, game.id);
-    await like(409, LikeAbleEntity.GAME, game.id);
+    const { accessToken } = await getValidationDataAndRegister(app);
+    await like(201, LikeAbleEntity.GAME, game.id, accessToken);
+    await like(409, LikeAbleEntity.GAME, game.id, accessToken);
   });
 
   it('unlikes a game', async () => {
@@ -124,9 +126,14 @@ describe('Likes System (e2e)', () => {
     unlike(200, LikeAbleEntity.GAME, game.id, accessToken);
   });
 
-  it('returns error while deleting a non-existing game', async () => {
+  it('returns error if unliking sth that user did not like', async () => {
+    const game = await addGame(app, 201, {
+      name: 'game35',
+      description: 'desc35',
+      metacritic: 200,
+    });
     const { accessToken } = await getValidationDataAndRegister(app);
-    await unlike(404, LikeAbleEntity.GAME, 21, accessToken);
+    await unlike(401, LikeAbleEntity.GAME, game.id, accessToken);
   });
 
   it('finds all likes for a game', async () => {
@@ -135,13 +142,11 @@ describe('Likes System (e2e)', () => {
       description: 'desc1',
       metacritic: 200,
     });
+    const { accessToken } = await getValidationDataAndRegister(app);
+    await like(201, LikeAbleEntity.GAME, game.id, accessToken);
 
-    await like(201, LikeAbleEntity.GAME, game.id);
-    await like(201, LikeAbleEntity.GAME, game.id);
-    await like(201, LikeAbleEntity.GAME, game.id);
-    await like(201, LikeAbleEntity.GAME, game.id);
     const likes = await getLikes(200, LikeAbleEntity.GAME, game.id);
-    expect(likes).toBeDefined();
+    expect(likes.data).toBeDefined();
   });
 
   it('returns error if game has no likes', async () => {
@@ -164,26 +169,11 @@ describe('Likes System (e2e)', () => {
       metacritic: 200,
     });
 
-    await request(app.getHttpServer())
-      .post(`/likes/${LikeAbleEntity}/${game.id}`)
-      .set('authorization', `Bearer ${accessToken}`)
-      .expect(201)
-      .then((res) => res.body);
-
-    await request(app.getHttpServer())
-      .post(`/likes/${LikeAbleEntity}/${game2.id}`)
-      .set('authorization', `Bearer ${accessToken}`)
-      .expect(201)
-      .then((res) => res.body);
-
-    await request(app.getHttpServer())
-      .get('/games')
-      .set('authorization', `Bearer ${accessToken}`)
-      .expect(200)
-      .then((res) => res.body);
+    await like(201, LikeAbleEntity.GAME, game.id, accessToken);
+    await like(201, LikeAbleEntity.GAME, game2.id, accessToken);
 
     const likes = await getUserLikes(accessToken, 200, LikeAbleEntity.GAME);
-    expect(likes).toBeDefined();
+    expect(likes.data).toBeDefined();
   });
 
   it('it returns error if user didnt like any game while getting user likes', async () => {

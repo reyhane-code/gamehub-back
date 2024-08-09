@@ -16,6 +16,7 @@ import { checkFilesMimetype } from 'src/helpers/image-storage';
 import { generateHashKey } from 'src/helpers/file.helper';
 import { ArticleFile } from 'models/article_file';
 import { fileType } from 'src/enums/file-type.enum';
+import { paginationDefault } from 'src/constance';
 
 @Injectable()
 export class ArticlesService {
@@ -104,13 +105,26 @@ export class ArticlesService {
     const articles = await this.articlesRepository.findAll({
       include: [{ model: Like }, { model: Comment }],
     });
-    if (!articles) {
+    if (articles.length < 1 || !articles) {
       throw new NotFoundException('No articles were found!');
     }
     return articles;
   }
 
-  async findArticlesWithPaginate({ perPage, page }: IPaginationQueryOptions) {
+  async findOne(id: number) {
+    const article = await this.articlesRepository.findOne({
+      where: { id },
+    });
+    if (!article) {
+      throw new NotFoundException('No article was found!');
+    }
+    return article;
+  }
+
+  async findArticlesWithPaginate(query: IPaginationQueryOptions) {
+    const page = query.page || paginationDefault.page;
+    const perPage = query.perPage || paginationDefault.perPage;
+
     const { count, rows } = await this.articlesRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
@@ -130,37 +144,42 @@ export class ArticlesService {
   }
 
   async findUserArticles(user: IUser) {
-    const articles = await this.articlesRepository.findAll({
+    const { rows, count } = await this.articlesRepository.findAndCountAll({
       where: { user_id: user.id },
       include: [{ model: Like }, { model: Comment }],
+      distinct: true,
     });
-    if (articles.length < 1) {
+    if (count < 1) {
       throw new NotFoundException('No articles were found!');
     }
-    return articles;
+    return {
+      count,
+      data: rows,
+    };
   }
 
-  async updateArticle(body: UpdateArticleDto, id: number, user: IUser) {
-    await this.findArticleById(id);
+  async updateArticle(body: UpdateArticleDto, articleId: number, user: IUser) {
+    await this.findOne(articleId);
     try {
-      return this.articlesRepository.update(
-        { body },
-        { where: { id, user_id: user.id } },
-      );
+      const updatedArticle = await this.articlesRepository.update(body, {
+        where: { id: articleId, user_id: user.id },
+        returning: true,
+      });
+      return updatedArticle;
     } catch (error) {
       throw new BadRequestException('Something went wrong!');
     }
   }
 
-  async deleteArticle(id: number, user: IUser, isSoftDelete: boolean) {
-    await this.findArticleById(id);
+  async deleteArticle(articleId: number, isSoftDelete: boolean, user: IUser) {
+    await this.findOne(articleId);
     if (isSoftDelete) {
       return this.articlesRepository.destroy({
-        where: { id, user_id: user.id },
+        where: { id: articleId, user_id: user.id },
       });
     } else {
       return this.articlesRepository.destroy({
-        where: { id, user_id: user.id },
+        where: { id: articleId, user_id: user.id },
         force: true,
       });
     }

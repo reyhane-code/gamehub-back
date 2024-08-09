@@ -1,9 +1,7 @@
 import { Expose } from 'class-transformer';
 import {
   IsString,
-  IsOptional,
-  IsNotEmpty,
-  IsNumber,
+  IsOptional
 } from 'src/custom-validator';
 
 export class UpdateArticleDto {

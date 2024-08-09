@@ -22,7 +22,7 @@ export class CommentsController {
   constructor(private commentsService: CommentsService) {}
 
   @UseGuards(AuthGuard)
-  @Post('/:entityId/:entityType')
+  @Post('/:entityType/:entityId')
   addComment(
     @Param('entityId') entityId: number,
     @Param('entityType') entityType: CommentAbleEntity,
@@ -37,6 +37,7 @@ export class CommentsController {
     return this.commentsService.findOneById(id);
   }
 
+  @UseGuards(AuthGuard)
   @Get('/user/:entityType')
   getUserComments(@CurrentUser() user: IUser) {
     return this.commentsService.findUserComments(user);

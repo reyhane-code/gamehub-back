@@ -17,14 +17,14 @@ export class CommentsService {
     @Inject(Repository.COMMENTS) private commentsRepository: typeof Comment,
   ) {}
 
-  addComment(
+  async addComment(
     entityId: number,
     entityType: CommentAbleEntity,
     body: AddCommentDto,
     user: IUser,
   ) {
     try {
-      return this.commentsRepository.create({
+      const comment = await this.commentsRepository.create({
         user_id: user.id,
         [`${entityType}_id`]: entityId,
         entity_type: entityType,
@@ -32,7 +32,10 @@ export class CommentsService {
         rate: body.rate,
         parent_id: body.parent_id,
       });
+
+      return comment; // Return the created comment
     } catch (error) {
+      console.error('Error adding comment:', error); // Log the error for debugging
       throw new BadRequestException(
         'Something went wrong when posting a comment!',
       );
@@ -42,9 +45,15 @@ export class CommentsService {
   async updateComment(commentId: number, body: UpdateCommentDto, user: IUser) {
     await this.findOneById(commentId);
     try {
-      return this.commentsRepository.update(body, {
-        where: { id: commentId, user_id: user.id },
-      });
+      return this.commentsRepository.update(
+        {
+          content: body.content,
+          rate: body.rate,
+        },
+        {
+          where: { id: commentId, user_id: user.id },
+        },
+      );
     } catch (error) {
       throw new BadRequestException(
         'Something went wrong when updating a comment!',
@@ -64,7 +73,7 @@ export class CommentsService {
     const { rows, count } = await this.commentsRepository.findAndCountAll({
       where: { [`${entityType}_id`]: entityId },
     });
-    if (count < 1) {
+    if (count == 0) {
       throw new NotFoundException('No comments were found!');
     }
     return {
@@ -77,6 +86,7 @@ export class CommentsService {
     const { rows, count } = await this.commentsRepository.findAndCountAll({
       where: { parent_id: parentId },
       include: { model: Like },
+      distinct: true,
     });
     if (count < 1) {
       throw new NotFoundException('No replies were found!');
@@ -95,7 +105,7 @@ export class CommentsService {
       });
     } else {
       return this.commentsRepository.destroy({
-        where: { id },
+        where: { id, user_id: user.id },
         force: true,
       });
     }
@@ -104,8 +114,9 @@ export class CommentsService {
     const { rows, count } = await this.commentsRepository.findAndCountAll({
       where: { user_id: user.id },
       include: { model: Like },
+      distinct: true,
     });
-    if (count < 1) {
+    if (count == 0) {
       throw new NotFoundException('No comments were found!');
     }
     return {

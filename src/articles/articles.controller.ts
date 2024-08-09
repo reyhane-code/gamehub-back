@@ -20,8 +20,9 @@ import { UpdateArticleDto } from './dtos/update-article.dto';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { FileFieldsFastifyInterceptor } from 'fastify-file-interceptor';
 import { multerOptions } from 'src/helpers/image-storage';
+import { paginationDefault } from 'src/constance';
 
-@Controller('article')
+@Controller('articles')
 export class ArticlesController {
   constructor(private articlesService: ArticlesService) {}
 
@@ -49,7 +50,9 @@ export class ArticlesController {
   }
 
   @Get('/paginate')
-  getArticlesWithPaginate(@Query() query: IPaginationQueryOptions) {
+  getArticlesWithPaginate(
+    @Query() query: IPaginationQueryOptions = paginationDefault,
+  ) {
     return this.articlesService.findArticlesWithPaginate(query);
   }
 
@@ -74,18 +77,17 @@ export class ArticlesController {
   updateArticle(
     @Body() body: UpdateArticleDto,
     @Param('id') id: number,
-    user: IUser,
+    @CurrentUser() user: IUser,
   ) {
     return this.articlesService.updateArticle(body, id, user);
   }
-
   @UseGuards(AuthGuard)
   @Delete('/:id')
   deleteArticle(
     @Param('id') id: number,
-    user: IUser,
     @Query() isSoftDelete: boolean = true,
+    @CurrentUser() user: IUser,
   ) {
-    return this.articlesService.deleteArticle(id, user, isSoftDelete);
+    return this.articlesService.deleteArticle(id, isSoftDelete, user);
   }
 }

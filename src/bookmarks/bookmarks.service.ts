@@ -37,7 +37,7 @@ export class BookmarksService {
     try {
       return this.bookmarksRepository.destroy({
         where: {
-          userId,
+          user_id: userId,
           [`${entityType}_id`]: entityId,
         },
         force: true,
