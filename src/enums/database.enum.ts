@@ -8,11 +8,10 @@ export enum TableName {
   GENRE_GAMES = 'genre_games',
   PLATFORM_GAMES = 'platform_games',
   LIKES = 'likes',
-  GAME_FILES = 'game_files',
   BOOKMARKS = 'bookmarks',
   COMMENTS = 'comments',
   ARTICLES = 'articles',
-  ARTICLE_FILES = 'article_files',
+  FILES = 'files',
 }
 
 export enum Repository {
@@ -25,11 +24,10 @@ export enum Repository {
   GENRE_GAMES = 'GENRE_GAMES_REPOSITORY',
   PLATFORM_GAMES = 'PLATFORM_GAMES_REPOSITORY',
   LIKES = 'LIKES_REPOSITORY',
-  GAME_FILES = 'GAME_FILES_REPOSITORY',
   BOOKMARKS = 'BOOKMARKS_REPOSITORY',
   COMMENTS = 'COMMENTS_REPOSITORY',
   ARTICLES = 'ARTICLES_REPOSITORY',
-  ARTICLE_FILES = 'ARTICLE_FILES_REPOSITORY',
+  FILES = 'FILES_REPOSITORY',
 }
 
 export enum Role {

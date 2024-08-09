@@ -1,9 +1,9 @@
-import { GameFile } from 'models/game_file.model';
+import { File } from 'models/file.model';
 import { Repository } from 'src/enums/database.enum';
 
 export const filesProviders = [
   {
-    provide: Repository.GAME_FILES,
-    useValue: GameFile,
+    provide: Repository.FILES,
+    useValue: File,
   },
 ];

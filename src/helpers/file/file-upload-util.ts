@@ -8,7 +8,6 @@ export const editFileName = (
   callback,
 ) => {
   const hashKey = generateHashKey(30);
-  console.log(hashKey);
   callback(null, `${hashKey}${extname(file.originalname)}`);
 };
 

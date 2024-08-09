@@ -6,24 +6,13 @@ import {
   UpdatedAt,
   DataType,
   BeforeUpdate,
-  ForeignKey,
   DeletedAt,
 } from 'sequelize-typescript';
 import { TableName } from '../src/enums/database.enum';
-import { User } from './user.model';
 import { Meta } from '../src/interfaces/meta.interface';
-import { Article } from './article.model';
 
-@Table({ tableName: TableName.GAME_FILES })
-export class ArticleFile extends Model {
-  @ForeignKey(() => Article)
-  @Column(DataType.INTEGER)
-  article_id: number;
-
-  @ForeignKey(() => User)
-  @Column(DataType.INTEGER)
-  user_id: number;
-
+@Table({ tableName: TableName.FILES })
+export class File extends Model {
   @Column(DataType.STRING)
   file_type: string;
 
@@ -43,7 +32,7 @@ export class ArticleFile extends Model {
   deletedAt?: Date | null;
 
   @BeforeUpdate
-  static updateTimestamp(instance: ArticleFile) {
+  static updateTimestamp(instance: File) {
     instance.updatedAt = new Date();
   }
 }

@@ -2,7 +2,6 @@ import { Expose } from 'class-transformer';
 import {
   IsString,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
 } from 'src/custom-validator';
 

@@ -3,21 +3,11 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.createTable('game_files', {
+    return queryInterface.createTable('files', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-      },
-      article_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: { model: 'articles', key: 'id' },
-      },
-      user_id: {
-        ype: Sequelize.INTEGER,
-        allowNull: false,
-        references: { model: 'users', key: 'id' },
       },
       file_type: {
         type: Sequelize.STRING,
@@ -50,6 +40,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('game_files');
+    return queryInterface.dropTable('files');
   },
 };

@@ -1,9 +1,8 @@
 import { Article } from 'models/article.model';
-import { ArticleFile } from 'models/article_file';
 import { Bookmark } from 'models/bookmark.model';
 import { Comment } from 'models/comment.model';
+import { File } from 'models/file.model';
 import { Game } from 'models/game.model';
-import { GameFile } from 'models/game_file.model';
 import { Genre } from 'models/genre.model';
 import { GenreGame } from 'models/genre_game.model';
 import { Like } from 'models/like.model';
@@ -36,11 +35,10 @@ export const databaseProviders = [
         PlatformGame,
         PublisherGame,
         Like,
-        GameFile,
         Bookmark,
         Comment,
         Article,
-        ArticleFile,
+        File,
       ]);
       await sequelize.sync();
       return sequelize;
