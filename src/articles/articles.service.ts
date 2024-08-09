@@ -12,8 +12,6 @@ import { Repository } from 'src/enums/database.enum';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { Like } from 'models/like.model';
 import { Comment } from 'models/comment.model';
-import { checkFilesMimetype } from 'src/helpers/image-storage';
-import { generateHashKey } from 'src/helpers/file.helper';
 import { ArticleFile } from 'models/article_file';
 import { fileType } from 'src/enums/file-type.enum';
 import { paginationDefault } from 'src/constance';
@@ -31,11 +29,9 @@ export class ArticlesService {
     user: IUser,
     imageFile?: Express.Multer.File,
   ) {
+    console.log('in the article service');
     try {
-      if (imageFile) {
-        checkFilesMimetype(imageFile.mimetype);
-      }
-      const hashKey = generateHashKey(35);
+      const hashKey = imageFile ? imageFile.filename : null;
 
       const article = await this.articlesRepository.create({
         title: body.title,

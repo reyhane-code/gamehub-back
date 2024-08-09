@@ -19,7 +19,7 @@ import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdateArticleDto } from './dtos/update-article.dto';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { FileFieldsFastifyInterceptor } from 'fastify-file-interceptor';
-import { multerOptions } from 'src/helpers/image-storage';
+import { multerOptions } from '../helpers/file/multer-options';
 import { paginationDefault } from 'src/constance';
 
 @Controller('articles')

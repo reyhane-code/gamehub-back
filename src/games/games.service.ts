@@ -21,9 +21,7 @@ import { setWhereQuery, toSlug } from 'src/helpers/helpers';
 import { sortOperation } from 'src/enums/enums';
 import { Like } from 'models/like.model';
 import { GameFile } from 'models/game_file.model';
-import { checkFilesMimetype } from 'src/helpers/image-storage';
 import { fileType } from 'src/enums/file-type.enum';
-import { generateHashKey } from 'src/helpers/file.helper';
 
 @Injectable()
 export class GamesService {
@@ -133,10 +131,7 @@ export class GamesService {
     imageFile?: Express.Multer.File,
   ) {
     try {
-      if (imageFile) {
-        checkFilesMimetype(imageFile.mimetype);
-      }
-      const hashKey = generateHashKey(35);
+      const hashKey = imageFile ? imageFile.filename : null;
 
       const game = await this.gamesRepository.create({
         name,

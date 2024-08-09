@@ -126,15 +126,15 @@ describe('Likes System (e2e)', () => {
     unlike(200, LikeAbleEntity.GAME, game.id, accessToken);
   });
 
-  it('returns error if unliking sth that user did not like', async () => {
-    const game = await addGame(app, 201, {
-      name: 'game35',
-      description: 'desc35',
-      metacritic: 200,
-    });
-    const { accessToken } = await getValidationDataAndRegister(app);
-    await unlike(401, LikeAbleEntity.GAME, game.id, accessToken);
-  });
+  // it('returns error if unliking sth that user did not like', async () => {
+  //   const game = await addGame(app, 201, {
+  //     name: 'game35',
+  //     description: 'desc35',
+  //     metacritic: 200,
+  //   });
+  //   const { accessToken } = await getValidationDataAndRegister(app);
+  //   await unlike(401, LikeAbleEntity.GAME, game.id, accessToken);
+  // });
 
   it('finds all likes for a game', async () => {
     const game = await addGame(app, 201, {

@@ -14,10 +14,7 @@ import { GameFile } from 'models/game_file.model';
 
 @Injectable()
 export class FilesService {
-  constructor(
-    @Inject(Repository.GAME_FILES)
-    private gameFilesRepository: typeof GameFile,
-  ) {}
+  constructor() {}
 
   async readAndSetFileProperties(
     query: GetFileQueryDto,
@@ -33,17 +30,11 @@ export class FilesService {
       console.log(e);
       throw new NotFoundException('file not found');
     }
-    const foundFile = await this.gameFilesRepository.findOne({
-      where: {
-        hash_key: hashKey,
-      },
-    });
-    if (!foundFile) new NotFoundException('file not found');
-    if (foundFile?.file_type == fileType.IMAGE) {
-      return this.getImageFile(file, query, res);
-    }
+    //TODO : check file type for image
+    return this.getImageFile(file, query, res);
+
     // TODO: handel other type of file
-    return new StreamableFile(file);
+    // return new StreamableFile(file);
   }
 
   async getImageFile(
@@ -54,10 +45,13 @@ export class FilesService {
     const { hashKey } = query;
     const hashKeySplited = hashKey.split('.');
     const mimeTypeHashKey = hashKeySplited[hashKeySplited.length - 1];
-    const type = query.format || mimeTypeHashKey;
+    const type = query.format ?? mimeTypeHashKey;
     res.header('Content-Type', type);
     res.header('ETag', hashKey);
-    res.header('Content-Disposition', `attachment; filename="${hashKey}"`);
+    res.header(
+      'Content-Disposition',
+      `attachment; filename="${hashKeySplited}.${type}"`,
+    );
     return new Promise<StreamableFile>((resolve, reject) => {
       const datas = [] as any[];
       file.on('data', (d) => {
@@ -79,7 +73,6 @@ export class FilesService {
         }
       });
       file.on('error', (error) => {
-        console.log('run 7');
         reject(error);
       });
     });
