@@ -11,11 +11,10 @@ import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdateArticleDto } from './dtos/update-article.dto';
 import { LikeAbleEntity, Repository } from 'src/enums/database.enum';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
-import { Like } from 'models/like.model';
 import { Comment } from 'models/comment.model';
-import { paginationDefault } from 'src/constance';
 import { FilesService } from 'src/files/files.service';
 import { LikesService } from 'src/likes/likes.service';
+import { getOrderClause, setWhereQuery } from 'src/helpers/helpers';
 
 @Injectable()
 export class ArticlesService {
@@ -108,15 +107,23 @@ export class ArticlesService {
     return article;
   }
 
-  async findArticlesWithPaginate(query: IPaginationQueryOptions) {
-    const page = query.page || paginationDefault.page;
-    const perPage = query.perPage || paginationDefault.perPage;
-
+  async findArticlesWithPaginate({
+    page,
+    perPage,
+    order,
+    search,
+  }: IPaginationQueryOptions) {
+    const whereClause = search ? setWhereQuery(search) : '';
+    const orderClause = order ?? getOrderClause(order);
     const { count, rows } = await this.articlesRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
       include: [{ model: Comment }],
       distinct: true,
+      where: this.articlesRepository.sequelize.literal(whereClause),
+      order: orderClause
+        ? this.articlesRepository.sequelize.literal(orderClause)
+        : [],
     });
     if (count < 1) {
       throw new NotFoundException('No articles was found!');

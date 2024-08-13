@@ -3,11 +3,8 @@ import { FilterOperationEnum, SortOperation } from 'src/enums/enums';
 export interface IPaginationQueryOptions {
   perPage?: number;
   page?: number;
-}
-
-export interface IOrderQueryOptions {
-  field?: string;
-  opration?: SortOperation;
+  order?: string;
+  search?: ISearchFilterParam;
 }
 
 export interface ISearchFilterOptions {
