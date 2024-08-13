@@ -24,27 +24,27 @@ export class FilesService {
     const foundFile = await this.filesRepository.findOne({
       where: { hash_key: hashKey },
     });
-  
+
     if (!foundFile) {
       throw new NotFoundException('File not found');
     }
-  
+
     const dist = this.getFilePath(hashKey, foundFile.file_type);
     const file = this.getFileStream(dist);
-  
+
     if (isImage(`${hashKey}.${foundFile.file_type}`)) {
       return this.getImageFile(file, query, res, foundFile.file_type);
     }
-  
+
     // TODO: Handle other types of files
     return new StreamableFile(file);
   }
-  
+
   private getFilePath(hashKey: string, fileType: string): string {
     const filesDirectory = `${process.cwd()}/files/`;
     return join(filesDirectory, `${hashKey}.${fileType}`);
   }
-  
+
   private getFileStream(filePath: string): ReadStream {
     try {
       const file = createReadStream(filePath);
@@ -57,7 +57,6 @@ export class FilesService {
       throw new NotFoundException('File not found');
     }
   }
-  
 
   async getImageFile(
     file: ReadStream,
@@ -67,6 +66,7 @@ export class FilesService {
   ): Promise<StreamableFile> {
     const { hashKey } = query;
     const type = query.format ?? fileType;
+
     res.header('Content-Type', type);
     res.header('ETag', hashKey);
     res.header(
@@ -87,6 +87,7 @@ export class FilesService {
             Number(query.width),
             Number(query.height),
             Number(query.quality),
+            query.fit,
           );
           resolve(new StreamableFile(changedFile));
         } catch (error) {

@@ -1,5 +1,6 @@
 import * as sharp from 'sharp';
 import { ImageFormat } from '../files/enums/image-format';
+import { ImgaeFit } from 'src/files/enums/image-fit.enum';
 
 const allowedFormats = ['png', 'jpg', 'jpeg', 'webp'];
 
@@ -9,10 +10,9 @@ export const changeProperties = async (
   width?: number,
   height?: number,
   quality: number = 80,
+  fit?: ImgaeFit,
   lossless: boolean = true,
 ): Promise<Buffer> => {
-
-
   const image = sharp(file);
   const metadata = await image.metadata();
   const {
@@ -27,7 +27,13 @@ export const changeProperties = async (
       lossless,
     })
     .resize(
-      getResizeConfig(width, height, imageOriginalWidth, imageOriginalHeight),
+      getResizeConfig(
+        width,
+        height,
+        imageOriginalWidth,
+        imageOriginalHeight,
+        fit,
+      ),
     )
     .toBuffer();
 };
@@ -40,10 +46,12 @@ const getResizeConfig = (
   height?: number,
   imageOriginalWidth?: number | undefined,
   imageOriginalHeight?: number | undefined,
-): { width: number; height: number } => {
+  fit?: ImgaeFit,
+): { width: number; height: number; fit: ImgaeFit } => {
   return {
     width: validNumberOrSetDefault(imageOriginalWidth || 300, width),
     height: validNumberOrSetDefault(imageOriginalHeight || 300, height),
+    fit: fit ?? ImgaeFit.COVER,
   };
 };
 
