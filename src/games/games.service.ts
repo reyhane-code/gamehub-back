@@ -14,29 +14,16 @@ import { paginationDefault } from 'src/constance';
 import { AddGameDto } from './dtos/add-game.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdateGameDto } from './dtos/update-game.dto';
-import { PlatformGame } from 'models/platform_game.model';
-import { PublisherGame } from 'models/publisher_game.model';
-import { GenreGame } from 'models/genre_game.model';
 import { setWhereQuery, toSlug } from 'src/helpers/helpers';
 import { sortOperation } from 'src/enums/enums';
 import { Like } from 'models/like.model';
-import { File } from 'models/file.model';
-import { Screenshot } from 'models/screenshot.model';
-import { FilesService } from 'src/files/files.service';
+import { GameHelperService } from './games-helper.service';
 
 @Injectable()
 export class GamesService {
   constructor(
     @Inject(Repository.GAMES) private gamesRepository: typeof Game,
-    @Inject(Repository.PLATFORM_GAMES)
-    private platformGamesRepository: typeof PlatformGame,
-    @Inject(Repository.PUBLISHER_GAMES)
-    private publisherGamesRepository: typeof PublisherGame,
-    @Inject(Repository.GENRE_GAMES)
-    private genreGamesRepository: typeof GenreGame,
-    @Inject(Repository.SCREENSHOTS)
-    private screenshotsRepository: typeof Screenshot,
-    private readonly filesService: FilesService,
+    private readonly gameHelperService: GameHelperService,
   ) {}
 
   async findOneById(id: number) {
@@ -55,7 +42,7 @@ export class GamesService {
     order,
     params,
   }: IGamesQuery) {
-    const query = this.buildGamesQuery({
+    const query = this.gameHelperService.buildGamesQuery({
       page,
       perPage,
       genreId,
@@ -77,45 +64,6 @@ export class GamesService {
       page,
       perPage,
       offset: perPage * (page - 1),
-    };
-  }
-
-  buildGamesQuery({
-    page,
-    perPage,
-    genreId,
-    platformId,
-    order,
-    params,
-  }: IGamesQuery) {
-    const includeClauses = [
-      genreId ? { model: Genre, where: { id: genreId } } : { model: Genre },
-      platformId
-        ? { model: Platform, where: { id: platformId } }
-        : { model: Platform },
-      { model: Publisher },
-      { model: Like },
-    ];
-
-    const orderClause = order
-      ? order.charAt(0) === '-'
-        ? `${order.substring(1)} ${sortOperation.DESC}`
-        : `${order} ${sortOperation.ASC}`
-      : '';
-
-    const whereClause = setWhereQuery(params);
-
-    const pageVal = page || paginationDefault.page;
-    const perPageVal = perPage || paginationDefault.perPage;
-
-    return {
-      limit: perPageVal,
-      offset: (pageVal - 1) * perPageVal,
-      include: includeClauses || [],
-      where: this.gamesRepository.sequelize.literal(whereClause),
-      order: orderClause
-        ? this.gamesRepository.sequelize.literal(orderClause)
-        : [],
     };
   }
 
@@ -150,7 +98,7 @@ export class GamesService {
 
       // Handle image file if provided
       if (imageFile) {
-        await this.filesService.saveImageFileToDB(
+        await this.gameHelperService.saveImageFileToDB(
           imageFile,
           image_alt,
           imageHashKey,
@@ -160,11 +108,11 @@ export class GamesService {
 
       // Handle screenshots if provided
       if (screenshots) {
-        await this.saveScreenshotsToDB(screenshots, game.id);
+        await this.gameHelperService.saveScreenshotsToDB(screenshots, game.id);
       }
 
       // Add game to relation tables
-      await this.addGameToRelationTables(
+      await this.gameHelperService.addGameToRelationTables(
         game.id,
         platformId,
         publisherId,
@@ -176,61 +124,6 @@ export class GamesService {
       throw new BadRequestException(
         'Something went wrong while adding the game.',
       );
-    }
-  }
-
-  async saveScreenshotsToDB(
-    screenshots: Express.Multer.File[],
-    gameId: number,
-  ) {
-    const screenshotPromises = screenshots.map(async (screenshot) => {
-      const [hashKey = null, fileExtension] =
-        screenshot?.filename?.split('.') || [];
-
-      await this.filesService.saveImageFileToDB(
-        screenshot,
-        screenshot.originalname,
-        hashKey,
-        fileExtension,
-      );
-
-      return this.screenshotsRepository.create({
-        game_id: gameId,
-        hash_key: hashKey,
-      });
-    });
-
-    // Await all screenshot promises
-    try {
-      await Promise.all(screenshotPromises);
-    } catch (error) {
-      throw new BadRequestException(
-        'Something went wrong while saving screenshots!',
-      );
-    }
-  }
-
-  async addGameToRelationTables(
-    gameId: number,
-    platformId: number,
-    publisherId: number,
-    genreId: number,
-  ) {
-    try {
-      await this.platformGamesRepository.create({
-        game_id: gameId,
-        platform_id: Number(platformId),
-      });
-      await this.publisherGamesRepository.create({
-        game_id: gameId,
-        publisher_id: Number(publisherId),
-      });
-      await this.genreGamesRepository.create({
-        game_id: gameId,
-        genre_id: Number(genreId),
-      });
-    } catch (error) {
-      throw new BadRequestException('something went wrong');
     }
   }
 
