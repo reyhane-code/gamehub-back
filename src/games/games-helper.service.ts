@@ -120,9 +120,7 @@ export class GameHelperService {
     ];
 
     const orderClause = getOrderClause(order);
-
-    const whereClause = setWhereQuery(search);
-
+    const whereClause = search ? setWhereQuery(search) : '';
     const pageVal = page || paginationDefault.page;
     const perPageVal = perPage || paginationDefault.perPage;
 

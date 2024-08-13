@@ -10,6 +10,7 @@ import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { AddGenreDto } from './dtos/add-genre.dto';
 import { UpdateGenreDto } from './dtos/update-genre.dto';
+import { getOrderClause, setWhereQuery } from 'src/helpers/helpers';
 
 @Injectable()
 export class GenresService {
@@ -65,10 +66,21 @@ export class GenresService {
     return genres;
   }
 
-  async findAllWithPaginate({ perPage, page }: IPaginationQueryOptions) {
+  async findAllWithPaginate({
+    perPage,
+    page,
+    search,
+    order,
+  }: IPaginationQueryOptions) {
+    const whereClause = search ? setWhereQuery(search) : '';
+    const orderClause = order ?? getOrderClause(order);
     const { count, rows } = await this.genresRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
+      where: this.genresRepository.sequelize.literal(whereClause),
+      order: orderClause
+        ? this.genresRepository.sequelize.literal(orderClause)
+        : [],
     });
     if (count < 1) {
       throw new NotFoundException('No genres was found!');

@@ -37,9 +37,8 @@ export const getOrderClause = (order: string | undefined): string => {
   if (!order) {
     return '';
   }
-
-  const isDescending = order.charAt(0) === '-';
-  const columnName = isDescending ? order.substring(1) : order;
+  const isDescending = order.startsWith('-');
+  const columnName = isDescending ? order.slice(1) : order;
 
   return `${columnName} ${isDescending ? SortOperation.DESC : SortOperation.ASC}`;
 };
