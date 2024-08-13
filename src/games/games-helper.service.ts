@@ -117,7 +117,6 @@ export class GameHelperService {
         ? { model: Platform, where: { id: platformId } }
         : { model: Platform },
       { model: Publisher },
-      { model: Like },
     ];
 
     const orderClause = order

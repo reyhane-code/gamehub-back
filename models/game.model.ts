@@ -22,6 +22,7 @@ import { User } from './user.model';
 import { Like } from './like.model';
 import { Comment } from './comment.model';
 import { Bookmark } from './bookmark.model';
+import { Screenshot } from './screenshot.model';
 
 @Table({ tableName: TableName.GAMES })
 export class Game extends Model {
@@ -58,6 +59,9 @@ export class Game extends Model {
 
   @HasMany(() => Like)
   likes: Like[];
+
+  @HasMany(() => Screenshot)
+  screenshots: Screenshot[];
 
   @HasMany(() => Comment)
   comments: Comment[];
