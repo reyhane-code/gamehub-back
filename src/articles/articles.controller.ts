@@ -12,7 +12,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
-import { AuthGuard } from 'src/guards/auth.guard';
 import { AddArticleDto } from './dtos/add-article.dto';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { IUser } from 'src/users/interfaces/user.interface';
@@ -21,18 +20,19 @@ import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { FileFieldsFastifyInterceptor } from 'fastify-file-interceptor';
 import { multerOptions } from '../helpers/file/multer-options';
 import { paginationDefault } from 'src/constance';
+import { AdminGuard } from 'src/guards/admin.guard';
 
 @Controller('articles')
 export class ArticlesController {
   constructor(private articlesService: ArticlesService) {}
 
-  @UseGuards(AuthGuard)
   @UseInterceptors(
     FileFieldsFastifyInterceptor(
       [{ name: 'image', maxCount: 1 }],
       multerOptions,
     ),
   )
+  @UseGuards(AdminGuard)
   @Post()
   createArticle(
     @Body() body: AddArticleDto,
@@ -66,13 +66,13 @@ export class ArticlesController {
     return this.articlesService.findArticleByTitle(title);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AdminGuard)
   @Get('/user')
   getUserArticles(@CurrentUser() user: IUser) {
     return this.articlesService.findUserArticles(user);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AdminGuard)
   @Put('/:id')
   updateArticle(
     @Body() body: UpdateArticleDto,
@@ -81,7 +81,7 @@ export class ArticlesController {
   ) {
     return this.articlesService.updateArticle(body, id, user);
   }
-  @UseGuards(AuthGuard)
+  @UseGuards(AdminGuard)
   @Delete('/:id')
   deleteArticle(
     @Param('id') id: number,
