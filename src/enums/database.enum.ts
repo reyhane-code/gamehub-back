@@ -12,6 +12,7 @@ export enum TableName {
   COMMENTS = 'comments',
   ARTICLES = 'articles',
   FILES = 'files',
+  SCREENSHOTS = 'screenshots',
 }
 
 export enum Repository {
@@ -28,6 +29,7 @@ export enum Repository {
   COMMENTS = 'COMMENTS_REPOSITORY',
   ARTICLES = 'ARTICLES_REPOSITORY',
   FILES = 'FILES_REPOSITORY',
+  SCREENSHOTS = 'SCREENSHOTS_REPOSITORY',
 }
 
 export enum Role {
