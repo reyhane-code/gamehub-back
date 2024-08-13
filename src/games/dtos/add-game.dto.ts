@@ -4,6 +4,7 @@ import {
   IsString,
   IsNotEmpty,
   IsOptional,
+  TransformAndValidateNumberArray,
 } from 'src/custom-validator';
 
 export class AddGameDto {
@@ -28,19 +29,16 @@ export class AddGameDto {
   metacritic?: number;
 
   @Expose()
-  @IsNumber()
-  @IsNotEmpty()
-  platformId: number;
+  @TransformAndValidateNumberArray()
+  platformIds: number[];
 
   @Expose()
-  @IsNumber()
-  @IsNotEmpty()
-  publisherId: number;
+  @TransformAndValidateNumberArray()
+  publisherIds: number[];
 
   @Expose()
-  @IsNumber()
-  @IsNotEmpty()
-  genreId: number;
+  @TransformAndValidateNumberArray()
+  genreIds: number[];
 
   @Expose()
   @IsString()
