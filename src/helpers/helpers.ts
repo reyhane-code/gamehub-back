@@ -1,3 +1,4 @@
+import { SortOperation } from 'src/enums/enums';
 import {
   ISearchFilterOptions,
   ISearchFilterParam,
@@ -30,4 +31,15 @@ const generateCondition = (
   return items
     .map((item) => `${item.field} ${item.operation} ${item.value}`)
     .join(` ${joinOperator} `);
+};
+
+export const getOrderClause = (order: string | undefined): string => {
+  if (!order) {
+    return '';
+  }
+
+  const isDescending = order.charAt(0) === '-';
+  const columnName = isDescending ? order.substring(1) : order;
+
+  return `${columnName} ${isDescending ? SortOperation.DESC : SortOperation.ASC}`;
 };

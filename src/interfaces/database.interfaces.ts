@@ -1,4 +1,4 @@
-import { FilterOperationEnum, sortOperation } from 'src/enums/enums';
+import { FilterOperationEnum, SortOperation } from 'src/enums/enums';
 
 export interface IPaginationQueryOptions {
   perPage?: number;
@@ -7,7 +7,7 @@ export interface IPaginationQueryOptions {
 
 export interface IOrderQueryOptions {
   field?: string;
-  opration?: sortOperation;
+  opration?: SortOperation;
 }
 
 export interface ISearchFilterOptions {

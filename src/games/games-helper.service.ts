@@ -10,8 +10,8 @@ import { Genre } from 'models/genre.model';
 import { Platform } from 'models/platform.model';
 import { Publisher } from 'models/publisher.model';
 import { Like } from 'models/like.model';
-import { sortOperation } from 'src/enums/enums';
-import { setWhereQuery } from 'src/helpers/helpers';
+import { SortOperation } from 'src/enums/enums';
+import { getOrderClause, setWhereQuery } from 'src/helpers/helpers';
 import { paginationDefault } from 'src/constance';
 import { Game } from 'models/game.model';
 
@@ -109,7 +109,7 @@ export class GameHelperService {
     genreId,
     platformId,
     order,
-    params,
+    search,
   }: IGamesQuery) {
     const includeClauses = [
       genreId ? { model: Genre, where: { id: genreId } } : { model: Genre },
@@ -119,13 +119,9 @@ export class GameHelperService {
       { model: Publisher },
     ];
 
-    const orderClause = order
-      ? order.charAt(0) === '-'
-        ? `${order.substring(1)} ${sortOperation.DESC}`
-        : `${order} ${sortOperation.ASC}`
-      : '';
+    const orderClause = getOrderClause(order);
 
-    const whereClause = setWhereQuery(params);
+    const whereClause = setWhereQuery(search);
 
     const pageVal = page || paginationDefault.page;
     const perPageVal = perPage || paginationDefault.perPage;

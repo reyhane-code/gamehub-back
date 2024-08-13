@@ -9,19 +9,20 @@ import { Article } from 'models/article.model';
 import { AddArticleDto } from './dtos/add-article.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdateArticleDto } from './dtos/update-article.dto';
-import { Repository } from 'src/enums/database.enum';
+import { LikeAbleEntity, Repository } from 'src/enums/database.enum';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { Like } from 'models/like.model';
 import { Comment } from 'models/comment.model';
 import { paginationDefault } from 'src/constance';
-import { File } from 'models/file.model';
 import { FilesService } from 'src/files/files.service';
+import { LikesService } from 'src/likes/likes.service';
 
 @Injectable()
 export class ArticlesService {
   constructor(
     @Inject(Repository.ARTICLES) private articlesRepository: typeof Article,
     private readonly filesService: FilesService,
+    private readonly likesService: LikesService,
   ) {}
 
   async createArticle(
@@ -63,12 +64,17 @@ export class ArticlesService {
   async findArticleById(id: number) {
     const article = await this.articlesRepository.findOne({
       where: { id },
-      include: [{ model: Like }, { model: Comment }],
+      include: [{ model: Comment }],
     });
+
     if (!article) {
       throw new NotFoundException('No article was found!');
     }
-    return article;
+    const likesCount = await this.likesService.getLikesCountForEntity(
+      article.id,
+      LikeAbleEntity.ARTICLE,
+    );
+    return { article, likes: likesCount };
   }
 
   async findArticleByTitle(title: string) {
@@ -81,12 +87,15 @@ export class ArticlesService {
 
   async findArticles() {
     const articles = await this.articlesRepository.findAll({
-      include: [{ model: Like }, { model: Comment }],
+      include: [{ model: Comment }],
     });
     if (articles.length < 1 || !articles) {
       throw new NotFoundException('No articles were found!');
     }
-    return articles;
+    const likesCount = await this.likesService.getLikesCountForAllEntities(
+      LikeAbleEntity.ARTICLE,
+    );
+    return { articles, likes: likesCount };
   }
 
   async findOne(id: number) {
@@ -106,25 +115,30 @@ export class ArticlesService {
     const { count, rows } = await this.articlesRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
-      include: [{ model: Like }, { model: Comment }],
+      include: [{ model: Comment }],
       distinct: true,
     });
     if (count < 1) {
       throw new NotFoundException('No articles was found!');
     }
+    const likesCount = await this.likesService.getLikesCountForAllEntities(
+      LikeAbleEntity.ARTICLE,
+    );
+
     return {
       count,
       data: rows,
       page,
       perPage,
       offset: (page - 1) * perPage,
+      likes: likesCount,
     };
   }
 
   async findUserArticles(user: IUser) {
     const { rows, count } = await this.articlesRepository.findAndCountAll({
       where: { user_id: user.id },
-      include: [{ model: Like }, { model: Comment }],
+      include: [{ model: Comment }],
       distinct: true,
     });
     if (count < 1) {

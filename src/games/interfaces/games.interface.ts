@@ -6,5 +6,5 @@ export interface IGamesQuery {
   genreId?: number;
   platformId?: number;
   order?: string;
-  params?: ISearchFilterParam;
+  search?: ISearchFilterParam;
 }

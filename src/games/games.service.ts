@@ -107,7 +107,7 @@ export class GamesService {
     genreId,
     platformId,
     order,
-    params,
+    search,
   }: IGamesQuery) {
     const query = this.gameHelperService.buildGamesQuery({
       page,
@@ -115,7 +115,7 @@ export class GamesService {
       genreId,
       platformId,
       order,
-      params,
+      search,
     });
     const { count, rows } = await this.gamesRepository.findAndCountAll({
       ...query,
@@ -198,13 +198,13 @@ export class GamesService {
         { model: Screenshot },
       ],
     });
+    if (!game) {
+      throw new NotFoundException('No game was found.');
+    }
     const likesCount = await this.likesService.getLikesCountForEntity(
       game.id,
       LikeAbleEntity.GAME,
     );
-    if (!game) {
-      throw new NotFoundException('No game was found.');
-    }
     return { game, likes: likesCount };
   }
 }
