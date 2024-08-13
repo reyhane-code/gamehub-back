@@ -30,58 +30,64 @@ export class GamesService {
       description,
       rating_top,
       metacritic,
-      platformId,
-      publisherId,
-      genreId,
+      platformIds,
+      publisherIds,
+      genreIds,
       image_alt,
     }: AddGameDto,
     user: IUser,
     imageFile?: Express.Multer.File,
     screenshots?: Express.Multer.File[],
   ) {
-    try {
-      const [imageHashKey = null, imageFileExtension] =
-        imageFile?.filename?.split('.') || [];
+    let imageHashKey = null;
+    let imageFileExtension = null;
+    let game: Game;
 
-      const game = await this.gamesRepository.create({
+    if (imageFile) {
+      [imageHashKey, imageFileExtension] =
+        imageFile?.filename?.split('.') || [];
+    }
+
+    try {
+      game = await this.gamesRepository.create({
         name,
         slug: toSlug(name),
         description,
-        background_image: imageFile ? imageHashKey : null,
+        background_image: imageHashKey,
         rating_top,
         metacritic,
         user_id: user.id,
       });
-
-      // Handle image file if provided
-      if (imageFile) {
-        await this.gameHelperService.saveImageFileToDB(
-          imageFile,
-          image_alt,
-          imageHashKey,
-          imageFileExtension,
-        );
-      }
-
-      // Handle screenshots if provided
-      if (screenshots) {
-        await this.gameHelperService.saveScreenshotsToDB(screenshots, game.id);
-      }
-
-      // Add game to relation tables
-      await this.gameHelperService.addGameToRelationTables(
-        game.id,
-        platformId,
-        publisherId,
-        genreId,
-      );
-
-      return game;
     } catch (error) {
       throw new BadRequestException(
         'Something went wrong while adding the game.',
       );
     }
+
+    // Handle image file if provided
+    if (imageFile) {
+      await this.gameHelperService.saveImageFileToDB(
+        imageFile,
+        image_alt,
+        imageHashKey,
+        imageFileExtension,
+      );
+    }
+
+    // Handle screenshots if provided
+    if (screenshots.length > 0) {
+      await this.gameHelperService.saveScreenshotsToDB(screenshots, game.id);
+    }
+
+    // Add game to relation tables
+    await this.gameHelperService.addGameToRelationTables(
+      game.id,
+      platformIds,
+      publisherIds,
+      genreIds,
+    );
+
+    return game;
   }
 
   async findOneById(id: number) {

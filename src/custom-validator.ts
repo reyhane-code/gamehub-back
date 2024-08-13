@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   ValidationOptions,
   IsNotEmpty as _IsNotEmpty,
@@ -16,7 +17,8 @@ import {
   ValidateIf as _ValidateIf,
   IsBoolean as _ISBoolean,
   IsEnum as _IsEnum,
-  Matches as _Matches
+  Matches as _Matches,
+  registerDecorator,
 } from 'class-validator';
 import { IsEmailOptions } from './interfaces/validator-interfaces';
 import { faTranslator } from './i18n/fa';
@@ -122,42 +124,78 @@ export const IsOptional = (
   validationOptions?: ValidationOptions,
 ): PropertyDecorator => _IsOptional(validationOptions);
 
-const defaultEmailOptions :IsEmailOptions = {
+const defaultEmailOptions: IsEmailOptions = {
   allow_display_name: false,
   allow_ip_domain: false,
   allow_utf8_local_part: true,
   domain_specific_validation: false,
-  ignore_max_length:false,
-}
+  ignore_max_length: false,
+};
 export const IsEmail = (
   validationOptions?: ValidationOptions,
 ): PropertyDecorator =>
   _IsEmail(
     { ...defaultEmailOptions },
-    generateOptions('IsEmail',validationOptions),
+    generateOptions('IsEmail', validationOptions),
   );
 export const ValidateIf = (
   condition: (object: any, value: any) => boolean,
   validationOptions?: ValidationOptions,
 ): PropertyDecorator =>
-  _ValidateIf(
-    condition,
-    generateOptions('ValidateIf', validationOptions),
-  );
+  _ValidateIf(condition, generateOptions('ValidateIf', validationOptions));
 export const IsEnum = (
   entity: object,
   validationOptions?: ValidationOptions,
 ): PropertyDecorator =>
-  _IsEnum(
-    entity,
-    generateOptions('IsEnum', validationOptions),
-  );
+  _IsEnum(entity, generateOptions('IsEnum', validationOptions));
 
 export const Matches = (
   pattern: RegExp,
   validationOptions?: ValidationOptions,
 ): PropertyDecorator =>
-  _Matches(
-    pattern,
-    generateOptions('Matches', validationOptions),
-  );
+  _Matches(pattern, generateOptions('Matches', validationOptions));
+
+
+export function TransformAndValidateNumberArray(
+  validationOptions?: ValidationOptions,
+) {
+  return function (object: Object, propertyName: string) {
+    // Register the validation decorator
+    registerDecorator({
+      name: 'isArrayOrSingleNumber',
+      target: object.constructor,
+      propertyName: propertyName,
+      options: validationOptions,
+      validator: {
+        validate(value: any, args: ValidationArguments) {
+          // Transform the value to an array of numbers
+          const transformedValue = Array.isArray(value)
+            ? value.map((item) => {
+                const numberValue = Number(item);
+                return isNaN(numberValue) ? null : numberValue; // Return null if conversion fails
+              })
+            : [Number(value)];
+
+          // Validate the transformed value
+          if (Array.isArray(transformedValue)) {
+            return transformedValue.every((val) => val !== null); // Check if all elements are valid numbers
+          }
+          return transformedValue[0] !== null; // Check if single value is valid
+        },
+        defaultMessage(args: ValidationArguments) {
+          return 'Value must be an array of numbers or a single number';
+        },
+      },
+    });
+
+    // Apply the transformation
+    Transform(({ value }) => {
+      return Array.isArray(value)
+        ? value.map((item) => {
+            const numberValue = Number(item);
+            return isNaN(numberValue) ? null : numberValue; // Return null if conversion fails
+          })
+        : [Number(value)];
+    })(object, propertyName);
+  };
+}

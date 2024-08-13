@@ -12,6 +12,8 @@ const messages = {
   IsEmail: 'مقدار وارد شده یک ایمیل صحیح نیست',
   Matches: 'مقدار یک {propertyName} معتبر نیست',
   IsEnum: 'مقدار یک {propertyName} معتبر نیست',
+  TransformAndValidateNumberArray:
+    ' برای {propertyName} باید حداقل یک مقدار وارد کنید',
 };
 const properties = {
   password: 'رمز عبور',
@@ -37,6 +39,9 @@ const properties = {
   categories: 'دسته بندی ها',
   subCategory: 'زیر دسته بندی',
   subCategories: 'زیر دسته بندی ها',
+  platformIds: 'پلتفرم ها',
+  genreIds: ' ژانر ها',
+  publisherIds: 'پابلیشر ها',
 };
 
 export const faTranslator = {

@@ -33,7 +33,7 @@ export class GameHelperService {
     screenshots: Express.Multer.File[],
     gameId: number,
   ) {
-    const screenshotPromises = screenshots.map(async (screenshot) => {
+    const screenshotPromises = screenshots?.map(async (screenshot) => {
       const [hashKey = null, fileExtension] =
         screenshot?.filename?.split('.') || [];
 
@@ -60,27 +60,37 @@ export class GameHelperService {
     }
   }
 
+  createRelations = (ids: number[], relationKey: string, gameId: number) => {
+    return ids.map((id) => ({
+      game_id: gameId,
+      [relationKey]: id,
+    }));
+  };
+
   async addGameToRelationTables(
     gameId: number,
-    platformId: number,
-    publisherId: number,
-    genreId: number,
+    platformIds: number[],
+    publisherIds: number[],
+    genreIds: number[],
   ) {
+    const platforms = this.createRelations(platformIds, 'platform_id', gameId);
+    const publishers = this.createRelations(
+      publisherIds,
+      'publisher_id',
+      gameId,
+    );
+    const genres = this.createRelations(genreIds, 'genre_id', gameId);
+
     try {
-      await this.platformGamesRepository.create({
-        game_id: gameId,
-        platform_id: Number(platformId),
-      });
-      await this.publisherGamesRepository.create({
-        game_id: gameId,
-        publisher_id: Number(publisherId),
-      });
-      await this.genreGamesRepository.create({
-        game_id: gameId,
-        genre_id: Number(genreId),
-      });
+      await Promise.all([
+        this.platformGamesRepository.bulkCreate(platforms),
+        this.publisherGamesRepository.bulkCreate(publishers),
+        this.genreGamesRepository.bulkCreate(genres),
+      ]);
     } catch (error) {
-      throw new BadRequestException('something went wrong');
+      throw new BadRequestException(
+        'Failed to add game to relation tables: ' + error.message,
+      );
     }
   }
 

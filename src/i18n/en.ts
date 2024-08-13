@@ -12,6 +12,8 @@ const messages = {
   IsEmail: '{propertyName} must be a valid email',
   Matches: 'مقدار یک {propertyName} معتبر نیست',
   IsEnum: 'مقدار یک {propertyName} معتبر نیست',
+  TransformAndValidateNumberArray:
+    'You have to provide at least one value for {propertyName}',
 };
 const properties = {
   password: 'password',
@@ -31,6 +33,9 @@ const properties = {
   categories: 'categories',
   subCategory: 'sub Category',
   subCategories: 'sub Categories',
+  platformIds: 'platforms',
+  genreIs: 'genres',
+  publisherIds: 'publishers',
 };
 
 export const enTranslator = {
