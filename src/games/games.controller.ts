@@ -50,7 +50,10 @@ export class GamesController {
   @UseGuards(AdminGuard)
   @UseInterceptors(
     FileFieldsFastifyInterceptor(
-      [{ name: 'image', maxCount: 1 }],
+      [
+        { name: 'image', maxCount: 1 },
+        { name: 'screenshots', maxCount: 12 },
+      ],
       multerOptions,
     ),
   )
@@ -59,10 +62,14 @@ export class GamesController {
     @Body() body: AddGameDto,
     @CurrentUser() user: IUser,
     @UploadedFiles()
-    image?: { image?: Express.Multer.File[] },
+    files?: {
+      image?: Express.Multer.File[];
+      screenshots?: Express.Multer.File[];
+    },
   ) {
-    const imageFile = image?.image ? image.image[0] : null;
-    return this.gamesService.addGame(body, user, imageFile);
+    const imageFile = files?.image ? files.image[0] : null;
+    const screenshots = files?.screenshots ? files.screenshots : null;
+    return this.gamesService.addGame(body, user, imageFile, screenshots);
   }
 
   @UseGuards(AdminGuard)

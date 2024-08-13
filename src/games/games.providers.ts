@@ -3,6 +3,7 @@ import { Game } from 'models/game.model';
 import { GenreGame } from 'models/genre_game.model';
 import { PlatformGame } from 'models/platform_game.model';
 import { PublisherGame } from 'models/publisher_game.model';
+import { Screenshot } from 'models/screenshot.model';
 import { Repository } from 'src/enums/database.enum';
 
 export const gamesProviders = [
@@ -25,5 +26,9 @@ export const gamesProviders = [
   {
     provide: Repository.FILES,
     useValue: File,
+  },
+  {
+    provide: Repository.SCREENSHOTS,
+    useValue: Screenshot,
   },
 ];

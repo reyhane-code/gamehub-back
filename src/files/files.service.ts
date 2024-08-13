@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Inject,
   Injectable,
   NotFoundException,
@@ -98,5 +99,26 @@ export class FilesService {
         reject(error);
       });
     });
+  }
+
+  saveImageFileToDB(
+    image: Express.Multer.File,
+    alt: string,
+    hashKey: string,
+    fileType: string,
+  ) {
+    try {
+      return this.filesRepository.create<File>({
+        file_type: fileType,
+        meta: {
+          size: Number(image.size),
+          alt,
+          blurHash: '',
+        },
+        hash_key: hashKey,
+      });
+    } catch (error) {
+      throw new BadRequestException('Something went wrong while saving image!');
+    }
   }
 }

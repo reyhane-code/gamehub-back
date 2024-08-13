@@ -20,9 +20,9 @@ import { GenreGame } from 'models/genre_game.model';
 import { setWhereQuery, toSlug } from 'src/helpers/helpers';
 import { sortOperation } from 'src/enums/enums';
 import { Like } from 'models/like.model';
-import { fileType } from 'src/enums/file-type.enum';
 import { File } from 'models/file.model';
-import { ImageFormat } from 'src/files/enums/image-format';
+import { Screenshot } from 'models/screenshot.model';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class GamesService {
@@ -34,7 +34,9 @@ export class GamesService {
     private publisherGamesRepository: typeof PublisherGame,
     @Inject(Repository.GENRE_GAMES)
     private genreGamesRepository: typeof GenreGame,
-    @Inject(Repository.FILES) private filesRepository: typeof File,
+    @Inject(Repository.SCREENSHOTS)
+    private screenshotsRepository: typeof Screenshot,
+    private readonly filesService: FilesService,
   ) {}
 
   async findOneById(id: number) {
@@ -116,6 +118,7 @@ export class GamesService {
         : [],
     };
   }
+
   async addGame(
     {
       name,
@@ -129,20 +132,38 @@ export class GamesService {
     }: AddGameDto,
     user: IUser,
     imageFile?: Express.Multer.File,
+    screenshots?: Express.Multer.File[],
   ) {
     try {
-      const [hashKey = null, fileExtension] = imageFile?.filename?.split('.') || [];
+      const [imageHashKey = null, imageFileExtension] =
+        imageFile?.filename?.split('.') || [];
 
       const game = await this.gamesRepository.create({
         name,
         slug: toSlug(name),
         description,
-        background_image: imageFile ? hashKey : null,
+        background_image: imageFile ? imageHashKey : null,
         rating_top,
         metacritic,
         user_id: user.id,
       });
 
+      // Handle image file if provided
+      if (imageFile) {
+        await this.filesService.saveImageFileToDB(
+          imageFile,
+          image_alt,
+          imageHashKey,
+          imageFileExtension,
+        );
+      }
+
+      // Handle screenshots if provided
+      if (screenshots) {
+        await this.saveScreenshotsToDB(screenshots, game.id);
+      }
+
+      // Add game to relation tables
       await this.addGameToRelationTables(
         game.id,
         platformId,
@@ -150,37 +171,42 @@ export class GamesService {
         genreId,
       );
 
-      if (imageFile)
-        await this.saveGameImageDataToDB(
-          imageFile,
-          image_alt,
-          hashKey,
-          fileExtension,
-        );
       return game;
     } catch (error) {
-      throw new BadRequestException('something went wrong');
+      throw new BadRequestException(
+        'Something went wrong while adding the game.',
+      );
     }
   }
 
-  saveGameImageDataToDB(
-    image: Express.Multer.File,
-    alt: string,
-    hashKey: string,
-    fileType: string,
+  async saveScreenshotsToDB(
+    screenshots: Express.Multer.File[],
+    gameId: number,
   ) {
-    try {
-      return this.filesRepository.create<File>({
-        file_type: fileType,
-        meta: {
-          size: Number(image.size),
-          alt,
-          blurHash: '',
-        },
+    const screenshotPromises = screenshots.map(async (screenshot) => {
+      const [hashKey = null, fileExtension] =
+        screenshot?.filename?.split('.') || [];
+
+      await this.filesService.saveImageFileToDB(
+        screenshot,
+        screenshot.originalname,
+        hashKey,
+        fileExtension,
+      );
+
+      return this.screenshotsRepository.create({
+        game_id: gameId,
         hash_key: hashKey,
       });
+    });
+
+    // Await all screenshot promises
+    try {
+      await Promise.all(screenshotPromises);
     } catch (error) {
-      throw new BadRequestException('something went wrong while saving image!');
+      throw new BadRequestException(
+        'Something went wrong while saving screenshots!',
+      );
     }
   }
 
