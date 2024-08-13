@@ -10,12 +10,10 @@ import { Platform } from 'models/platform.model';
 import { Repository } from 'src/enums/database.enum';
 import { IGamesQuery } from './interfaces/games.interface';
 import { Publisher } from 'models/publisher.model';
-import { paginationDefault } from 'src/constance';
 import { AddGameDto } from './dtos/add-game.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdateGameDto } from './dtos/update-game.dto';
-import { setWhereQuery, toSlug } from 'src/helpers/helpers';
-import { sortOperation } from 'src/enums/enums';
+import { toSlug } from 'src/helpers/helpers';
 import { Like } from 'models/like.model';
 import { GameHelperService } from './games-helper.service';
 
@@ -25,47 +23,6 @@ export class GamesService {
     @Inject(Repository.GAMES) private gamesRepository: typeof Game,
     private readonly gameHelperService: GameHelperService,
   ) {}
-
-  async findOneById(id: number) {
-    const game = await this.gamesRepository.findOne({ where: { id } });
-    if (!game) {
-      throw new NotFoundException('NO game was found.');
-    }
-    return game;
-  }
-
-  async getGames({
-    page,
-    perPage,
-    genreId,
-    platformId,
-    order,
-    params,
-  }: IGamesQuery) {
-    const query = this.gameHelperService.buildGamesQuery({
-      page,
-      perPage,
-      genreId,
-      platformId,
-      order,
-      params,
-    });
-    const { count, rows } = await this.gamesRepository.findAndCountAll({
-      ...query,
-      distinct: true,
-    });
-    if (count < 1) {
-      throw new NotFoundException('NO game was found.');
-    }
-
-    return {
-      count,
-      data: rows,
-      page,
-      perPage,
-      offset: perPage * (page - 1),
-    };
-  }
 
   async addGame(
     {
@@ -125,6 +82,47 @@ export class GamesService {
         'Something went wrong while adding the game.',
       );
     }
+  }
+
+  async findOneById(id: number) {
+    const game = await this.gamesRepository.findOne({ where: { id } });
+    if (!game) {
+      throw new NotFoundException('NO game was found.');
+    }
+    return game;
+  }
+
+  async getGames({
+    page,
+    perPage,
+    genreId,
+    platformId,
+    order,
+    params,
+  }: IGamesQuery) {
+    const query = this.gameHelperService.buildGamesQuery({
+      page,
+      perPage,
+      genreId,
+      platformId,
+      order,
+      params,
+    });
+    const { count, rows } = await this.gamesRepository.findAndCountAll({
+      ...query,
+      distinct: true,
+    });
+    if (count < 1) {
+      throw new NotFoundException('NO game was found.');
+    }
+
+    return {
+      count,
+      data: rows,
+      page,
+      perPage,
+      offset: perPage * (page - 1),
+    };
   }
 
   async deleteGame(gameId: number, isSoftDelete: boolean) {

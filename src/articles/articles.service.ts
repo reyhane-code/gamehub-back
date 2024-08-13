@@ -15,12 +15,13 @@ import { Like } from 'models/like.model';
 import { Comment } from 'models/comment.model';
 import { paginationDefault } from 'src/constance';
 import { File } from 'models/file.model';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class ArticlesService {
   constructor(
     @Inject(Repository.ARTICLES) private articlesRepository: typeof Article,
-    @Inject(Repository.FILES) private filesRepository: typeof File,
+    private readonly filesService: FilesService,
   ) {}
 
   async createArticle(
@@ -46,7 +47,7 @@ export class ArticlesService {
       });
 
       if (imageFile) {
-        await this.saveArticleImageDataToDB(
+        await this.filesService.saveImageFileToDB(
           imageFile,
           body.imageAlt,
           hashKey,
@@ -56,26 +57,6 @@ export class ArticlesService {
       return article;
     } catch (error) {
       throw new BadRequestException('Something went wrong!');
-    }
-  }
-  saveArticleImageDataToDB(
-    image: Express.Multer.File,
-    alt: string,
-    hashKey: string,
-    fileType: string,
-  ) {
-    try {
-      return this.filesRepository.create({
-        meta: {
-          size: Number(image.size),
-          alt,
-          blurHash: '',
-        },
-        file_type: fileType,
-        hash_key: hashKey,
-      });
-    } catch (error) {
-      throw new BadRequestException('something went wrong while saving image!');
     }
   }
 
