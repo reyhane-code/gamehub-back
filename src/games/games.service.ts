@@ -7,7 +7,7 @@ import {
 import { Game } from 'models/game.model';
 import { Genre } from 'models/genre.model';
 import { Platform } from 'models/platform.model';
-import { Repository } from 'src/enums/database.enum';
+import { LikeAbleEntity, Repository } from 'src/enums/database.enum';
 import { IGamesQuery } from './interfaces/games.interface';
 import { Publisher } from 'models/publisher.model';
 import { AddGameDto } from './dtos/add-game.dto';
@@ -16,12 +16,15 @@ import { UpdateGameDto } from './dtos/update-game.dto';
 import { toSlug } from 'src/helpers/helpers';
 import { Like } from 'models/like.model';
 import { GameHelperService } from './games-helper.service';
+import { LikesService } from 'src/likes/likes.service';
+import { Screenshot } from 'models/screenshot.model';
 
 @Injectable()
 export class GamesService {
   constructor(
     @Inject(Repository.GAMES) private gamesRepository: typeof Game,
     private readonly gameHelperService: GameHelperService,
+    private readonly likesService: LikesService,
   ) {}
 
   async addGame(
@@ -122,12 +125,17 @@ export class GamesService {
       throw new NotFoundException('NO game was found.');
     }
 
+    const likesCount = await this.likesService.getLikesCountForAllEntities(
+      LikeAbleEntity.GAME,
+    );
+
     return {
       count,
       data: rows,
       page,
       perPage,
       offset: perPage * (page - 1),
+      likes: likesCount,
     };
   }
 
@@ -171,8 +179,13 @@ export class GamesService {
     }
   }
 
-  findUserGames(user: IUser) {
-    return this.gamesRepository.findAll({ where: { user_id: user.id } });
+  async findUserGames(user: IUser) {
+    const games = await this.gamesRepository.findAll({
+      where: { user_id: user.id },
+    });
+    if (games.length < 1) {
+      throw new NotFoundException('This user does not have any games!');
+    }
   }
 
   async findGameBySlug(slug: string) {
@@ -182,14 +195,16 @@ export class GamesService {
         { model: Genre },
         { model: Publisher },
         { model: Platform },
-        {
-          model: Like,
-        },
+        { model: Screenshot },
       ],
     });
+    const likesCount = await this.likesService.getLikesCountForEntity(
+      game.id,
+      LikeAbleEntity.GAME,
+    );
     if (!game) {
       throw new NotFoundException('No game was found.');
     }
-    return game;
+    return { game, likes: likesCount };
   }
 }

@@ -10,6 +10,7 @@ import { Platform } from 'models/platform.model';
 import { PlatformGame } from 'models/platform_game.model';
 import { Publisher } from 'models/publisher.model';
 import { PublisherGame } from 'models/publisher_game.model';
+import { Screenshot } from 'models/screenshot.model';
 import { User } from 'models/user.model';
 import { Sequelize } from 'sequelize-typescript';
 export const databaseProviders = [
@@ -39,6 +40,7 @@ export const databaseProviders = [
         Comment,
         Article,
         File,
+        Screenshot,
       ]);
       await sequelize.sync();
       return sequelize;
