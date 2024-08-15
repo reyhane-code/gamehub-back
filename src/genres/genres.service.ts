@@ -10,7 +10,7 @@ import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { AddGenreDto } from './dtos/add-genre.dto';
 import { UpdateGenreDto } from './dtos/update-genre.dto';
-import { genreatePaginationQuery } from 'src/helpers/helpers';
+import { generatePaginationQuery } from 'src/helpers/helpers';
 
 @Injectable()
 export class GenresService {
@@ -67,7 +67,7 @@ export class GenresService {
   }
 
   async findAllWithPaginate(query: IPaginationQueryOptions) {
-    const { page, perPage, order, where } = genreatePaginationQuery(query);
+    const { page, perPage, order, where } = generatePaginationQuery(query);
 
     const { count, rows } = await this.genresRepository.findAndCountAll({
       limit: perPage,

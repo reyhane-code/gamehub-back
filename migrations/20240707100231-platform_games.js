@@ -26,7 +26,7 @@ module.exports = {
       },
       updatedAt: {
         type: Sequelize.DATE,
-        allowNull: false,
+        allowNull: true,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       deletedAt: {
@@ -40,3 +40,5 @@ module.exports = {
     return queryInterface.dropTable('platform_games');
   },
 };
+
+

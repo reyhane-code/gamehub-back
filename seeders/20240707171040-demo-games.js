@@ -19,6 +19,7 @@ module.exports = {
         metacritic: 316,
         user_id: 1,
         createdAt: new Date(),
+        updatedAt: new Date(),
       },
       //2
       {

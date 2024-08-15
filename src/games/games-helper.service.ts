@@ -10,7 +10,7 @@ import { Genre } from 'models/genre.model';
 import { Platform } from 'models/platform.model';
 import { Publisher } from 'models/publisher.model';
 import {
-  genreatePaginationQuery
+  generatePaginationQuery
 } from 'src/helpers/helpers';
 import { Game } from 'models/game.model';
 
@@ -103,6 +103,7 @@ export class GameHelperService {
   }
 
   buildGamesQuery(query: IGamesQuery) {
+    console.log('queryBuild', query )
     const includeClauses = [
       query.genreId
         ? { model: Genre, where: { id: query.genreId } }
@@ -113,7 +114,7 @@ export class GameHelperService {
       { model: Publisher },
     ];
 
-    const { page, perPage, order, where } = genreatePaginationQuery(query);
+    const { page, perPage, order, where } = generatePaginationQuery(query);
 
     return {
       limit: perPage,

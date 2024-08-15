@@ -11,7 +11,7 @@ import { AddPlatformDto } from './dtos/add-platform.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdatedPlatformDto } from './dtos/update-platform.dto';
 import {
-  genreatePaginationQuery, toSlug
+  generatePaginationQuery, toSlug
 } from 'src/helpers/helpers';
 
 @Injectable()
@@ -76,7 +76,7 @@ export class PlatformsService {
   }
 
   async findAllWithPaginate(query: IPaginationQueryOptions) {
-    const { page, perPage, order, where } = genreatePaginationQuery(query);
+    const { page, perPage, order, where } = generatePaginationQuery(query);
 
     const { count, rows } = await this.platformsRepository.findAndCountAll({
       limit: perPage,

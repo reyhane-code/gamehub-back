@@ -15,7 +15,7 @@ import { Comment } from 'models/comment.model';
 import { FilesService } from 'src/files/files.service';
 import { LikesService } from 'src/likes/likes.service';
 import {
-  genreatePaginationQuery,
+  generatePaginationQuery,
   getOrderClause,
   setWhereQuery,
 } from 'src/helpers/helpers';
@@ -112,7 +112,7 @@ export class ArticlesService {
   }
 
   async findArticlesWithPaginate(query: IPaginationQueryOptions) {
-    const { page, perPage, order, where } = genreatePaginationQuery(query);
+    const { page, perPage, order, where } = generatePaginationQuery(query);
     const { rows, count } = await this.articlesRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
