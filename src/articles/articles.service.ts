@@ -14,7 +14,11 @@ import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { Comment } from 'models/comment.model';
 import { FilesService } from 'src/files/files.service';
 import { LikesService } from 'src/likes/likes.service';
-import { getOrderClause, setWhereQuery } from 'src/helpers/helpers';
+import {
+  genreatePaginationQuery,
+  getOrderClause,
+  setWhereQuery,
+} from 'src/helpers/helpers';
 
 @Injectable()
 export class ArticlesService {
@@ -107,23 +111,13 @@ export class ArticlesService {
     return article;
   }
 
-  async findArticlesWithPaginate({
-    page,
-    perPage,
-    order,
-    search,
-  }: IPaginationQueryOptions) {
-    const whereClause = search ? setWhereQuery(search) : '';
-    const orderClause = order ?? getOrderClause(order);
-    const { count, rows } = await this.articlesRepository.findAndCountAll({
+  async findArticlesWithPaginate(query: IPaginationQueryOptions) {
+    const { page, perPage, order, where } = genreatePaginationQuery(query);
+    const { rows, count } = await this.articlesRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
-      include: [{ model: Comment }],
-      distinct: true,
-      where: this.articlesRepository.sequelize.literal(whereClause),
-      order: orderClause
-        ? this.articlesRepository.sequelize.literal(orderClause)
-        : [],
+      where: this.articlesRepository.sequelize.literal(where),
+      order: order ? this.articlesRepository.sequelize.literal(order) : [],
     });
     if (count < 1) {
       throw new NotFoundException('No articles was found!');

@@ -9,10 +9,9 @@ import { IGamesQuery } from './interfaces/games.interface';
 import { Genre } from 'models/genre.model';
 import { Platform } from 'models/platform.model';
 import { Publisher } from 'models/publisher.model';
-import { Like } from 'models/like.model';
-import { SortOperation } from 'src/enums/enums';
-import { getOrderClause, setWhereQuery } from 'src/helpers/helpers';
-import { paginationDefault } from 'src/constance';
+import {
+  genreatePaginationQuery
+} from 'src/helpers/helpers';
 import { Game } from 'models/game.model';
 
 @Injectable()
@@ -103,35 +102,25 @@ export class GameHelperService {
     return this.filesService.saveImageFileToDB(image, alt, hashKey, fileType);
   }
 
-  buildGamesQuery({
-    page,
-    perPage,
-    genreId,
-    platformId,
-    order,
-    search,
-  }: IGamesQuery) {
+  buildGamesQuery(query: IGamesQuery) {
     const includeClauses = [
-      genreId ? { model: Genre, where: { id: genreId } } : { model: Genre },
-      platformId
-        ? { model: Platform, where: { id: platformId } }
+      query.genreId
+        ? { model: Genre, where: { id: query.genreId } }
+        : { model: Genre },
+      query.platformId
+        ? { model: Platform, where: { id: query.platformId } }
         : { model: Platform },
       { model: Publisher },
     ];
 
-    const orderClause = getOrderClause(order);
-    const whereClause = search ? setWhereQuery(search) : '';
-    const pageVal = page || paginationDefault.page;
-    const perPageVal = perPage || paginationDefault.perPage;
+    const { page, perPage, order, where } = genreatePaginationQuery(query);
 
     return {
-      limit: perPageVal,
-      offset: (pageVal - 1) * perPageVal,
+      limit: perPage,
+      offset: (page - 1) * perPage,
       include: includeClauses || [],
-      where: this.gamesRepository.sequelize.literal(whereClause),
-      order: orderClause
-        ? this.gamesRepository.sequelize.literal(orderClause)
-        : [],
+      where: this.gamesRepository.sequelize.literal(where),
+      order: order ? this.gamesRepository.sequelize.literal(order) : [],
     };
   }
 }

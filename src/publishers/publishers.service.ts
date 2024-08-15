@@ -10,7 +10,11 @@ import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { AddPublisherDto } from './dtos/add-publisher.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdatePublisherDto } from './dtos/update-publisher.dto';
-import { getOrderClause, setWhereQuery } from 'src/helpers/helpers';
+import {
+  genreatePaginationQuery,
+  getOrderClause,
+  setWhereQuery,
+} from 'src/helpers/helpers';
 
 @Injectable()
 export class PublishersService {
@@ -66,21 +70,14 @@ export class PublishersService {
     return publishers;
   }
 
-  async findAllWithPaginate({
-    perPage,
-    page,
-    search,
-    order,
-  }: IPaginationQueryOptions) {
-    const whereClause = search ? setWhereQuery(search) : '';
-    const orderClause = order ?? getOrderClause(order);
+  async findAllWithPaginate(query: IPaginationQueryOptions) {
+    const { page, perPage, order, where } = genreatePaginationQuery(query);
+
     const { count, rows } = await this.publishersRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
-      where: this.publishersRepository.sequelize.literal(whereClause),
-      order: orderClause
-        ? this.publishersRepository.sequelize.literal(orderClause)
-        : [],
+      where: this.publishersRepository.sequelize.literal(where),
+      order: order ? this.publishersRepository.sequelize.literal(order) : [],
     });
     if (count < 1) {
       throw new NotFoundException('No publishers was found!');
