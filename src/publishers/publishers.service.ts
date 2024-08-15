@@ -11,7 +11,7 @@ import { AddPublisherDto } from './dtos/add-publisher.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdatePublisherDto } from './dtos/update-publisher.dto';
 import {
-  genreatePaginationQuery,
+  generatePaginationQuery,
   getOrderClause,
   setWhereQuery,
 } from 'src/helpers/helpers';
@@ -71,7 +71,7 @@ export class PublishersService {
   }
 
   async findAllWithPaginate(query: IPaginationQueryOptions) {
-    const { page, perPage, order, where } = genreatePaginationQuery(query);
+    const { page, perPage, order, where } = generatePaginationQuery(query);
 
     const { count, rows } = await this.publishersRepository.findAndCountAll({
       limit: perPage,

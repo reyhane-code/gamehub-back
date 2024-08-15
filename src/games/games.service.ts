@@ -101,14 +101,9 @@ export class GamesService {
     return game;
   }
 
-  async getGames({
-    page,
-    perPage,
-    genreId,
-    platformId,
-    order,
-    search,
-  }: IGamesQuery) {
+  async getGames(reqQuery: IGamesQuery) {
+    console.log('reqQuery', reqQuery)
+    const { page, perPage, genreId, platformId, order, search } = reqQuery;
     const query = this.gameHelperService.buildGamesQuery({
       page,
       perPage,

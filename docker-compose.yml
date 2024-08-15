@@ -29,6 +29,7 @@ services:
       POSTGRES_PORT: '5432'
     depends_on:
       - postgres
+      - migrate
       - redis
 
   postgres:
@@ -70,7 +71,7 @@ services:
       - .:/gamehub/src/app
     depends_on:
       - postgres
-    command: sh -c "npx sequelize db:migrate"
+    command:  sh -c "sleep 3 && npx sequelize db:migrate"
 
   seed:
     image: mortezahatamikia/base-node
@@ -79,5 +80,7 @@ services:
       - .:/gamehub/src/app
     depends_on:
       - postgres
+      - redis
       - migrate
-    command: sh -c "npx sequelize-cli db:seed:all"
+      - api
+    command:  sh -c "sleep 5 && npx sequelize-cli db:seed:all"

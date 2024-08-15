@@ -46,7 +46,7 @@ export const getOrderClause = (order: string | undefined): string => {
   return `${columnName} ${isDescending ? SortOperation.DESC : SortOperation.ASC}`;
 };
 
-export const genreatePaginationQuery = (query: IPaginationQueryOptions) => {
+export const generatePaginationQuery = (query: IPaginationQueryOptions) => {
   const perPage = query.perPage ?? paginationDefault.perPage;
   const page = query.page ?? paginationDefault.page;
   const order = query.order ? getOrderClause(query.order) : null;
