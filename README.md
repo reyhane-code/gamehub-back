@@ -79,7 +79,6 @@ and
 psql -U postgres
 first alter the user: ALTER USER postgres WITH PASSWORD 'rewq4321';
 CREATE DATABASE gamehub_db;
-CREATE DATABASE gamehub_db;
 
 then: 
 CREATE OR REPLACE FUNCTION update_updatedAt_column()
