@@ -4,7 +4,7 @@ export interface IPaginationQueryOptions {
   perPage?: number;
   page?: number;
   order?: string;
-  search?: ISearchFilterParam;
+  where?: ISearchFilterParam;
 }
 
 export interface ISearchFilterOptions {

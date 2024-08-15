@@ -70,9 +70,9 @@ export const addGame = async (
       name,
       description,
       metacritic,
-      publisherId: publisher.id,
-      genreId: genre.id,
-      platformId: platform.id,
+      publisherIds: publisher.id,
+      genreIds: genre.id,
+      platformIds: platform.id,
     })
     .expect(status)
     .then((res) => res.body);

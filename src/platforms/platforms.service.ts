@@ -10,7 +10,9 @@ import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { AddPlatformDto } from './dtos/add-platform.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdatedPlatformDto } from './dtos/update-platform.dto';
-import { getOrderClause, setWhereQuery, toSlug } from 'src/helpers/helpers';
+import {
+  genreatePaginationQuery, toSlug
+} from 'src/helpers/helpers';
 
 @Injectable()
 export class PlatformsService {
@@ -73,21 +75,14 @@ export class PlatformsService {
     return platforms;
   }
 
-  async findAllWithPaginate({
-    perPage,
-    page,
-    search,
-    order,
-  }: IPaginationQueryOptions) {
-    const whereClause = search ? setWhereQuery(search) : '';
-    const orderClause = order ?? getOrderClause(order);
+  async findAllWithPaginate(query: IPaginationQueryOptions) {
+    const { page, perPage, order, where } = genreatePaginationQuery(query);
+
     const { count, rows } = await this.platformsRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
-      where: this.platformsRepository.sequelize.literal(whereClause),
-      order: orderClause
-        ? this.platformsRepository.sequelize.literal(orderClause)
-        : [],
+      where: this.platformsRepository.sequelize.literal(where),
+      order: order ? this.platformsRepository.sequelize.literal(order) : [],
     });
     if (count < 1) {
       throw new NotFoundException('No platforms was found!');
