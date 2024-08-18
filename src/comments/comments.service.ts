@@ -4,17 +4,23 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CommentAbleEntity, Repository } from 'src/enums/database.enum';
+import {
+  CommentAbleEntity,
+  LikeAbleEntity,
+  Repository,
+} from 'src/enums/database.enum';
 import { AddCommentDto } from './dtos/add-comment.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { Comment } from 'models/comment.model';
 import { UpdateCommentDto } from './dtos/update-comment.dto';
 import { Like } from 'models/like.model';
+import { LikesService } from 'src/likes/likes.service';
 
 @Injectable()
 export class CommentsService {
   constructor(
     @Inject(Repository.COMMENTS) private commentsRepository: typeof Comment,
+    private readonly likesService: LikesService,
   ) {}
 
   async addComment(
@@ -76,9 +82,13 @@ export class CommentsService {
     if (count == 0) {
       throw new NotFoundException('No comments were found!');
     }
+    const likesCount = await this.likesService.getLikesCountForAllEntities(
+      LikeAbleEntity.COMMENT,
+    );
     return {
       count,
       data: rows,
+      likes: likesCount,
     };
   }
 
@@ -91,6 +101,10 @@ export class CommentsService {
     if (count < 1) {
       throw new NotFoundException('No replies were found!');
     }
+    //TODO: check what to do??
+    // const likesCount = await this.likesService.getLikesCountForAllEntities(
+    //   LikeAbleEntity.COMMENT,
+    // );
     return {
       count,
       data: rows,
@@ -110,18 +124,22 @@ export class CommentsService {
       });
     }
   }
-  async findUserComments(user: IUser) {
+  async findUserComments(user: IUser, entityType: CommentAbleEntity) {
     const { rows, count } = await this.commentsRepository.findAndCountAll({
       where: { user_id: user.id },
-      include: { model: Like },
+      include: { model: Comment.associations[`${entityType}`].target },
       distinct: true,
     });
     if (count == 0) {
       throw new NotFoundException('No comments were found!');
     }
+    const likesCount = await this.likesService.getLikesCountForAllEntities(
+      LikeAbleEntity.COMMENT,
+    );
     return {
       count,
       data: rows,
+      likes: likesCount,
     };
   }
 

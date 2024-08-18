@@ -39,8 +39,11 @@ export class CommentsController {
 
   @UseGuards(AuthGuard)
   @Get('/user/:entityType')
-  getUserComments(@CurrentUser() user: IUser) {
-    return this.commentsService.findUserComments(user);
+  getUserComments(
+    @CurrentUser() user: IUser,
+    @Param('entityType') entityType: CommentAbleEntity,
+  ) {
+    return this.commentsService.findUserComments(user, entityType);
   }
 
   @Get('/:entityType/:entityId')
