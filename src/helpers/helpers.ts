@@ -84,12 +84,12 @@ const formatValue = (value: any) => {
   return value; // For numbers and other types
 };
 
-export const getOrderClause = (order: string | undefined): string => {
-  if (!order) {
+export const getsortByClause = (sortBy: string | undefined): string => {
+  if (!sortBy) {
     return '';
   }
-  const isDescending = order.startsWith('-');
-  const columnName = isDescending ? order.slice(1) : order;
+  const isDescending = sortBy.startsWith('-');
+  const columnName = isDescending ? sortBy.slice(1) : sortBy;
 
   return `${columnName} ${isDescending ? SortOperation.DESC : SortOperation.ASC}`;
 };
@@ -100,7 +100,7 @@ export const generatePaginationQuery = (
 ) => {
   const perPage = query.perPage ?? paginationDefault.perPage;
   const page = query.page ?? paginationDefault.page;
-  const orderClause = query.order ? getOrderClause(query.order) : null;
+  const sortByClause = query.sortBy ? getsortByClause(query.sortBy) : null;
 
   let filterInclude = [];
   let filterConditions = '';
@@ -129,7 +129,7 @@ export const generatePaginationQuery = (
   return {
     page,
     perPage,
-    order: orderClause,
+    sortBy: sortByClause,
     whereConditions: whereConditions.trim() ?? '',
     include: [...searchInclude, ...filterInclude] ?? [],
   };

@@ -112,14 +112,14 @@ export class ArticlesService {
   }
 
   async findArticlesWithPaginate(query: IPaginationQueryOptions) {
-    const { page, perPage, order, whereConditions, include } =
+    const { page, perPage, sortBy, whereConditions, include } =
       generatePaginationQuery(query, Article);
     const { rows, count } = await this.articlesRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
       where: this.articlesRepository.sequelize.literal(whereConditions),
       include: include.length > 0 ? include : undefined,
-      order: order ? this.articlesRepository.sequelize.literal(order) : [],
+      order: sortBy ? this.articlesRepository.sequelize.literal(sortBy) : [],
     });
     if (count < 1) {
       throw new NotFoundException('No articles was found!');
