@@ -14,11 +14,8 @@ import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { Comment } from 'models/comment.model';
 import { FilesService } from 'src/files/files.service';
 import { LikesService } from 'src/likes/likes.service';
-import {
-  generatePaginationQuery,
-  getOrderClause,
-  setWhereQuery,
-} from 'src/helpers/helpers';
+import { generatePaginationQuery } from 'src/helpers/helpers';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class ArticlesService {
@@ -112,11 +109,13 @@ export class ArticlesService {
   }
 
   async findArticlesWithPaginate(query: IPaginationQueryOptions) {
-    const { page, perPage, order, where } = generatePaginationQuery(query);
+    const { page, perPage, order, whereConditions, include } =
+      generatePaginationQuery(query, Article);
     const { rows, count } = await this.articlesRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
-      where: this.articlesRepository.sequelize.literal(where),
+      where: { [Op.or]: whereConditions },
+      include: include.length > 0 ? include : undefined,
       order: order ? this.articlesRepository.sequelize.literal(order) : [],
     });
     if (count < 1) {

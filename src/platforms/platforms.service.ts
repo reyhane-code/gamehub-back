@@ -10,9 +10,8 @@ import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { AddPlatformDto } from './dtos/add-platform.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdatedPlatformDto } from './dtos/update-platform.dto';
-import {
-  generatePaginationQuery, toSlug
-} from 'src/helpers/helpers';
+import { generatePaginationQuery, toSlug } from 'src/helpers/helpers';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class PlatformsService {
@@ -76,12 +75,14 @@ export class PlatformsService {
   }
 
   async findAllWithPaginate(query: IPaginationQueryOptions) {
-    const { page, perPage, order, where } = generatePaginationQuery(query);
+    const { page, perPage, order, whereConditions, include } =
+      generatePaginationQuery(query, Platform);
 
     const { count, rows } = await this.platformsRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
-      where: this.platformsRepository.sequelize.literal(where),
+      where: whereConditions ?? { [Op.or]: whereConditions },
+      include: include.length > 0 ? include : undefined,
       order: order ? this.platformsRepository.sequelize.literal(order) : [],
     });
     if (count < 1) {

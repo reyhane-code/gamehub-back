@@ -4,7 +4,8 @@ export interface IPaginationQueryOptions {
   perPage?: number;
   page?: number;
   order?: string;
-  where?: ISearchFilterParam;
+  filter?: ISearchFilterOptions[];
+  search?: ISearchFilterOptions[];
 }
 
 export interface ISearchFilterOptions {
@@ -13,9 +14,4 @@ export interface ISearchFilterOptions {
   operation: FilterOperationEnum;
 
   value: number | string | Date | number[] | string[] | boolean;
-}
-
-export interface ISearchFilterParam {
-  filter?: ISearchFilterOptions[];
-  search?: ISearchFilterOptions[];
 }

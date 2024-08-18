@@ -31,7 +31,7 @@ export class Platform extends Model {
   createdAt: Date;
 
   @UpdatedAt
-  updatedAt: Date;
+  updatedAt?: Date | null;
 
   @DeletedAt
   deletedAt?: Date | null;
