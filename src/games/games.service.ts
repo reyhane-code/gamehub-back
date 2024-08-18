@@ -13,11 +13,12 @@ import { Publisher } from 'models/publisher.model';
 import { AddGameDto } from './dtos/add-game.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdateGameDto } from './dtos/update-game.dto';
-import { toSlug } from 'src/helpers/helpers';
+import { generatePaginationQuery, toSlug } from 'src/helpers/helpers';
 import { Like } from 'models/like.model';
 import { GameHelperService } from './games-helper.service';
 import { LikesService } from 'src/likes/likes.service';
 import { Screenshot } from 'models/screenshot.model';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class GamesService {
@@ -101,19 +102,20 @@ export class GamesService {
     return game;
   }
 
-  async getGames(reqQuery: IGamesQuery) {
-    console.log('reqQuery', reqQuery)
-    const { page, perPage, genreId, platformId, order, search } = reqQuery;
-    const query = this.gameHelperService.buildGamesQuery({
-      page,
-      perPage,
-      genreId,
-      platformId,
-      order,
-      search,
-    });
+  async getGames(query: IGamesQuery) {
+    const { page, perPage, order, whereConditions, include } =
+      generatePaginationQuery(query, Game);
+
+    include.push({ model: Publisher });
+
     const { count, rows } = await this.gamesRepository.findAndCountAll({
-      ...query,
+      limit: perPage,
+      offset: perPage * (page - 1),
+      where: {
+        [Op.or]: whereConditions,
+      },
+      include: include.length > 0 ? include : undefined,
+      order: order ? this.gamesRepository.sequelize.literal(order) : [],
       distinct: true,
     });
     if (count < 1) {

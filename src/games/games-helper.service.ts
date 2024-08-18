@@ -9,10 +9,9 @@ import { IGamesQuery } from './interfaces/games.interface';
 import { Genre } from 'models/genre.model';
 import { Platform } from 'models/platform.model';
 import { Publisher } from 'models/publisher.model';
-import {
-  generatePaginationQuery
-} from 'src/helpers/helpers';
+import { generatePaginationQuery } from 'src/helpers/helpers';
 import { Game } from 'models/game.model';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class GameHelperService {
@@ -103,24 +102,14 @@ export class GameHelperService {
   }
 
   buildGamesQuery(query: IGamesQuery) {
-    console.log('queryBuild', query )
-    const includeClauses = [
-      query.genreId
-        ? { model: Genre, where: { id: query.genreId } }
-        : { model: Genre },
-      query.platformId
-        ? { model: Platform, where: { id: query.platformId } }
-        : { model: Platform },
-      { model: Publisher },
-    ];
-
-    const { page, perPage, order, where } = generatePaginationQuery(query);
-
+    console.log('queryBuild', query);
+    const { page, perPage, order, whereConditions, include } =
+      generatePaginationQuery(query, Game);
     return {
       limit: perPage,
       offset: (page - 1) * perPage,
-      include: includeClauses || [],
-      where: this.gamesRepository.sequelize.literal(where),
+      where: whereConditions,
+      include: (include.length > 0) ? include : undefined,
       order: order ? this.gamesRepository.sequelize.literal(order) : [],
     };
   }

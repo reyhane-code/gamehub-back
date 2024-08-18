@@ -11,6 +11,7 @@ import { IUser } from 'src/users/interfaces/user.interface';
 import { AddGenreDto } from './dtos/add-genre.dto';
 import { UpdateGenreDto } from './dtos/update-genre.dto';
 import { generatePaginationQuery } from 'src/helpers/helpers';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class GenresService {
@@ -67,12 +68,16 @@ export class GenresService {
   }
 
   async findAllWithPaginate(query: IPaginationQueryOptions) {
-    const { page, perPage, order, where } = generatePaginationQuery(query);
+    const { page, perPage, order, whereConditions, include } =
+      generatePaginationQuery(query, Genre);
 
     const { count, rows } = await this.genresRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
-      where: this.genresRepository.sequelize.literal(where),
+      where: {
+        [Op.or]: whereConditions,
+      },
+      include: include.length > 0 ? include : undefined,
       order: order ? this.genresRepository.sequelize.literal(order) : [],
     });
     if (count < 1) {

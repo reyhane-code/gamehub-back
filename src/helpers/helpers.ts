@@ -1,39 +1,54 @@
-import { or } from 'sequelize';
+import { Op } from 'sequelize';
+import { Model } from 'sequelize-typescript';
 import { paginationDefault } from 'src/constance';
 import { SortOperation } from 'src/enums/enums';
 import {
   IPaginationQueryOptions,
   ISearchFilterOptions,
-  ISearchFilterParam,
 } from 'src/interfaces/database.interfaces';
+
+const operationMap = {
+  EQ: Op.eq,
+  NE: Op.ne,
+  GT: Op.gt,
+  LT: Op.lt,
+  GTE: Op.gte,
+  LTE: Op.lte,
+  LIKE: Op.like,
+};
 
 export const toSlug = (str: string) => {
   return str.toLowerCase().replace(/\s+/g, '-');
 };
-export const setWhereQuery = (params: ISearchFilterParam) => {
-  if (!params) {
-    return '';
-  }
-  let query = '';
-
-  if (params.filter.length >= 1) {
-    query += generateCondition(params.filter, 'AND');
-  }
-
-  if (params.search.length >= 1) {
-    const searchQuery = generateCondition(params.search, 'OR');
-    query += query && searchQuery ? ` AND (${searchQuery})` : searchQuery;
-  }
-
-  return query;
-};
-const generateCondition = (
-  items: ISearchFilterOptions[],
-  joinOperator: string,
+export const getSearchAndFilter = (
+  filter: ISearchFilterOptions[],
+  model: any,
 ) => {
-  return items
-    .map((item) => `${item.field} ${item.operation} ${item.value}`)
-    .join(` ${joinOperator} `);
+  if (!filter) {
+    return { whereConditions: [], include: [] }; // Return an empty object with the expected structure
+  }
+
+  const whereConditions: any[] = [];
+  const include: any[] = [];
+
+  filter.forEach(({ field, operation, value }) => {
+    const operationFunc = operationMap[operation];
+    if (!operationFunc) return;
+
+    if (field.includes('.')) {
+      const [relation, nestedField] = field.split('.');
+      include.push({
+        model: model.associations[relation].target,
+        where: {
+          [nestedField]: { [operationFunc]: value },
+        },
+      });
+    } else {
+      whereConditions.push({ [field]: { [operationFunc]: value } });
+    }
+  });
+
+  return { whereConditions, include };
 };
 
 export const getOrderClause = (order: string | undefined): string => {
@@ -46,15 +61,20 @@ export const getOrderClause = (order: string | undefined): string => {
   return `${columnName} ${isDescending ? SortOperation.DESC : SortOperation.ASC}`;
 };
 
-export const generatePaginationQuery = (query: IPaginationQueryOptions) => {
+export const generatePaginationQuery = (
+  query: IPaginationQueryOptions,
+  model: any,
+) => {
   const perPage = query.perPage ?? paginationDefault.perPage;
   const page = query.page ?? paginationDefault.page;
-  const order = query.order ? getOrderClause(query.order) : null;
-  const where = query.where ? setWhereQuery(query.where) : '';
+  const orderClause = query.order ? getOrderClause(query.order) : null;
+  const { include, whereConditions } = getSearchAndFilter(query.filter, model);
+
   return {
     page,
     perPage,
-    order,
-    where,
+    order: orderClause,
+    whereConditions,
+    include,
   };
 };
