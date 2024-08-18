@@ -102,13 +102,8 @@ export class GamesService {
   }
 
   async getGames(query: IPaginationQueryOptions) {
-    const { page, perPage, order, whereConditions, include } =
+    const { page, perPage, sortBy, whereConditions, include } =
       generatePaginationQuery(query, Game);
-    console.log(
-      'whereConditionssssssssssssssssssssssssssssssssssssssssss',
-      whereConditions,
-    );
-    console.log('include bveforr', include);
     if (include.length < 1) {
       include.push({ model: Genre });
       include.push({ model: Platform });
@@ -121,7 +116,7 @@ export class GamesService {
       offset: perPage * (page - 1),
       where: this.gamesRepository.sequelize.literal(whereConditions),
       include: include,
-      order: order ? this.gamesRepository.sequelize.literal(order) : [],
+      order: sortBy ? this.gamesRepository.sequelize.literal(sortBy) : [],
       distinct: true,
     });
     if (count < 1) {

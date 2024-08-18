@@ -1,9 +1,9 @@
-import { FilterOperationEnum, SortOperation } from 'src/enums/enums';
+import { FilterOperationEnum } from 'src/enums/enums';
 
 export interface IPaginationQueryOptions {
   perPage?: number;
   page?: number;
-  order?: string;
+  sortBy?: string;
   filter?: ISearchFilterOptions[];
   search?: ISearchFilterOptions[];
 }

@@ -75,7 +75,7 @@ export class PlatformsService {
   }
 
   async findAllWithPaginate(query: IPaginationQueryOptions) {
-    const { page, perPage, order, whereConditions, include } =
+    const { page, perPage, sortBy, whereConditions, include } =
       generatePaginationQuery(query, Platform);
 
     const { count, rows } = await this.platformsRepository.findAndCountAll({
@@ -83,7 +83,7 @@ export class PlatformsService {
       offset: perPage * (page - 1),
       where: this.platformsRepository.sequelize.literal(whereConditions),
       include: include.length > 0 ? include : undefined,
-      order: order ? this.platformsRepository.sequelize.literal(order) : [],
+      order: sortBy ? this.platformsRepository.sequelize.literal(sortBy) : [],
     });
     if (count < 1) {
       throw new NotFoundException('No platforms was found!');

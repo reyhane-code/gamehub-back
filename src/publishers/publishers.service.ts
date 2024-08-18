@@ -68,7 +68,7 @@ export class PublishersService {
   }
 
   async findAllWithPaginate(query: IPaginationQueryOptions) {
-    const { page, perPage, order, whereConditions, include } =
+    const { page, perPage, sortBy, whereConditions, include } =
       generatePaginationQuery(query, Publisher);
 
     const { count, rows } = await this.publishersRepository.findAndCountAll({
@@ -76,7 +76,7 @@ export class PublishersService {
       offset: perPage * (page - 1),
       where: this.publishersRepository.sequelize.literal(whereConditions),
       include: include.length > 0 ? include : undefined,
-      order: order ? this.publishersRepository.sequelize.literal(order) : [],
+      order: sortBy ? this.publishersRepository.sequelize.literal(sortBy) : [],
     });
     if (count < 1) {
       throw new NotFoundException('No publishers was found!');
