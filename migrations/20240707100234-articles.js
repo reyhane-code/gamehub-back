@@ -27,6 +27,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      view: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
