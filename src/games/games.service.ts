@@ -8,17 +8,16 @@ import { Game } from 'models/game.model';
 import { Genre } from 'models/genre.model';
 import { Platform } from 'models/platform.model';
 import { LikeAbleEntity, Repository } from 'src/enums/database.enum';
-import { IGamesQuery } from './interfaces/games.interface';
 import { Publisher } from 'models/publisher.model';
 import { AddGameDto } from './dtos/add-game.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdateGameDto } from './dtos/update-game.dto';
 import { generatePaginationQuery, toSlug } from 'src/helpers/helpers';
-import { Like } from 'models/like.model';
 import { GameHelperService } from './games-helper.service';
 import { LikesService } from 'src/likes/likes.service';
 import { Screenshot } from 'models/screenshot.model';
 import { Op } from 'sequelize';
+import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 
 @Injectable()
 export class GamesService {
@@ -102,19 +101,26 @@ export class GamesService {
     return game;
   }
 
-  async getGames(query: IGamesQuery) {
+  async getGames(query: IPaginationQueryOptions) {
     const { page, perPage, order, whereConditions, include } =
       generatePaginationQuery(query, Game);
-
+    console.log(
+      'whereConditionssssssssssssssssssssssssssssssssssssssssss',
+      whereConditions,
+    );
+    console.log('include bveforr', include);
+    if (include.length < 1) {
+      include.push({ model: Genre });
+      include.push({ model: Platform });
+    }
     include.push({ model: Publisher });
+    console.log('include afterrrrrrrr', include);
 
     const { count, rows } = await this.gamesRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
-      where: {
-        [Op.or]: whereConditions,
-      },
-      include: include.length > 0 ? include : undefined,
+      where: this.gamesRepository.sequelize.literal(whereConditions),
+      include: include,
       order: order ? this.gamesRepository.sequelize.literal(order) : [],
       distinct: true,
     });

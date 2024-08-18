@@ -74,9 +74,7 @@ export class PublishersService {
     const { count, rows } = await this.publishersRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
-      where: {
-        [Op.or]: whereConditions,
-      },
+      where: this.publishersRepository.sequelize.literal(whereConditions),
       include: include.length > 0 ? include : undefined,
       order: order ? this.publishersRepository.sequelize.literal(order) : [],
     });

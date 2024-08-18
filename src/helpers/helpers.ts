@@ -21,17 +21,18 @@ export const toSlug = (str: string) => {
   return str.toLowerCase().replace(/\s+/g, '-');
 };
 export const getSearchAndFilter = (
-  filter: ISearchFilterOptions[],
+  params: ISearchFilterOptions[],
   model: any,
+  joinOperator: string,
 ) => {
-  if (!filter) {
-    return { whereConditions: [], include: [] }; // Return an empty object with the expected structure
+  if (!params || params.length === 0) {
+    return { whereConditions: '', include: [] }; // Return an empty object with the expected structure
   }
 
   const whereConditions: any[] = [];
   const include: any[] = [];
 
-  filter.forEach(({ field, operation, value }) => {
+  params.forEach(({ field, operation, value }) => {
     const operationFunc = operationMap[operation];
     if (!operationFunc) return;
 
@@ -48,7 +49,39 @@ export const getSearchAndFilter = (
     }
   });
 
-  return { whereConditions, include };
+  const whereConditionsString = generateCondition(
+    whereConditions,
+    joinOperator,
+  );
+
+  return { whereConditions: whereConditionsString, include };
+};
+
+const generateCondition = (items: any[], joinOperator: string) => {
+  return items
+    .map((item) => {
+      const [field] = Object.keys(item);
+      const operation = Object.keys(item[field])[0];
+      const value = item[field][operation];
+
+      const formattedValue = formatValue(value);
+
+      return `${field} ${operation} ${formattedValue}`;
+    })
+    .join(` ${joinOperator} `);
+};
+
+const formatValue = (value: any) => {
+  if (value === null) {
+    return 'NULL';
+  } else if (Array.isArray(value)) {
+    return `(${value.map((v) => (typeof v === 'string' ? `'${v}'` : v)).join(', ')})`;
+  } else if (typeof value === 'string') {
+    return `'${value}'`;
+  } else if (typeof value === 'boolean') {
+    return value ? 'TRUE' : 'FALSE';
+  }
+  return value; // For numbers and other types
 };
 
 export const getOrderClause = (order: string | undefined): string => {
@@ -68,13 +101,36 @@ export const generatePaginationQuery = (
   const perPage = query.perPage ?? paginationDefault.perPage;
   const page = query.page ?? paginationDefault.page;
   const orderClause = query.order ? getOrderClause(query.order) : null;
-  const { include, whereConditions } = getSearchAndFilter(query.filter, model);
 
+  let filterInclude = [];
+  let filterConditions = '';
+  let searchInclude = [];
+  let searchConditions = '';
+
+  if (query.filter) {
+    const filterResult = getSearchAndFilter(query.filter, model, 'AND');
+    filterInclude = filterResult.include;
+    filterConditions = filterResult.whereConditions;
+  }
+
+  if (query.search) {
+    const searchResult = getSearchAndFilter(query.search, model, 'OR');
+    searchInclude = searchResult.include;
+    searchConditions = searchResult.whereConditions;
+  }
+  let whereConditions = '';
+  if (filterConditions && searchConditions) {
+    whereConditions = `${filterConditions} AND ${searchConditions}`;
+  } else if (filterConditions) {
+    whereConditions = filterConditions;
+  } else if (searchConditions) {
+    whereConditions = searchConditions;
+  }
   return {
     page,
     perPage,
     order: orderClause,
-    whereConditions,
-    include,
+    whereConditions: whereConditions.trim() ?? '',
+    include: [...searchInclude, ...filterInclude] ?? [],
   };
 };
