@@ -81,7 +81,7 @@ export class PlatformsService {
     const { count, rows } = await this.platformsRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
-      where: whereConditions ?? { [Op.or]: whereConditions },
+      where: this.platformsRepository.sequelize.literal(whereConditions),
       include: include.length > 0 ? include : undefined,
       order: order ? this.platformsRepository.sequelize.literal(order) : [],
     });

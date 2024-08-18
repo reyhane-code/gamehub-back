@@ -74,9 +74,7 @@ export class GenresService {
     const { count, rows } = await this.genresRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
-      where: {
-        [Op.or]: whereConditions,
-      },
+      where: this.genresRepository.sequelize.literal(whereConditions),
       include: include.length > 0 ? include : undefined,
       order: order ? this.genresRepository.sequelize.literal(order) : [],
     });

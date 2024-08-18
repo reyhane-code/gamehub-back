@@ -114,7 +114,7 @@ export class ArticlesService {
     const { rows, count } = await this.articlesRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
-      where: { [Op.or]: whereConditions },
+      where: this.articlesRepository.sequelize.literal(whereConditions),
       include: include.length > 0 ? include : undefined,
       order: order ? this.articlesRepository.sequelize.literal(order) : [],
     });

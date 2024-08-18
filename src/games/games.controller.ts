@@ -12,7 +12,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { GamesService } from './games.service';
-import { IGamesQuery } from './interfaces/games.interface';
 import { AddGameDto } from './dtos/add-game.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdateGameDto } from './dtos/update-game.dto';
@@ -20,6 +19,7 @@ import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { FileFieldsFastifyInterceptor } from 'fastify-file-interceptor';
 import { multerOptions } from 'src/helpers/file/multer-options';
+import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 
 @Controller('games')
 export class GamesController {
@@ -31,7 +31,7 @@ export class GamesController {
   }
 
   @Get()
-  getGames(@Query() query: IGamesQuery) {
+  getGames(@Query() query: IPaginationQueryOptions) {
     return this.gamesService.getGames(query);
   }
 
