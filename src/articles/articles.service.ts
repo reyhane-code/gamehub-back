@@ -15,7 +15,7 @@ import { Comment } from 'models/comment.model';
 import { FilesService } from 'src/files/files.service';
 import { LikesService } from 'src/likes/likes.service';
 import { generatePaginationQuery } from 'src/helpers/helpers';
-import { Op } from 'sequelize';
+import { Op, where } from 'sequelize';
 
 @Injectable()
 export class ArticlesService {
@@ -64,12 +64,15 @@ export class ArticlesService {
   async findArticleById(id: number) {
     const article = await this.articlesRepository.findOne({
       where: { id },
-      include: [{ model: Comment }],
     });
 
     if (!article) {
       throw new NotFoundException('No article was found!');
     }
+    await this.articlesRepository.update(
+      { view: article.view + 1 },
+      { where: { id: article.id } },
+    );
     const likesCount = await this.likesService.getLikesCountForEntity(
       article.id,
       LikeAbleEntity.ARTICLE,

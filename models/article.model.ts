@@ -31,6 +31,9 @@ export class Article extends Model {
   @Column(DataType.STRING)
   image?: string;
 
+  @Column({ type: DataType.INTEGER, defaultValue: 0 })
+  view: number;
+
   @CreatedAt
   @Column(DataType.DATE)
   createdAt: Date;
