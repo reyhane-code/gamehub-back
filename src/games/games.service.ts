@@ -109,8 +109,7 @@ export class GamesService {
       include.push({ model: Platform });
     }
     include.push({ model: Publisher });
-    console.log('include afterrrrrrrr', include);
-
+    
     const { count, rows } = await this.gamesRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
