@@ -6,6 +6,7 @@ import {
   IPaginationQueryOptions,
   ISearchFilterOptions,
 } from 'src/interfaces/database.interfaces';
+import * as qs from 'qs';
 
 const operationMap = {
   EQ: Op.eq,
@@ -38,8 +39,13 @@ export const getSearchAndFilter = (
 
     if (field.includes('.')) {
       const [relation, nestedField] = field.split('.');
+      const modelValue =
+        model.associations[relation]?.target ??
+        model.associations[relation + 's']?.target;
+
+      if (!modelValue) return;
       include.push({
-        model: model.associations[relation].target,
+        model: modelValue,
         where: {
           [nestedField]: { [operationFunc]: value },
         },
@@ -84,7 +90,7 @@ const formatValue = (value: any) => {
   return value; // For numbers and other types
 };
 
-export const getsortByClause = (sortBy: string | undefined): string => {
+export const getSortByClause = (sortBy: string | undefined): string => {
   if (!sortBy) {
     return '';
   }
@@ -95,12 +101,16 @@ export const getsortByClause = (sortBy: string | undefined): string => {
 };
 
 export const generatePaginationQuery = (
-  query: IPaginationQueryOptions,
+  queryValue: IPaginationQueryOptions,
   model: any,
 ) => {
+  // @ts-ignore
+  const query = qs.parse(queryValue, {
+    allowDots: true,
+  }) as IPaginationQueryOptions;
   const perPage = query.perPage ?? paginationDefault.perPage;
   const page = query.page ?? paginationDefault.page;
-  const sortByClause = query.sortBy ? getsortByClause(query.sortBy) : null;
+  const sortByClause = query.sortBy ? getSortByClause(query.sortBy) : null;
 
   let filterInclude = [];
   let filterConditions = '';
@@ -109,13 +119,13 @@ export const generatePaginationQuery = (
 
   if (query.filter) {
     const filterResult = getSearchAndFilter(query.filter, model, 'AND');
-    filterInclude = filterResult.include;
+    filterInclude = filterResult.include ?? [];
     filterConditions = filterResult.whereConditions;
   }
 
   if (query.search) {
     const searchResult = getSearchAndFilter(query.search, model, 'OR');
-    searchInclude = searchResult.include;
+    searchInclude = searchResult.include ?? [];
     searchConditions = searchResult.whereConditions;
   }
   let whereConditions = '';
@@ -131,6 +141,6 @@ export const generatePaginationQuery = (
     perPage,
     sortBy: sortByClause,
     whereConditions: whereConditions.trim() ?? '',
-    include: [...searchInclude, ...filterInclude] ?? [],
+    include: [...searchInclude, ...filterInclude],
   };
 };
