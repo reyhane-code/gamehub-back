@@ -11,7 +11,6 @@ import { IUser } from 'src/users/interfaces/user.interface';
 import { AddGenreDto } from './dtos/add-genre.dto';
 import { UpdateGenreDto } from './dtos/update-genre.dto';
 import { generatePaginationQuery } from 'src/helpers/helpers';
-import { Op } from 'sequelize';
 
 @Injectable()
 export class GenresService {

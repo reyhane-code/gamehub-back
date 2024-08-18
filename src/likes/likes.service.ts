@@ -78,6 +78,7 @@ export class LikesService {
         user_id: userId,
         entity_type: entityType,
       },
+      include: { model: Like.associations[`${entityType}`].target },
     });
     if (count < 1) {
       throw new NotFoundException(`You did not like any !`);

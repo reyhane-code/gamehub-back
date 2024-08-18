@@ -80,6 +80,7 @@ export class BookmarksService {
         user_id: userId,
         entity_type: entityType,
       },
+      include: { model: Bookmark.associations[`${entityType}`].target },
     });
     if (count < 1) {
       throw new NotFoundException(`You did not bookmark any ${entityType}s!`);
