@@ -5,16 +5,16 @@ export enum SortOperation {
 export enum FilterOperationEnum {
   //! any list
   IN = 'IN',
-  NOT_IN = 'NOT_IN',
+  NOT_IN = 'NOT IN',
   BETWEEN = 'BETWEEN',
-  NOT_BETWEEN = 'NOT_BETWEEN',
+  NOT_BETWEEN = 'NOT BETWEEN',
   //! any
-  EQ = 'EQ',
-  GT = 'GT',
-  GTE = 'GTE',
-  LT = 'LT',
-  LTE = 'LTE',
-  NE = 'NE',
+  EQ = '=',
+  GT = '>',
+  GTE = '>=',
+  LT = '<',
+  LTE = '<=',
+  NE = '<>',
   //! string
   LIKE = 'LIKE',
   ILIKE = 'ILIKE',
