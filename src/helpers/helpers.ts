@@ -1,22 +1,12 @@
-import { Op } from 'sequelize';
+import { Op, Sequelize } from 'sequelize';
 import { Model } from 'sequelize-typescript';
 import { paginationDefault } from 'src/constance';
-import { SortOperation } from 'src/enums/enums';
+import { FilterOperationEnum, SortOperation } from 'src/enums/enums';
 import {
   IPaginationQueryOptions,
   ISearchFilterOptions,
 } from 'src/interfaces/database.interfaces';
 import * as qs from 'qs';
-
-const operationMap = {
-  EQ: Op.eq,
-  NE: Op.ne,
-  GT: Op.gt,
-  LT: Op.lt,
-  GTE: Op.gte,
-  LTE: Op.lte,
-  LIKE: Op.like,
-};
 
 export const toSlug = (str: string) => {
   return str.toLowerCase().replace(/\s+/g, '-');
@@ -26,7 +16,7 @@ export const getSearchAndFilter = (
   model: any,
   joinOperator: string,
 ) => {
-  if (!params || params.length === 0) {
+  if (!params) {
     return { whereConditions: '', include: [] }; // Return an empty object with the expected structure
   }
 
@@ -34,45 +24,42 @@ export const getSearchAndFilter = (
   const include: any[] = [];
 
   params.forEach(({ field, operation, value }) => {
-    const operationFunc = operationMap[operation];
-    if (!operationFunc) return;
+    // const operationFunc = FilterOperationEnum[operation];
+    // if (!operationFunc) return;
 
     if (field.includes('.')) {
       const [relation, nestedField] = field.split('.');
       const modelValue =
         model.associations[relation]?.target ??
         model.associations[relation + 's']?.target;
-
       if (!modelValue) return;
       include.push({
         model: modelValue,
-        where: {
-          [nestedField]: { [operationFunc]: value },
-        },
+        where: Sequelize.literal(`${field} ${operation} ${value}`),
       });
     } else {
-      whereConditions.push({ [field]: { [operationFunc]: value } });
+      whereConditions.push({ field, operation, value });
     }
   });
 
   const whereConditionsString = generateCondition(
     whereConditions,
+    model,
     joinOperator,
   );
 
   return { whereConditions: whereConditionsString, include };
 };
 
-const generateCondition = (items: any[], joinOperator: string) => {
+const generateCondition = (
+  items: any[],
+  model: any,
+  joinOperator: string,
+): string => {
   return items
-    .map((item) => {
-      const [field] = Object.keys(item);
-      const operation = Object.keys(item[field])[0];
-      const value = item[field][operation];
-
-      const formattedValue = formatValue(value);
-
-      return `${field} ${operation} ${formattedValue}`;
+    .map(({ field, value, operation }) => {
+      const formatdValue = formatValue(value);
+      return `"${model.name}"."${field}" ${operation} ${formatdValue}`;
     })
     .join(` ${joinOperator} `);
 };
@@ -81,9 +68,9 @@ const formatValue = (value: any) => {
   if (value === null) {
     return 'NULL';
   } else if (Array.isArray(value)) {
-    return `(${value.map((v) => (typeof v === 'string' ? `'${v}'` : v)).join(', ')})`;
+    return `(${value.map((v) => (typeof v === 'string' ? `'${v.replace(/'/g, "''")}'` : v)).join(', ')})`;
   } else if (typeof value === 'string') {
-    return `'${value}'`;
+    return `'${value.replace(/'/g, "''")}'`; // Escape single quotes in strings
   } else if (typeof value === 'boolean') {
     return value ? 'TRUE' : 'FALSE';
   }
@@ -136,6 +123,7 @@ export const generatePaginationQuery = (
   } else if (searchConditions) {
     whereConditions = searchConditions;
   }
+  console.log(filterInclude, 'filllllterrrrrj');
   return {
     page,
     perPage,
