@@ -27,6 +27,7 @@ export const getSearchAndFilter = (
     // const operationFunc = FilterOperationEnum[operation];
     // if (!operationFunc) return;
 
+    console.log('ruuun', FilterOperationEnum[operation], operation)
     if (field.includes('.')) {
       const [relation, nestedField] = field.split('.');
       const modelValue =
@@ -35,10 +36,10 @@ export const getSearchAndFilter = (
       if (!modelValue) return;
       include.push({
         model: modelValue,
-        where: Sequelize.literal(`${field} ${operation} ${value}`),
+        where: Sequelize.literal(`${field} ${FilterOperationEnum[operation]} ${value}`),
       });
     } else {
-      whereConditions.push({ field, operation, value });
+      whereConditions.push({ field, operation: FilterOperationEnum[operation], value });
     }
   });
 
@@ -58,8 +59,8 @@ const generateCondition = (
 ): string => {
   return items
     .map(({ field, value, operation }) => {
-      const formatdValue = formatValue(value);
-      return `"${model.name}"."${field}" ${operation} ${formatdValue}`;
+      const formattedValue = formatValue(value);
+      return `"${model.name}"."${field}" ${operation} ${formattedValue}`;
     })
     .join(` ${joinOperator} `);
 };
@@ -124,6 +125,8 @@ export const generatePaginationQuery = (
     whereConditions = searchConditions;
   }
   console.log(filterInclude, 'filllllterrrrrj');
+  console.log(searchInclude, 'searchhhhhh');
+  console.log(searchConditions, 'searchhhhhh2');
   return {
     page,
     perPage,
