@@ -7,13 +7,16 @@ export function TransformResponse(dto: any) {
     const originalSend = response.send.bind(response);
 
     response.send = (body: any) => {
-      const transformedBody = plainToInstance(dto, body, {
-        excludeExtraneousValues: true,
-      });
-      return originalSend(transformedBody);
+      try {
+        const transformedBody = plainToInstance(dto, body, { excludeExtraneousValues: true });
+        return originalSend(transformedBody);
+      } catch (error) {
+        // Handle transformation error (e.g., log it, send a default response, etc.)
+        console.error('Transformation error:', error);
+        return originalSend({ error: 'Transformation failed' });
+      }
     };
 
-    // Return null as the decorator does not modify the request parameters
-    return null;
+    return null; // The decorator does not modify the request parameters
   })();
 }
