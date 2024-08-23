@@ -80,6 +80,7 @@ export class BookmarksService {
         user_id: userId,
         entity_type: entityType,
       },
+      distinct: true,
       include: { model: Bookmark.associations[`${entityType}`].target },
     });
     if (count < 1) {
