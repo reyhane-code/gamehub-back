@@ -8,6 +8,8 @@ import {
 } from '@nestjs/common';
 import { Like } from 'models/like.model';
 import { Repository, LikeAbleEntity } from 'src/enums/database.enum';
+import { generatePaginationQuery } from 'src/helpers/helpers';
+import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 
 @Injectable()
 export class LikesService {
@@ -63,16 +65,18 @@ export class LikesService {
         [`${entityType}_id`]: entityId,
       },
     });
-    if (count < 1) {
-      throw new NotFoundException(`This ${entityType} has no likes!`);
-    }
     return {
       count,
-      data: rows,
+      itmes: rows ?? [],
     };
   }
 
-  async findUserLikedEntity(userId: number, entityType: LikeAbleEntity) {
+  async findUserLikedEntity(
+    userId: number,
+    entityType: LikeAbleEntity,
+    query: IPaginationQueryOptions,
+  ) {
+    const { page, perPage } = generatePaginationQuery(query, Like);
     const { rows, count } = await this.likesRepository.findAndCountAll({
       where: {
         user_id: userId,
@@ -80,13 +84,17 @@ export class LikesService {
       },
       include: { model: Like.associations[`${entityType}`].target },
       distinct: true,
+      limit: perPage,
+      offset: (page - 1) * perPage,
     });
-    if (count < 1) {
-      throw new NotFoundException(`You did not like any !`);
-    }
+    const items = rows.map((item) => item[item.entity_type]);
     return {
-      count,
-      data: rows,
+      pagination: {
+        count,
+        page,
+        perPage,
+      },
+      items,
     };
   }
 

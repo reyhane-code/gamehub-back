@@ -68,8 +68,11 @@ export class ArticlesController {
 
   @UseGuards(AdminGuard)
   @Get('/user')
-  getUserArticles(@CurrentUser() user: IUser) {
-    return this.articlesService.findUserArticles(user);
+  getUserArticles(
+    @CurrentUser() user: IUser,
+    @Query() query: IPaginationQueryOptions = paginationDefault,
+  ) {
+    return this.articlesService.findUserArticles(user, query);
   }
 
   @UseGuards(AdminGuard)

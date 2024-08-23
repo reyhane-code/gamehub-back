@@ -61,10 +61,7 @@ export class PublishersService {
 
   async findAll() {
     const publishers = await this.publishersRepository.findAll();
-    if (publishers.length < 1) {
-      throw new NotFoundException('No publishers was found!');
-    }
-    return publishers;
+    return publishers ?? [];
   }
 
   async findAllWithPaginate(query: IPaginationQueryOptions) {
@@ -78,15 +75,13 @@ export class PublishersService {
       include: include.length > 0 ? include : undefined,
       order: sortBy ? this.publishersRepository.sequelize.literal(sortBy) : [],
     });
-    if (count < 1) {
-      throw new NotFoundException('No publishers was found!');
-    }
     return {
-      count,
-      data: rows,
-      page,
-      perPage,
-      offset: perPage * (page - 1),
+      pagination: {
+        count,
+        page,
+        perPage,
+      },
+      items: rows ?? [],
     };
   }
 

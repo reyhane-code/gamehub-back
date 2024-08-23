@@ -79,15 +79,12 @@ export class CommentsService {
     const { rows, count } = await this.commentsRepository.findAndCountAll({
       where: { [`${entityType}_id`]: entityId },
     });
-    if (count == 0) {
-      throw new NotFoundException('No comments were found!');
-    }
     const likesCount = await this.likesService.getLikesCountForAllEntities(
       LikeAbleEntity.COMMENT,
     );
     return {
       count,
-      data: rows,
+      items: rows ?? [],
       likes: likesCount,
     };
   }
@@ -98,16 +95,13 @@ export class CommentsService {
       include: { model: Like },
       distinct: true,
     });
-    if (count < 1) {
-      throw new NotFoundException('No replies were found!');
-    }
     //TODO: check what to do??
     // const likesCount = await this.likesService.getLikesCountForAllEntities(
     //   LikeAbleEntity.COMMENT,
     // );
     return {
       count,
-      data: rows,
+      items: rows ?? [],
     };
   }
 
@@ -130,15 +124,12 @@ export class CommentsService {
       include: { model: Comment.associations[`${entityType}`].target },
       distinct: true,
     });
-    if (count == 0) {
-      throw new NotFoundException('No comments were found!');
-    }
     const likesCount = await this.likesService.getLikesCountForAllEntities(
       LikeAbleEntity.COMMENT,
     );
     return {
       count,
-      data: rows,
+      items: rows ?? [],
       likes: likesCount,
     };
   }

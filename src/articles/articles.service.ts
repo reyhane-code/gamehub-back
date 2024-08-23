@@ -15,7 +15,6 @@ import { Comment } from 'models/comment.model';
 import { FilesService } from 'src/files/files.service';
 import { LikesService } from 'src/likes/likes.service';
 import { generatePaginationQuery } from 'src/helpers/helpers';
-import { Op, where } from 'sequelize';
 
 @Injectable()
 export class ArticlesService {
@@ -121,35 +120,33 @@ export class ArticlesService {
       include: include.length > 0 ? include : undefined,
       order: sortBy ? this.articlesRepository.sequelize.literal(sortBy) : [],
     });
-    if (count < 1) {
-      throw new NotFoundException('No articles was found!');
-    }
     const likesCount = await this.likesService.getLikesCountForAllEntities(
       LikeAbleEntity.ARTICLE,
     );
 
     return {
-      count,
-      data: rows,
-      page,
-      perPage,
-      offset: (page - 1) * perPage,
+      pagination: {
+        count,
+        page,
+        perPage,
+      },
+      items: rows ?? [],
       likes: likesCount,
     };
   }
 
-  async findUserArticles(user: IUser) {
+  async findUserArticles(user: IUser, query: IPaginationQueryOptions) {
+    const { page, perPage } = generatePaginationQuery(query, Article);
     const { rows, count } = await this.articlesRepository.findAndCountAll({
       where: { user_id: user.id },
       include: [{ model: Comment }],
       distinct: true,
+      limit: perPage,
+      offset: (page - 1) * perPage,
     });
-    if (count < 1) {
-      throw new NotFoundException('No articles were found!');
-    }
     return {
-      count,
-      data: rows,
+      paginations: { count, page, perPage },
+      items: rows ?? [],
     };
   }
 

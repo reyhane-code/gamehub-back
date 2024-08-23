@@ -60,10 +60,7 @@ export class GenresService {
 
   async findAll() {
     const genres = await this.genresRepository.findAll();
-    if (genres.length < 1) {
-      throw new NotFoundException('No genres was found!');
-    }
-    return genres;
+    return genres ?? [];
   }
 
   async findAllWithPaginate(query: IPaginationQueryOptions) {
@@ -77,15 +74,13 @@ export class GenresService {
       include: include.length > 0 ? include : undefined,
       order: sortBy ? this.genresRepository.sequelize.literal(sortBy) : [],
     });
-    if (count < 1) {
-      throw new NotFoundException('No genres was found!');
-    }
     return {
-      count,
-      data: rows,
-      page,
-      perPage,
-      offset: (page - 1) * perPage,
+      pagination: {
+        count,
+        page,
+        perPage,
+      },
+      items: rows ?? [],
     };
   }
 
