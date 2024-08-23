@@ -1,0 +1,554 @@
+{
+  "pagination": {
+    "count": 10,
+    "page": "1",
+    "perPage": "5"
+  },
+  "items": {
+    "rows": [
+      {
+        "id": 1,
+        "name": "Vampire: The Masquerade - Bloodlines 2",
+        "description": "Sired in an act of vampire insurrection, your existence ignites the war for Seattle's blood trade. Enter uneasy alliances with the creatures who control the city and uncover the sprawling conspiracy which plunged Seattle into a bloody civil war between powerful vampire factions.\n        ♞Become the Ultimate Vampire\n        Immerse yourself in the World of Darkness and live out your vampire fantasy in a city filled with intriguing characters that react to your choices. You and your unique disciplines are a weapon in our forward-driving, fast-moving, melee-focussed combat system. Your power will grow as you advance, but remember to uphold the Masquerade and guard your humanity... or face the consequences.\n        ♝Descend into Seattle’s Dark Heart and Survive the Vampire Elite\n        Seattle has always been run by vampires. Hunt your prey across Seattle locations faithfully reimagined in the World of Darkness. Meet the old blood founders present since the city’s birth and the new blood steering the tech money redefining the city.",
+        "slug": "vampire-bloodlines2",
+        "background_image": "https://uploadkon.ir/uploads/92de13_24vampire-masquerade-bloodlines2-ps5-wallpapers-07.jpg",
+        "rating_top": 1,
+        "metacritic": 316,
+        "user_id": 1,
+        "createdAt": "2024-08-23T07:36:41.759Z",
+        "updatedAt": "2024-08-23T07:36:41.759Z",
+        "deletedAt": null,
+        "genres": [
+          {
+            "id": 1,
+            "name": "Action",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.781Z",
+            "updatedAt": "2024-08-23T07:36:41.781Z",
+            "deletedAt": null,
+            "GenreGame": {
+              "game_id": 1,
+              "genre_id": 1,
+              "createdAt": "2024-08-23T07:36:41.793Z",
+              "updatedAt": "2024-08-23T07:36:41.794Z",
+              "deletedAt": null
+            }
+          },
+          {
+            "id": 2,
+            "name": "RPG",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.781Z",
+            "updatedAt": "2024-08-23T07:36:41.781Z",
+            "deletedAt": null,
+            "GenreGame": {
+              "game_id": 1,
+              "genre_id": 2,
+              "createdAt": "2024-08-23T07:36:41.793Z",
+              "updatedAt": "2024-08-23T07:36:41.794Z",
+              "deletedAt": null
+            }
+          }
+        ],
+        "platforms": [
+          {
+            "id": 1,
+            "name": "PlayStation 5",
+            "slug": "playstation5",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.767Z",
+            "updatedAt": "2024-08-23T07:36:41.767Z",
+            "deletedAt": null,
+            "PlatformGame": {
+              "game_id": 1,
+              "platform_id": 1,
+              "createdAt": "2024-08-23T07:36:41.786Z",
+              "updatedAt": "2024-08-23T07:36:41.787Z",
+              "deletedAt": null
+            }
+          },
+          {
+            "id": 2,
+            "name": "Xbox Series S/X",
+            "slug": "xbox-series-x",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.767Z",
+            "updatedAt": "2024-08-23T07:36:41.767Z",
+            "deletedAt": null,
+            "PlatformGame": {
+              "game_id": 1,
+              "platform_id": 2,
+              "createdAt": "2024-08-23T07:36:41.786Z",
+              "updatedAt": "2024-08-23T07:36:41.787Z",
+              "deletedAt": null
+            }
+          },
+          {
+            "id": 3,
+            "name": "PC",
+            "slug": "pc",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.767Z",
+            "updatedAt": "2024-08-23T07:36:41.767Z",
+            "deletedAt": null,
+            "PlatformGame": {
+              "game_id": 1,
+              "platform_id": 3,
+              "createdAt": "2024-08-23T07:36:41.786Z",
+              "updatedAt": "2024-08-23T07:36:41.787Z",
+              "deletedAt": null
+            }
+          },
+          {
+            "id": 4,
+            "name": "Xbox One",
+            "slug": "xbox-one",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.767Z",
+            "updatedAt": "2024-08-23T07:36:41.767Z",
+            "deletedAt": null,
+            "PlatformGame": {
+              "game_id": 1,
+              "platform_id": 4,
+              "createdAt": "2024-08-23T07:36:41.786Z",
+              "updatedAt": "2024-08-23T07:36:41.787Z",
+              "deletedAt": null
+            }
+          },
+          {
+            "id": 5,
+            "name": "PlayStation 4",
+            "slug": "playstation4",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.767Z",
+            "updatedAt": "2024-08-23T07:36:41.767Z",
+            "deletedAt": null,
+            "PlatformGame": {
+              "game_id": 1,
+              "platform_id": 5,
+              "createdAt": "2024-08-23T07:36:41.786Z",
+              "updatedAt": "2024-08-23T07:36:41.787Z",
+              "deletedAt": null
+            }
+          }
+        ],
+        "publishers": [
+          {
+            "id": 1,
+            "name": "Paradox Interactive",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.783Z",
+            "updatedAt": "2024-08-23T07:36:41.784Z",
+            "deletedAt": null,
+            "PublisherGame": {
+              "game_id": 1,
+              "publisher_id": 1,
+              "createdAt": "2024-08-23T07:36:41.790Z",
+              "updatedAt": "2024-08-23T07:36:41.791Z",
+              "deletedAt": null
+            }
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "V Rising",
+        "description": "A Vampire Survival Experience\n        Awaken as a weakened vampire after centuries of slumber. Hunt for blood in nearby settlements to regain your strength while hiding from the scorching sun to survive. Rebuild your castle and convert humans into your loyal servants in a quest to raise your vampire empire. Make allies online, fend off holy soldiers, and wage war against other players in a world of conflict.",
+        "slug": "v-rising",
+        "background_image": "https://uploadkon.ir/uploads/e57513_24HD-wallpaper-video-game-v-rising.jpg",
+        "rating_top": 2,
+        "metacritic": 62,
+        "user_id": 1,
+        "createdAt": "2024-08-23T07:36:41.759Z",
+        "updatedAt": null,
+        "deletedAt": null,
+        "genres": [
+          {
+            "id": 1,
+            "name": "Action",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.781Z",
+            "updatedAt": "2024-08-23T07:36:41.781Z",
+            "deletedAt": null,
+            "GenreGame": {
+              "game_id": 2,
+              "genre_id": 1,
+              "createdAt": "2024-08-23T07:36:41.793Z",
+              "updatedAt": "2024-08-23T07:36:41.794Z",
+              "deletedAt": null
+            }
+          },
+          {
+            "id": 2,
+            "name": "RPG",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.781Z",
+            "updatedAt": "2024-08-23T07:36:41.781Z",
+            "deletedAt": null,
+            "GenreGame": {
+              "game_id": 2,
+              "genre_id": 2,
+              "createdAt": "2024-08-23T07:36:41.793Z",
+              "updatedAt": "2024-08-23T07:36:41.794Z",
+              "deletedAt": null
+            }
+          }
+        ],
+        "platforms": [
+          {
+            "id": 1,
+            "name": "PlayStation 5",
+            "slug": "playstation5",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.767Z",
+            "updatedAt": "2024-08-23T07:36:41.767Z",
+            "deletedAt": null,
+            "PlatformGame": {
+              "game_id": 2,
+              "platform_id": 1,
+              "createdAt": "2024-08-23T07:36:41.786Z",
+              "updatedAt": "2024-08-23T07:36:41.787Z",
+              "deletedAt": null
+            }
+          },
+          {
+            "id": 3,
+            "name": "PC",
+            "slug": "pc",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.767Z",
+            "updatedAt": "2024-08-23T07:36:41.767Z",
+            "deletedAt": null,
+            "PlatformGame": {
+              "game_id": 2,
+              "platform_id": 3,
+              "createdAt": "2024-08-23T07:36:41.786Z",
+              "updatedAt": "2024-08-23T07:36:41.787Z",
+              "deletedAt": null
+            }
+          }
+        ],
+        "publishers": [
+          {
+            "id": 1,
+            "name": "Paradox Interactive",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.783Z",
+            "updatedAt": "2024-08-23T07:36:41.784Z",
+            "deletedAt": null,
+            "PublisherGame": {
+              "game_id": 2,
+              "publisher_id": 1,
+              "createdAt": "2024-08-23T07:36:41.790Z",
+              "updatedAt": "2024-08-23T07:36:41.791Z",
+              "deletedAt": null
+            }
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Songs of Conquest",
+        "description": "Songs of Conquest is a turn based game where you build a kingdom, raise armies and control powerful magicians called wielders. You’ll quest around for loot, fight monsters, optimize build orders and strategies to pick off the enemy teams. We call it Classic Adventure Strategy, for short. Combat will be a major part of the game. You’ll recruit troops and your wielders will command them on the battlefield. The wielders harness a magic called “The essence”. By combining your wielders skills with the essence of the troops you get access to powerful spells.",
+        "slug": "songs-of-conquest",
+        "background_image": "https://uploadkon.ir/uploads/b4ec13_24EGS-SongsofConquest-Lavapotion-S1-2560x1440-fa8ea8f7cebfc72538f205aab8649839.jpeg",
+        "rating_top": 49,
+        "metacritic": 819,
+        "user_id": 1,
+        "createdAt": "2024-08-23T07:36:41.759Z",
+        "updatedAt": null,
+        "deletedAt": null,
+        "genres": [
+          {
+            "id": 3,
+            "name": "Strategy",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.781Z",
+            "updatedAt": "2024-08-23T07:36:41.781Z",
+            "deletedAt": null,
+            "GenreGame": {
+              "game_id": 3,
+              "genre_id": 3,
+              "createdAt": "2024-08-23T07:36:41.793Z",
+              "updatedAt": "2024-08-23T07:36:41.794Z",
+              "deletedAt": null
+            }
+          },
+          {
+            "id": 5,
+            "name": "Advanture",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.781Z",
+            "updatedAt": "2024-08-23T07:36:41.781Z",
+            "deletedAt": null,
+            "GenreGame": {
+              "game_id": 3,
+              "genre_id": 5,
+              "createdAt": "2024-08-23T07:36:41.793Z",
+              "updatedAt": "2024-08-23T07:36:41.794Z",
+              "deletedAt": null
+            }
+          }
+        ],
+        "platforms": [
+          {
+            "id": 3,
+            "name": "PC",
+            "slug": "pc",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.767Z",
+            "updatedAt": "2024-08-23T07:36:41.767Z",
+            "deletedAt": null,
+            "PlatformGame": {
+              "game_id": 3,
+              "platform_id": 3,
+              "createdAt": "2024-08-23T07:36:41.786Z",
+              "updatedAt": "2024-08-23T07:36:41.787Z",
+              "deletedAt": null
+            }
+          }
+        ],
+        "publishers": [
+          {
+            "id": 3,
+            "name": "Coffee Stain Studios",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.783Z",
+            "updatedAt": "2024-08-23T07:36:41.784Z",
+            "deletedAt": null,
+            "PublisherGame": {
+              "game_id": 3,
+              "publisher_id": 3,
+              "createdAt": "2024-08-23T07:36:41.790Z",
+              "updatedAt": "2024-08-23T07:36:41.791Z",
+              "deletedAt": null
+            }
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Prince of Persia: The Sands of Time Remake",
+        "description": "Songs of Conquest is a turn based game where you build a kingdom, raise armies and control powerful magicians called wielders. You’ll quest around for loot, fight monsters, optimize build orders and strategies to pick off the enemy teams. We call it Classic Adventure Strategy, for short. Combat will be a major part of the game. You’ll recruit troops and your wielders will command them on the battlefield. The wielders harness a magic called “The essence”. By combining your wielders skills with the essence of the troops you get access to powerful spells.",
+        "slug": "princ-of-persia-the-sands-of-time-remake",
+        "background_image": "https://uploadkon.ir/uploads/289f13_24HD-wallpaper-poster-of-prince-of-persia-the-sands-of-time-remake.jpg",
+        "rating_top": 52,
+        "metacritic": 2210,
+        "user_id": 1,
+        "createdAt": "2024-08-23T07:36:41.759Z",
+        "updatedAt": null,
+        "deletedAt": null,
+        "genres": [
+          {
+            "id": 1,
+            "name": "Action",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.781Z",
+            "updatedAt": "2024-08-23T07:36:41.781Z",
+            "deletedAt": null,
+            "GenreGame": {
+              "game_id": 4,
+              "genre_id": 1,
+              "createdAt": "2024-08-23T07:36:41.793Z",
+              "updatedAt": "2024-08-23T07:36:41.794Z",
+              "deletedAt": null
+            }
+          }
+        ],
+        "platforms": [
+          {
+            "id": 1,
+            "name": "PlayStation 5",
+            "slug": "playstation5",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.767Z",
+            "updatedAt": "2024-08-23T07:36:41.767Z",
+            "deletedAt": null,
+            "PlatformGame": {
+              "game_id": 4,
+              "platform_id": 1,
+              "createdAt": "2024-08-23T07:36:41.786Z",
+              "updatedAt": "2024-08-23T07:36:41.787Z",
+              "deletedAt": null
+            }
+          },
+          {
+            "id": 2,
+            "name": "Xbox Series S/X",
+            "slug": "xbox-series-x",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.767Z",
+            "updatedAt": "2024-08-23T07:36:41.767Z",
+            "deletedAt": null,
+            "PlatformGame": {
+              "game_id": 4,
+              "platform_id": 2,
+              "createdAt": "2024-08-23T07:36:41.786Z",
+              "updatedAt": "2024-08-23T07:36:41.787Z",
+              "deletedAt": null
+            }
+          },
+          {
+            "id": 3,
+            "name": "PC",
+            "slug": "pc",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.767Z",
+            "updatedAt": "2024-08-23T07:36:41.767Z",
+            "deletedAt": null,
+            "PlatformGame": {
+              "game_id": 4,
+              "platform_id": 3,
+              "createdAt": "2024-08-23T07:36:41.786Z",
+              "updatedAt": "2024-08-23T07:36:41.787Z",
+              "deletedAt": null
+            }
+          },
+          {
+            "id": 4,
+            "name": "Xbox One",
+            "slug": "xbox-one",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.767Z",
+            "updatedAt": "2024-08-23T07:36:41.767Z",
+            "deletedAt": null,
+            "PlatformGame": {
+              "game_id": 4,
+              "platform_id": 4,
+              "createdAt": "2024-08-23T07:36:41.786Z",
+              "updatedAt": "2024-08-23T07:36:41.787Z",
+              "deletedAt": null
+            }
+          },
+          {
+            "id": 5,
+            "name": "PlayStation 4",
+            "slug": "playstation4",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.767Z",
+            "updatedAt": "2024-08-23T07:36:41.767Z",
+            "deletedAt": null,
+            "PlatformGame": {
+              "game_id": 4,
+              "platform_id": 5,
+              "createdAt": "2024-08-23T07:36:41.786Z",
+              "updatedAt": "2024-08-23T07:36:41.787Z",
+              "deletedAt": null
+            }
+          }
+        ],
+        "publishers": [
+          {
+            "id": 4,
+            "name": "Ubisoft Entertainment",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.783Z",
+            "updatedAt": "2024-08-23T07:36:41.784Z",
+            "deletedAt": null,
+            "PublisherGame": {
+              "game_id": 4,
+              "publisher_id": 4,
+              "createdAt": "2024-08-23T07:36:41.790Z",
+              "updatedAt": "2024-08-23T07:36:41.791Z",
+              "deletedAt": null
+            }
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "name": "Anger Foot",
+        "description": "Anger Foot is a lightning-fast hard bass blast of kicking doors and kicking ass. Crash through the caffeine-fueled fever dream of Shit City, putting the boot to a menacing menagerie of merciless gangsters.\n        Unleash the world's deadliest feet on a colorful cast of anthropomorphic enemies. Clearing out slums, sewers, and skyscrapers as you grab new weapons, unlock new sneakers, and upgrade your powers in absurd and wonderful ways. Kick and shoot your way to the exit as you leave behind a smoldering trail of shattered doors, broken bones, and crumpled energy drinks.Fast-Paced Ass Kicking ActionShit City is a disease and your foot is the cure. Lace-up a capricious collection of formidable footwear to fight through a diverse series of deranged city districts.Vibrant Visuals, Relentless BeatsEnjoy a concussive, bass-thumping soundtrack as you stampede through a feverish criminal underworld. An assault on all your senses. Including common sense.Run. Kick. RepeatAre you the god of style, speed, or power? Discover secrets and unlocks that encourage replayability - and learn to tackle levels in new creative, ridiculous, and devastating ways.Master The FootBecome one with the toes and be quick on the trigger. Your skills must surpass human comprehension if you are to prevail and learn the secret of the Anger Foot.",
+        "slug": "anger-foot",
+        "background_image": "https://uploadkon.ir/uploads/fb6613_24da93ffb65843f39b240ffd97c07a3acb.jpg",
+        "rating_top": 53,
+        "metacritic": 974,
+        "user_id": 1,
+        "createdAt": "2024-08-23T07:36:41.759Z",
+        "updatedAt": null,
+        "deletedAt": null,
+        "genres": [
+          {
+            "id": 1,
+            "name": "Action",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.781Z",
+            "updatedAt": "2024-08-23T07:36:41.781Z",
+            "deletedAt": null,
+            "GenreGame": {
+              "game_id": 5,
+              "genre_id": 1,
+              "createdAt": "2024-08-23T07:36:41.793Z",
+              "updatedAt": "2024-08-23T07:36:41.794Z",
+              "deletedAt": null
+            }
+          },
+          {
+            "id": 4,
+            "name": "Shooter",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.781Z",
+            "updatedAt": "2024-08-23T07:36:41.781Z",
+            "deletedAt": null,
+            "GenreGame": {
+              "game_id": 5,
+              "genre_id": 4,
+              "createdAt": "2024-08-23T07:36:41.793Z",
+              "updatedAt": "2024-08-23T07:36:41.794Z",
+              "deletedAt": null
+            }
+          }
+        ],
+        "platforms": [
+          {
+            "id": 2,
+            "name": "Xbox Series S/X",
+            "slug": "xbox-series-x",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.767Z",
+            "updatedAt": "2024-08-23T07:36:41.767Z",
+            "deletedAt": null,
+            "PlatformGame": {
+              "game_id": 5,
+              "platform_id": 2,
+              "createdAt": "2024-08-23T07:36:41.786Z",
+              "updatedAt": "2024-08-23T07:36:41.787Z",
+              "deletedAt": null
+            }
+          }
+        ],
+        "publishers": [
+          {
+            "id": 5,
+            "name": "Devolver Digital",
+            "user_id": 1,
+            "createdAt": "2024-08-23T07:36:41.783Z",
+            "updatedAt": "2024-08-23T07:36:41.784Z",
+            "deletedAt": null,
+            "PublisherGame": {
+              "game_id": 5,
+              "publisher_id": 5,
+              "createdAt": "2024-08-23T07:36:41.790Z",
+              "updatedAt": "2024-08-23T07:36:41.791Z",
+              "deletedAt": null
+            }
+          }
+        ]
+      }
+    ],
+    "likesCount": [
+      {
+        "game_id": 2,
+        "count": 1
+      },
+      {
+        "game_id": 3,
+        "count": 1
+      },
+      {
+        "game_id": 4,
+        "count": 1
+      }
+    ]
+  }
+}
