@@ -131,4 +131,18 @@ export class LikesService {
       throw new Error(`Could not retrieve likes count for ${entityType}s.`);
     }
   }
+
+  async getLikesCountForAllEntitiesWithIds(
+    entityType: LikeAbleEntity,
+    ids: string[],
+  ) {
+    try {
+      return this.likesRepository.count({
+        where: { entity_type: entityType, [`${entityType}_id`]: ids },
+        group: [`${entityType}_id`],
+      });
+    } catch (error) {
+      throw new Error(`Could not retrieve likes count for ${entityType}s.`);
+    }
+  }
 }

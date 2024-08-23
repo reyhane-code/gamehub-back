@@ -111,34 +111,22 @@ export class GamesService {
       include.push({ model: Platform });
     }
     include.push({ model: Publisher });
-    include.push({
-      model: Like,
-      attributes: [],
-      where: {
-        entity_type: LikeAbleEntity.GAME,
-        game_id: { [Op.col]: 'games.id' },
-      },
-      required: false,
-    });
 
     const { count, rows } = await this.gamesRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
       where: this.gamesRepository.sequelize.literal(whereConditions),
       include: include,
-      attributes: {
-        include: [
-          [Sequelize.fn('COUNT', Sequelize.col('likes.game_id')), 'likesCount'],
-        ],
-      },
-      group: ['games.id'],
       order: sortBy ? this.gamesRepository.sequelize.literal(sortBy) : [],
       distinct: true,
     });
 
-    // const likesCount = await this.likesService.getLikesCountForAllEntities(
-    // LikeAbleEntity.GAME,
-    // );
+    const gameIds = rows?.map((game) => game.id) ?? [];
+    const likesCount =
+      await this.likesService.getLikesCountForAllEntitiesWithIds(
+        LikeAbleEntity.GAME,
+        gameIds,
+      );
 
     return {
       pagination: {
@@ -147,7 +135,7 @@ export class GamesService {
         perPage,
       },
       items: rows ?? [],
-      // likesCount,
+      likesCount,
     };
   }
 
