@@ -24,15 +24,15 @@ export class Like extends Model {
 
   @ForeignKey(() => Game)
   @Column(DataType.INTEGER)
-  game_id: number;
+  game_id?: number;
 
   @ForeignKey(() => Comment)
   @Column(DataType.INTEGER)
-  comment_id: number;
+  comment_id?: number;
 
   @ForeignKey(() => Article)
   @Column(DataType.INTEGER)
-  article_id: number;
+  article_id?: number;
 
   @Column(DataType.STRING)
   entity_type: string;

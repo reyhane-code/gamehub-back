@@ -18,6 +18,8 @@ import { LikesService } from 'src/likes/likes.service';
 import { Screenshot } from 'models/screenshot.model';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { Like } from 'models/like.model';
+import { Sequelize } from 'sequelize';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class GamesService {
@@ -112,6 +114,10 @@ export class GamesService {
     include.push({
       model: Like,
       attributes: [],
+      where: {
+        entity_type: LikeAbleEntity.GAME,
+        game_id: { [Op.col]: 'games.id' },
+      },
       required: false,
     });
 
@@ -120,13 +126,19 @@ export class GamesService {
       offset: perPage * (page - 1),
       where: this.gamesRepository.sequelize.literal(whereConditions),
       include: include,
+      attributes: {
+        include: [
+          [Sequelize.fn('COUNT', Sequelize.col('likes.game_id')), 'likesCount'],
+        ],
+      },
+      group: ['games.id'],
       order: sortBy ? this.gamesRepository.sequelize.literal(sortBy) : [],
       distinct: true,
     });
 
-    const likesCount = await this.likesService.getLikesCountForAllEntities(
-      LikeAbleEntity.GAME,
-    );
+    // const likesCount = await this.likesService.getLikesCountForAllEntities(
+    // LikeAbleEntity.GAME,
+    // );
 
     return {
       pagination: {
@@ -135,7 +147,7 @@ export class GamesService {
         perPage,
       },
       items: rows ?? [],
-      likesCount,
+      // likesCount,
     };
   }
 
