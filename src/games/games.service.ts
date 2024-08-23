@@ -16,8 +16,8 @@ import { generatePaginationQuery, toSlug } from 'src/helpers/helpers';
 import { GameHelperService } from './games-helper.service';
 import { LikesService } from 'src/likes/likes.service';
 import { Screenshot } from 'models/screenshot.model';
-import { Op } from 'sequelize';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
+import { Like } from 'models/like.model';
 
 @Injectable()
 export class GamesService {
@@ -109,7 +109,12 @@ export class GamesService {
       include.push({ model: Platform });
     }
     include.push({ model: Publisher });
-    
+    include.push({
+      model: Like,
+      attributes: [],
+      required: false,
+    });
+
     const { count, rows } = await this.gamesRepository.findAndCountAll({
       limit: perPage,
       offset: perPage * (page - 1),
@@ -118,21 +123,19 @@ export class GamesService {
       order: sortBy ? this.gamesRepository.sequelize.literal(sortBy) : [],
       distinct: true,
     });
-    if (count < 1) {
-      throw new NotFoundException('NO game was found.');
-    }
 
     const likesCount = await this.likesService.getLikesCountForAllEntities(
       LikeAbleEntity.GAME,
     );
 
     return {
-      count,
-      data: rows,
-      page,
-      perPage,
-      offset: perPage * (page - 1),
-      likes: likesCount,
+      pagination: {
+        count,
+        page,
+        perPage,
+      },
+      items: rows ?? [],
+      likesCount,
     };
   }
 
