@@ -7,6 +7,8 @@ import {
 } from '@nestjs/common';
 import { Bookmark } from 'models/bookmark.model';
 import { Repository } from 'src/enums/database.enum';
+import { generatePaginationQuery } from 'src/helpers/helpers';
+import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 
 @Injectable()
 export class BookmarksService {
@@ -65,16 +67,18 @@ export class BookmarksService {
         [`${entityType}_id`]: entityId,
       },
     });
-    if (count < 1) {
-      throw new NotFoundException(`This ${entityType} has no bookmarks!`);
-    }
     return {
       count,
-      data: rows,
+      items: rows ?? [],
     };
   }
 
-  async findUserBookmarkedEntity(userId: number, entityType: string) {
+  async findUserBookmarkedEntity(
+    userId: number,
+    entityType: string,
+    query: IPaginationQueryOptions,
+  ) {
+    const { page, perPage } = generatePaginationQuery(query, Bookmark);
     const { rows, count } = await this.bookmarksRepository.findAndCountAll({
       where: {
         user_id: userId,
@@ -82,13 +86,18 @@ export class BookmarksService {
       },
       distinct: true,
       include: { model: Bookmark.associations[`${entityType}`].target },
+      limit: perPage,
+      offset: (page - 1) * perPage,
     });
-    if (count < 1) {
-      throw new NotFoundException(`You did not bookmark any ${entityType}s!`);
-    }
+
+    const items = rows.map((item) => item[item.entity_type]);
     return {
-      count,
-      data: rows,
+      pagination: {
+        count,
+        page,
+        perPage,
+      },
+      items,
     };
   }
 }

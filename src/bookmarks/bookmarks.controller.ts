@@ -4,12 +4,15 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { BookmarksService } from './bookmarks.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { IUser } from 'src/users/interfaces/user.interface';
+import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
+import { paginationDefault } from 'src/constance';
 
 @Controller('bookmarks')
 export class BookmarksController {
@@ -48,7 +51,12 @@ export class BookmarksController {
   async getUserBookmarkedEntities(
     @Param('entityType') entityType: string,
     @CurrentUser() user: IUser,
+    @Query() query: IPaginationQueryOptions = paginationDefault,
   ) {
-    return this.bookmarksService.findUserBookmarkedEntity(user.id, entityType);
+    return this.bookmarksService.findUserBookmarkedEntity(
+      user.id,
+      entityType,
+      query,
+    );
   }
 }

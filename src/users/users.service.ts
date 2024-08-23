@@ -86,11 +86,12 @@ export class UsersService {
     });
 
     return {
-      count,
-      data: rows,
-      page,
-      perPage,
-      offset: (page - 1) * perPage,
+      pagination: {
+        count,
+        page,
+        perPage,
+      },
+      items: rows,
     };
   }
 

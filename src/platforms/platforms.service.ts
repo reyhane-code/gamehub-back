@@ -11,7 +11,6 @@ import { AddPlatformDto } from './dtos/add-platform.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdatedPlatformDto } from './dtos/update-platform.dto';
 import { generatePaginationQuery, toSlug } from 'src/helpers/helpers';
-import { Op } from 'sequelize';
 
 @Injectable()
 export class PlatformsService {
@@ -68,10 +67,8 @@ export class PlatformsService {
 
   async findAll() {
     const platforms = await this.platformsRepository.findAll();
-    if (platforms.length < 1) {
-      throw new NotFoundException('No platforms was found!');
-    }
-    return platforms;
+
+    return platforms ?? [];
   }
 
   async findAllWithPaginate(query: IPaginationQueryOptions) {
@@ -85,15 +82,13 @@ export class PlatformsService {
       include: include.length > 0 ? include : undefined,
       order: sortBy ? this.platformsRepository.sequelize.literal(sortBy) : [],
     });
-    if (count < 1) {
-      throw new NotFoundException('No platforms was found!');
-    }
     return {
-      count,
-      data: rows,
-      page,
-      perPage,
-      offset: (page - 1) * perPage,
+      pagination: {
+        count,
+        page,
+        perPage,
+      },
+      items: rows ?? [],
     };
   }
 
@@ -101,9 +96,7 @@ export class PlatformsService {
     const platforms = await this.platformsRepository.findAll({
       where: { user_id: user.id },
     });
-    if (platforms.length < 1) {
-      throw new NotFoundException('No platforms was found!');
-    }
-    return platforms;
+
+    return platforms ?? [];
   }
 }

@@ -49,7 +49,7 @@ export class User extends Model {
   updatedAt?: Date | null;
 
   @DeletedAt
-  deletedAt?: Date | null;
+  deletedAt?: Date | null;j
 
   @HasMany(() => Game)
   games: Game[];

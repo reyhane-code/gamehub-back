@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { LikesService } from './likes.service';
@@ -11,6 +12,8 @@ import { AuthGuard } from '../guards/auth.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { LikeAbleEntity } from 'src/enums/database.enum';
+import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
+import { paginationDefault } from 'src/constance';
 
 @Controller('likes')
 export class LikesController {
@@ -49,7 +52,8 @@ export class LikesController {
   async getUserLikes(
     @Param('entityType') entityType: LikeAbleEntity,
     @CurrentUser() user: IUser,
+    @Query() query: IPaginationQueryOptions = paginationDefault,
   ) {
-    return this.likesService.findUserLikedEntity(user.id, entityType);
+    return this.likesService.findUserLikedEntity(user.id, entityType, query);
   }
 }
