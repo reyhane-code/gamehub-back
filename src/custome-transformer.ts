@@ -1,22 +1,51 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
+import { HttpException, HttpStatus } from '@nestjs/common';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 
-export function TransformResponse(dto: any) {
-  return createParamDecorator((data: unknown, ctx: ExecutionContext) => {
-    const response = ctx.switchToHttp().getResponse();
-    const originalSend = response.send.bind(response);
+interface TransformOptions {
+  excludeExtraneousValues?: boolean;
+}
 
-    response.send = (body: any) => {
+export function TransformResponse(dto: any, options?: TransformOptions) {
+  const defaultOptions: TransformOptions = {
+    excludeExtraneousValues: true, // Exclude extraneous values by default
+    ...options, // Merge with provided options
+  };
+
+  return function (target: any, key: string, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+
+    descriptor.value = async function (...args: any[]) {
       try {
-        const transformedBody = plainToInstance(dto, body, { excludeExtraneousValues: true });
-        return originalSend(transformedBody);
+        const result = await originalMethod.apply(this, args);
+
+        // Check if the result is an array or a single object
+        if (Array.isArray(result)) {
+          return result.map((item) =>
+            plainToInstance(dto, item, defaultOptions),
+          );
+        }
+
+        console.log('result 0', result);
+        // if (result?.items) {
+        //   result.items = result.items.map((item) => {
+        //     return plainToInstance(dto.items, instanceToPlain(item.dataValues), defaultOptions);
+        //   });
+        //   console.log('result', result);
+        //   return result;
+        // }
+        return plainToInstance(dto, result, defaultOptions);
       } catch (error) {
-        // Handle transformation error (e.g., log it, send a default response, etc.)
-        console.error('Transformation error:', error);
-        return originalSend({ error: 'Transformation failed' });
+        // Log the error (you can use a logging service here)
+        console.error('Error in TransformResponse decorator:', error);
+
+        // Optionally, throw a custom exception
+        throw new HttpException(
+          'Internal Server Error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
     };
 
-    return null; // The decorator does not modify the request parameters
-  })();
+    return descriptor;
+  };
 }
