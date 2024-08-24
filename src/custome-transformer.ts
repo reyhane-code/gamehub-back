@@ -18,21 +18,12 @@ export function TransformResponse(dto: any, options?: TransformOptions) {
       try {
         const result = await originalMethod.apply(this, args);
 
-        // Check if the result is an array or a single object
         if (Array.isArray(result)) {
           return result.map((item) =>
             plainToInstance(dto, item, defaultOptions),
           );
         }
 
-        console.log('result 0', result);
-        // if (result?.items) {
-        //   result.items = result.items.map((item) => {
-        //     return plainToInstance(dto.items, instanceToPlain(item.dataValues), defaultOptions);
-        //   });
-        //   console.log('result', result);
-        //   return result;
-        // }
         return plainToInstance(dto, result, defaultOptions);
       } catch (error) {
         // Log the error (you can use a logging service here)
