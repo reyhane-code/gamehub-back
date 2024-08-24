@@ -41,6 +41,12 @@ export class Bookmark extends Model {
   @DeletedAt
   deletedAt?: Date | null;
 
+  @BelongsTo(() => Game)
+  game: Game;
+
+  @BelongsTo(() => Article)
+  article: Article;
+
   @BeforeUpdate
   static updateTimestamp(instance: Bookmark) {
     instance.updatedAt = new Date();

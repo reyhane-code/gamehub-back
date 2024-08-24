@@ -27,7 +27,7 @@ export const getSearchAndFilter = (
     // const operationFunc = FilterOperationEnum[operation];
     // if (!operationFunc) return;
 
-    console.log('ruuun', FilterOperationEnum[operation], operation)
+    console.log('ruuun', FilterOperationEnum[operation], operation);
     if (field.includes('.')) {
       const [relation, nestedField] = field.split('.');
       const modelValue =
@@ -36,10 +36,16 @@ export const getSearchAndFilter = (
       if (!modelValue) return;
       include.push({
         model: modelValue,
-        where: Sequelize.literal(`${field} ${FilterOperationEnum[operation]} ${value}`),
+        where: Sequelize.literal(
+          `${field} ${FilterOperationEnum[operation]} ${value}`,
+        ),
       });
     } else {
-      whereConditions.push({ field, operation: FilterOperationEnum[operation], value });
+      whereConditions.push({
+        field,
+        operation: FilterOperationEnum[operation],
+        value,
+      });
     }
   });
 
@@ -124,9 +130,6 @@ export const generatePaginationQuery = (
   } else if (searchConditions) {
     whereConditions = searchConditions;
   }
-  console.log(filterInclude, 'filllllterrrrrj');
-  console.log(searchInclude, 'searchhhhhh');
-  console.log(searchConditions, 'searchhhhhh2');
   return {
     page,
     perPage,
@@ -134,4 +137,11 @@ export const generatePaginationQuery = (
     whereConditions: whereConditions.trim() ?? '',
     include: [...searchInclude, ...filterInclude],
   };
+};
+
+export const expandHandler = (expand: string, model: any) => {
+  const associations = expand.split(',');
+  return associations.map((item) => ({
+    model: model.associations[`${item}`].target,
+  }));
 };

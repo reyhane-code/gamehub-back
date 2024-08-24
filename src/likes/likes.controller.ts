@@ -48,12 +48,13 @@ export class LikesController {
   }
 
   @UseGuards(AuthGuard)
-  @Get('/user/:entityType')
+  @Get('/user/:entityType/:expand?')
   async getUserLikes(
     @Param('entityType') entityType: LikeAbleEntity,
     @CurrentUser() user: IUser,
     @Query() query: IPaginationQueryOptions = paginationDefault,
+    @Param('expand') expand?: string,
   ) {
-    return this.likesService.findUserLikedEntity(user.id, entityType, query);
+    return this.likesService.findUserLikedEntity(user.id, entityType, query, expand);
   }
 }
