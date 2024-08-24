@@ -13,6 +13,7 @@ import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { paginationDefault } from 'src/constance';
+import { BookmarkAbleEntity } from 'src/enums/database.enum';
 
 @Controller('bookmarks')
 export class BookmarksController {
@@ -47,16 +48,18 @@ export class BookmarksController {
   }
 
   @UseGuards(AuthGuard)
-  @Get('/user/:entityType')
+  @Get('/user/:entityType/:expand?')
   async getUserBookmarkedEntities(
-    @Param('entityType') entityType: string,
+    @Param('entityType') entityType: BookmarkAbleEntity,
     @CurrentUser() user: IUser,
     @Query() query: IPaginationQueryOptions = paginationDefault,
+    @Param('expand') expand?: string,
   ) {
     return this.bookmarksService.findUserBookmarkedEntity(
       user.id,
       entityType,
       query,
+      expand,
     );
   }
 }
