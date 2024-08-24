@@ -18,6 +18,8 @@ import { UserPasswordDto } from './dtos/user-password.dto';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../guards/auth.guard';
 import { Role } from 'src/enums/database.enum';
+import { TransformResponse } from 'src/custome-transformer';
+import { UserResponseDto } from './userdata.dto';
 
 @Controller('/user')
 export class UsersController {
@@ -39,10 +41,13 @@ export class UsersController {
     return this.usersService.updateUserRole(user, body.role, id);
   }
 
+  @TransformResponse(UserResponseDto)
   @Get()
   @UseGuards(AuthGuard)
-  getUsers(@Query() query: IPaginationQueryOptions = paginationDefault) {
-    return this.usersService.allUsers(query);
+  async getUsers() {
+    // return this.usersService.allUsers(query);
+    const result = await this.usersService.allUsers();
+    return result; 
   }
 
   @UseGuards(AuthGuard)
