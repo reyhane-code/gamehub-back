@@ -6,8 +6,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Bookmark } from 'models/bookmark.model';
-import { Repository } from 'src/enums/database.enum';
-import { generatePaginationQuery } from 'src/helpers/helpers';
+import { BookmarkAbleEntity, Repository } from 'src/enums/database.enum';
+import { expandHandler, generatePaginationQuery } from 'src/helpers/helpers';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 
 @Injectable()
@@ -75,17 +75,22 @@ export class BookmarksService {
 
   async findUserBookmarkedEntity(
     userId: number,
-    entityType: string,
+    entityType: BookmarkAbleEntity,
     query: IPaginationQueryOptions,
+    expand?: string,
   ) {
+    const association = Bookmark.associations[`${entityType}`].target;
     const { page, perPage } = generatePaginationQuery(query, Bookmark);
     const { rows, count } = await this.bookmarksRepository.findAndCountAll({
       where: {
         user_id: userId,
         entity_type: entityType,
       },
+      include: {
+        model: association,
+        include: expand ? expandHandler(expand, association) : [],
+      },
       distinct: true,
-      include: { model: Bookmark.associations[`${entityType}`].target },
       limit: perPage,
       offset: (page - 1) * perPage,
     });

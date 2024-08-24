@@ -49,6 +49,12 @@ export class Like extends Model {
   @BelongsTo(() => Game)
   game: Game;
 
+  @BelongsTo(() => Article)
+  article: Article;
+
+  @BelongsTo(() => Comment)
+  comment: Comment;
+
   @BeforeUpdate
   static updateTimestamp(instance: Like) {
     instance.updatedAt = new Date();
