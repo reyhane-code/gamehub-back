@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Like } from 'models/like.model';
 import { Repository, LikeAbleEntity } from 'src/enums/database.enum';
-import { generatePaginationQuery } from 'src/helpers/helpers';
+import { expandHandler, generatePaginationQuery } from 'src/helpers/helpers';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 
 @Injectable()
@@ -75,14 +75,19 @@ export class LikesService {
     userId: number,
     entityType: LikeAbleEntity,
     query: IPaginationQueryOptions,
+    expand?: string,
   ) {
+    const association = Like.associations[`${entityType}`].target;
     const { page, perPage } = generatePaginationQuery(query, Like);
     const { rows, count } = await this.likesRepository.findAndCountAll({
       where: {
         user_id: userId,
         entity_type: entityType,
       },
-      include: { model: Like.associations[`${entityType}`].target },
+      include: {
+        model: association,
+        include: expand ? expandHandler(expand, association) : [],
+      },
       distinct: true,
       limit: perPage,
       offset: (page - 1) * perPage,
