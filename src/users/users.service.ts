@@ -78,20 +78,20 @@ export class UsersService {
     }
   }
 
-  async allUsers() {
-    // { perPage, page }: IPaginationQueryOptions
+  async allUsers({ perPage, page }: IPaginationQueryOptions) {
+    const offset  = !!((page - 1) * perPage) ? (page - 1) * perPage : 0
     const { count, rows } = await this.usersRepository.findAndCountAll({
-      // attributes: { exclude: ['password'] },
-      // limit: perPage,
-      // offset: (page - 1) * perPage,
+      attributes: { exclude: ['password'] },
+      limit: perPage,
+      offset,
     });
 
     return {
-      // pagination: {
-      //   count,
-      //   page,
-      //   perPage,
-      // },
+      pagination: {
+        count,
+        page,
+        perPage,
+      },
       items: rows,
     };
   }
