@@ -21,7 +21,25 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
   app.use(morgan('tiny'));
   app.enableCors();
-  await app.register(helmet);
+
+
+  app.register(helmet, {
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        // you can add more source like "https://trusted.cdn.com"
+        scriptSrc: ["'self'"],
+      },
+    },
+    hsts: {
+      maxAge: 31536000, // 1 year
+      includeSubDomains: true,
+    },
+    referrerPolicy: { policy: 'no-referrer' },
+    crossOriginEmbedderPolicy: { policy: 'require-corp' },
+    crossOriginOpenerPolicy: { policy: 'same-origin' },
+  });
+
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
     transformOptions: {
