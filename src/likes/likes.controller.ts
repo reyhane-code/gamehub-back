@@ -14,6 +14,7 @@ import { IUser } from 'src/users/interfaces/user.interface';
 import { LikeAbleEntity } from 'src/enums/database.enum';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { paginationDefault } from 'src/constance';
+import { IGetUseLikesQuery } from './intefaces/get-user-likes-query';
 
 @Controller('likes')
 export class LikesController {
@@ -52,9 +53,8 @@ export class LikesController {
   async getUserLikes(
     @Param('entityType') entityType: LikeAbleEntity,
     @CurrentUser() user: IUser,
-    @Query() query: IPaginationQueryOptions = paginationDefault,
-    @Param('expand') expand?: string,
+    @Query() query: IGetUseLikesQuery,
   ) {
-    return this.likesService.findUserLikedEntity(user.id, entityType, query, expand);
+    return this.likesService.findUserLikedEntity(user.id, entityType, query);
   }
 }

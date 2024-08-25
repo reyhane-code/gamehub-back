@@ -10,6 +10,7 @@ import { Like } from 'models/like.model';
 import { Repository, LikeAbleEntity } from 'src/enums/database.enum';
 import { expandHandler, generatePaginationQuery } from 'src/helpers/helpers';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
+import { IGetUseLikesQuery } from './intefaces/get-user-likes-query';
 
 @Injectable()
 export class LikesService {
@@ -74,8 +75,7 @@ export class LikesService {
   async findUserLikedEntity(
     userId: number,
     entityType: LikeAbleEntity,
-    query: IPaginationQueryOptions,
-    expand?: string,
+    query: IGetUseLikesQuery,
   ) {
     const association = Like.associations[`${entityType}`].target;
     const { page, perPage } = generatePaginationQuery(query, Like);
@@ -86,7 +86,7 @@ export class LikesService {
       },
       include: {
         model: association,
-        include: expand ? expandHandler(expand, association) : [],
+        include: query.expand ? expandHandler(query.expand, association) : [],
       },
       distinct: true,
       limit: perPage,
