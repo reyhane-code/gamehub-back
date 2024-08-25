@@ -21,6 +21,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
 import { CommentsModule } from './comments/comments.module';
 import { ArticlesModule } from './articles/articles.module';
+import { HttpSecurityHeadersMiddleware } from './middlewares/http-security-headers.middleware';
 
 @Module({
   imports: [
@@ -62,6 +63,10 @@ export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LangMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+
+    consumer
+      .apply(HttpSecurityHeadersMiddleware)
       .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }
