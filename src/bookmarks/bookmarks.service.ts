@@ -9,6 +9,7 @@ import { Bookmark } from 'models/bookmark.model';
 import { BookmarkAbleEntity, Repository } from 'src/enums/database.enum';
 import { expandHandler, generatePaginationQuery } from 'src/helpers/helpers';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
+import { IGetUserBookmarksQuery } from './interfaces/get-user-bookmarks-query';
 
 @Injectable()
 export class BookmarksService {
@@ -76,8 +77,7 @@ export class BookmarksService {
   async findUserBookmarkedEntity(
     userId: number,
     entityType: BookmarkAbleEntity,
-    query: IPaginationQueryOptions,
-    expand?: string,
+    query: IGetUserBookmarksQuery,
   ) {
     const association = Bookmark.associations[`${entityType}`].target;
     const { page, perPage } = generatePaginationQuery(query, Bookmark);
@@ -88,7 +88,7 @@ export class BookmarksService {
       },
       include: {
         model: association,
-        include: expand ? expandHandler(expand, association) : [],
+        include: query.expand ? expandHandler(query.expand, association) : [],
       },
       distinct: true,
       limit: perPage,

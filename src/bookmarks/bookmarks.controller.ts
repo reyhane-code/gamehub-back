@@ -14,6 +14,7 @@ import { IUser } from 'src/users/interfaces/user.interface';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { paginationDefault } from 'src/constance';
 import { BookmarkAbleEntity } from 'src/enums/database.enum';
+import { IGetUserBookmarksQuery } from './interfaces/get-user-bookmarks-query';
 
 @Controller('bookmarks')
 export class BookmarksController {
@@ -52,14 +53,12 @@ export class BookmarksController {
   async getUserBookmarkedEntities(
     @Param('entityType') entityType: BookmarkAbleEntity,
     @CurrentUser() user: IUser,
-    @Query() query: IPaginationQueryOptions = paginationDefault,
-    @Param('expand') expand?: string,
+    @Query() query: IGetUserBookmarksQuery,
   ) {
     return this.bookmarksService.findUserBookmarkedEntity(
       user.id,
       entityType,
       query,
-      expand,
     );
   }
 }
