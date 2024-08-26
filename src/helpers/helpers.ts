@@ -107,8 +107,8 @@ export const generatePaginationQuery = (
   const sortByClause = query.sortBy ? getSortByClause(query.sortBy) : null;
 
   let filterInclude = [];
-  let filterConditions = '';
   let searchInclude = [];
+  let filterConditions = '';
   let searchConditions = '';
 
   if (query.filter) {
@@ -145,3 +145,5 @@ export const expandHandler = (expand: string, model: any) => {
     model: model.associations[`${item}`].target,
   }));
 };
+
+

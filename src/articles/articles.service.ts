@@ -22,7 +22,7 @@ export class ArticlesService {
     @Inject(Repository.ARTICLES) private articlesRepository: typeof Article,
     private readonly filesService: FilesService,
     private readonly likesService: LikesService,
-  ) {}
+  ) { }
 
   async createArticle(
     body: AddArticleDto,
@@ -120,9 +120,13 @@ export class ArticlesService {
       include: include.length > 0 ? include : undefined,
       order: sortBy ? this.articlesRepository.sequelize.literal(sortBy) : [],
     });
-    const likesCount = await this.likesService.getLikesCountForAllEntities(
-      LikeAbleEntity.ARTICLE,
-    );
+    const articleIds = rows?.map((article) => article.id) ?? [];
+    const likesCount =
+      await this.likesService.getLikesCountForAllEntitiesWithIds(
+        LikeAbleEntity.ARTICLE,
+        articleIds,
+      );
+
 
     return {
       pagination: {
