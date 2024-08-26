@@ -20,6 +20,8 @@ import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { Like } from 'models/like.model';
 import { Sequelize } from 'sequelize';
 import { Op } from 'sequelize';
+import { buildQueryOptions } from 'src/helpers/dynamic-query-helper'
+import { inspect } from 'util';
 
 @Injectable()
 export class GamesService {
@@ -27,7 +29,7 @@ export class GamesService {
     @Inject(Repository.GAMES) private gamesRepository: typeof Game,
     private readonly gameHelperService: GameHelperService,
     private readonly likesService: LikesService,
-  ) {}
+  ) { }
 
   async addGame(
     {
@@ -104,22 +106,25 @@ export class GamesService {
   }
 
   async getGames(query: IPaginationQueryOptions) {
-    const { page, perPage, sortBy, whereConditions, include } =
-      generatePaginationQuery(query, Game);
+    const { where, include, sortBy, page, perPage, limit, offset } = buildQueryOptions(query, Game)
+
     if (include.length < 1) {
       include.push({ model: Genre });
       include.push({ model: Platform });
     }
     include.push({ model: Publisher });
 
+
     const { count, rows } = await this.gamesRepository.findAndCountAll({
-      limit: perPage,
-      offset: perPage * (page - 1),
-      where: this.gamesRepository.sequelize.literal(whereConditions),
-      include: include,
+      limit,
+      offset,
+      where,
+      include,
       order: sortBy ? this.gamesRepository.sequelize.literal(sortBy) : [],
       distinct: true,
     });
+
+
 
     const gameIds = rows?.map((game) => game.id) ?? [];
     const likesCount =
