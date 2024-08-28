@@ -17,10 +17,8 @@ export class BookmarksService {
     @Inject(Repository.BOOKMARKS) private bookmarksRepository: typeof Bookmark,
   ) { }
 
-  async bookmark(userId: number, entityId: number, entityType: string) {
-    const bookmark = await this.bookmarksRepository.findOne({
-      where: { user_id: userId, [`${entityType}_id`]: entityId },
-    });
+  async bookmark(userId: number, entityId: number, entityType: BookmarkAbleEntity) {
+    const bookmark = await this.didUserBookmark(userId, entityId, entityType)
     if (bookmark) {
       throw new ConflictException('You have bookmarked this before');
     }
@@ -35,7 +33,7 @@ export class BookmarksService {
     }
   }
 
-  async removeBookmark(userId: number, entityId: number, entityType: string) {
+  async removeBookmark(userId: number, entityId: number, entityType: BookmarkAbleEntity) {
     await this.findOne(userId, entityId, entityType);
     try {
       return this.bookmarksRepository.destroy({
@@ -52,7 +50,7 @@ export class BookmarksService {
     }
   }
 
-  async findOne(userId: number, entityId: number, entityType: string) {
+  async findOne(userId: number, entityId: number, entityType: BookmarkAbleEntity) {
     const bookmark = await this.bookmarksRepository.findOne({
       where: { user_id: userId, [`${entityType}_id`]: entityId },
     });
@@ -62,7 +60,7 @@ export class BookmarksService {
     return bookmark;
   }
 
-  async findBookmarks(entityId: number, entityType: string) {
+  async findBookmarks(entityId: number, entityType: BookmarkAbleEntity) {
     const { rows, count } = await this.bookmarksRepository.findAndCountAll({
       where: {
         [`${entityType}_id`]: entityId,
@@ -105,4 +103,15 @@ export class BookmarksService {
       items,
     };
   }
+
+  async didUserBookmark(userId: number, entityId: number, entityType: BookmarkAbleEntity): Promise<boolean> {
+    const bookmarkExists = await this.bookmarksRepository.findOne({
+      where: {
+        user_id: userId,
+        [`${entityType}_id`]: entityId,
+      },
+    });
+    return bookmarkExists ? true : false;
+  }
+
 }

@@ -16,14 +16,14 @@ import { IGetUseLikesQuery } from './intefaces/get-user-likes-query';
 
 @Controller('likes')
 export class LikesController {
-  constructor(private likesService: LikesService) {}
+  constructor(private likesService: LikesService) { }
 
   @UseGuards(AuthGuard)
   @Post('/:entityType/:entityId')
   async like(
-    @Param('entityType') entityType: LikeAbleEntity,
-    @Param('entityId') entityId: number,
     @CurrentUser() user: IUser,
+    @Param('entityId') entityId: number,
+    @Param('entityType') entityType: LikeAbleEntity,
   ) {
     return this.likesService.likeEntity(user.id, entityId, entityType);
   }
@@ -54,5 +54,15 @@ export class LikesController {
     @Query() query: IGetUseLikesQuery,
   ) {
     return this.likesService.findUserLikedEntity(user.id, entityType, query);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/user/bookmarked//:entityType/:entityId')
+  didUserLike(
+    @CurrentUser() user: IUser,
+    @Param('entityId') entityId: number,
+    @Param('entityType') entityType: LikeAbleEntity,
+  ) {
+    return this.likesService.didUserLike(user.id, entityId, entityType)
   }
 }
