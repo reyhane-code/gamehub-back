@@ -14,7 +14,7 @@ import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { Comment } from 'models/comment.model';
 import { FilesService } from 'src/files/files.service';
 import { LikesService } from 'src/likes/likes.service';
-import { generatePaginationQuery } from 'src/helpers/helpers';
+import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
 
 @Injectable()
 export class ArticlesService {
@@ -111,22 +111,21 @@ export class ArticlesService {
   }
 
   async findArticlesWithPaginate(query: IPaginationQueryOptions) {
-    const { page, perPage, sortBy, whereConditions, include } =
-      generatePaginationQuery(query, Article);
+    const { where, limit, offset, include, sortBy, page, perPage } = buildQueryOptions(query, Article)
     const { rows, count } = await this.articlesRepository.findAndCountAll({
-      limit: perPage,
-      offset: perPage * (page - 1),
-      where: this.articlesRepository.sequelize.literal(whereConditions),
-      include: include.length > 0 ? include : undefined,
+      limit,
+      offset,
+      where,
+      include,
       order: sortBy ? this.articlesRepository.sequelize.literal(sortBy) : [],
     });
+
     const articleIds = rows?.map((article) => article.id) ?? [];
     const likesCount =
       await this.likesService.getLikesCountForAllEntitiesWithIds(
         LikeAbleEntity.ARTICLE,
         articleIds,
       );
-
 
     return {
       pagination: {
@@ -140,13 +139,14 @@ export class ArticlesService {
   }
 
   async findUserArticles(user: IUser, query: IPaginationQueryOptions) {
-    const { page, perPage } = generatePaginationQuery(query, Article);
+    const { page, perPage, limit, offset, include } = buildQueryOptions(query, Article);
+    include.push({ model: Comment })
     const { rows, count } = await this.articlesRepository.findAndCountAll({
       where: { user_id: user.id },
-      include: [{ model: Comment }],
+      include,
       distinct: true,
-      limit: perPage,
-      offset: (page - 1) * perPage,
+      limit,
+      offset,
     });
     return {
       paginations: { count, page, perPage },

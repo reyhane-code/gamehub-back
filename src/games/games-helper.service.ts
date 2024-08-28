@@ -5,7 +5,6 @@ import { PublisherGame } from 'models/publisher_game.model';
 import { Screenshot } from 'models/screenshot.model';
 import { Repository } from 'src/enums/database.enum';
 import { FilesService } from 'src/files/files.service';
-import { generatePaginationQuery } from 'src/helpers/helpers';
 import { Game } from 'models/game.model';
 
 @Injectable()
@@ -95,17 +94,4 @@ export class GameHelperService {
   ) {
     return this.filesService.saveImageFileToDB(image, alt, hashKey, fileType);
   }
-
-  // buildGamesQuery(query: IGamesQuery) {
-  //   console.log('queryBuild', query);
-  //   const { page, perPage, order, whereConditions, include } =
-  //     generatePaginationQuery(query, Game);
-  //   return {
-  //     limit: perPage,
-  //     offset: (page - 1) * perPage,
-  //     where: whereConditions,
-  //     include: (include.length > 0) ? include : undefined,
-  //     order: order ? this.gamesRepository.sequelize.literal(order) : [],
-  //   };
-  // }
 }

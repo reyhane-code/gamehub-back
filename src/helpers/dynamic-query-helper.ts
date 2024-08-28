@@ -52,8 +52,6 @@ export const buildQueryOptions = (queryVal: any, model: typeof Model) => {
   let perPage = query.perPage ?? paginationDefault.perPage
   let sortBy = query.sortBy ?? undefined
 
-  console.log(query.search, 'search')
-  console.log(query.filter, 'filter')
   if (query.search) {
     const searches = Array.isArray(query.search) ? query.search : [query.search];
     searches.forEach((search) => {
@@ -65,7 +63,6 @@ export const buildQueryOptions = (queryVal: any, model: typeof Model) => {
           const modelValue =
             model.associations[relation]?.target ??
             model.associations[relation + 's']?.target;
-          console.log(modelValue, 'modelVal')
           if (!modelValue) return;
           searchInclude.push({
             model: modelValue,
@@ -99,8 +96,6 @@ export const buildQueryOptions = (queryVal: any, model: typeof Model) => {
     });
   }
 
-  console.log(searchConditions, 'searchconditions')
-  console.log(filterConditions, 'filterconditions')
   // Combine search and filter conditions with AND between search and filter, OR within each
   if (searchConditions.length > 0 && filterConditions.length > 0) {
     where = {
@@ -114,7 +109,6 @@ export const buildQueryOptions = (queryVal: any, model: typeof Model) => {
   } else if (filterConditions.length > 0) {
     where = { [Op.and]: filterConditions };
   }
-  console.log(where, 'where')
 
   // Handle sortBying
   if (sortBy) {
@@ -126,7 +120,6 @@ export const buildQueryOptions = (queryVal: any, model: typeof Model) => {
   }
 
   const include = filterInclude.concat(searchInclude)
-  console.log(inspect(include))
   return {
     page,
     perPage,

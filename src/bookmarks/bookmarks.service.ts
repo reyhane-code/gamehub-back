@@ -7,15 +7,15 @@ import {
 } from '@nestjs/common';
 import { Bookmark } from 'models/bookmark.model';
 import { BookmarkAbleEntity, Repository } from 'src/enums/database.enum';
-import { expandHandler, generatePaginationQuery } from 'src/helpers/helpers';
-import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
+import { expandHandler } from 'src/helpers/helpers';
 import { IGetUserBookmarksQuery } from './interfaces/get-user-bookmarks-query';
+import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
 
 @Injectable()
 export class BookmarksService {
   constructor(
     @Inject(Repository.BOOKMARKS) private bookmarksRepository: typeof Bookmark,
-  ) {}
+  ) { }
 
   async bookmark(userId: number, entityId: number, entityType: string) {
     const bookmark = await this.bookmarksRepository.findOne({
@@ -80,7 +80,7 @@ export class BookmarksService {
     query: IGetUserBookmarksQuery,
   ) {
     const association = Bookmark.associations[`${entityType}`].target;
-    const { page, perPage } = generatePaginationQuery(query, Bookmark);
+    const { page, perPage, limit, offset } = buildQueryOptions(query, Bookmark)
     const { rows, count } = await this.bookmarksRepository.findAndCountAll({
       where: {
         user_id: userId,
@@ -91,8 +91,8 @@ export class BookmarksService {
         include: query.expand ? expandHandler(query.expand, association) : [],
       },
       distinct: true,
-      limit: perPage,
-      offset: (page - 1) * perPage,
+      limit,
+      offset
     });
 
     const items = rows.map((item) => item[item.entity_type]);

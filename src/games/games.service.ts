@@ -12,14 +12,11 @@ import { Publisher } from 'models/publisher.model';
 import { AddGameDto } from './dtos/add-game.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdateGameDto } from './dtos/update-game.dto';
-import { generatePaginationQuery, toSlug } from 'src/helpers/helpers';
+import { toSlug } from 'src/helpers/helpers';
 import { GameHelperService } from './games-helper.service';
 import { LikesService } from 'src/likes/likes.service';
 import { Screenshot } from 'models/screenshot.model';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
-import { Like } from 'models/like.model';
-import { Sequelize } from 'sequelize';
-import { Op } from 'sequelize';
 import { buildQueryOptions } from 'src/helpers/dynamic-query-helper'
 import { inspect } from 'util';
 
@@ -108,11 +105,12 @@ export class GamesService {
   async getGames(query: IPaginationQueryOptions) {
     const { where, include, sortBy, page, perPage, limit, offset } = buildQueryOptions(query, Game)
 
-    if (include.length < 1) {
+    if (!include.includes({ model: Genre }) || !include.includes({ model: Platform })) {
       include.push({ model: Genre });
       include.push({ model: Platform });
     }
     include.push({ model: Publisher });
+    console.log(inspect(include, null, 10))
 
 
     const { count, rows } = await this.gamesRepository.findAndCountAll({
@@ -140,7 +138,7 @@ export class GamesService {
         perPage,
       },
       items: rows ?? [],
-      likesCount,
+      likes: likesCount,
     };
   }
 

@@ -12,14 +12,14 @@ import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { UserPasswordDto } from './dtos/user-password.dto';
 import { User } from '../../models/user.model';
 import { Repository, Role } from 'src/enums/database.enum';
-import { generatePaginationQuery } from 'src/helpers/helpers';
+import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
 
 @Injectable()
 export class UsersService {
   constructor(
     @Inject(Repository.USERS)
     private usersRepository: typeof User,
-  ) {}
+  ) { }
 
   async updateUser(user: IUser, body: UpdateUserDto) {
     if (body.username && body.username != user.username) {
@@ -80,11 +80,10 @@ export class UsersService {
   }
 
   async allUsers(query: IPaginationQueryOptions) {
-    const { page, perPage } = generatePaginationQuery(query, User);
-    const offset = !!((page - 1) * perPage) ? (page - 1) * perPage : 0;
+    const { page, perPage, offset, limit } = buildQueryOptions(query, User);
     const { count, rows } = await this.usersRepository.findAndCountAll({
       attributes: { exclude: ['password'] },
-      limit: perPage,
+      limit,
       offset,
     });
 

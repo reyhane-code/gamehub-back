@@ -15,25 +15,27 @@ import { isImage } from 'src/helpers/file.helper';
 
 @Injectable()
 export class FilesService {
-  constructor(@Inject(Repository.FILES) private filesRepository: typeof File) {}
+  constructor(@Inject(Repository.FILES) private filesRepository: typeof File) { }
 
   async readAndSetFileProperties(
     query: GetFileQueryDto,
     res: Response,
   ): Promise<StreamableFile> {
     const { hashKey } = query;
+    //TODO: parse query
     const foundFile = await this.filesRepository.findOne({
       where: { hash_key: hashKey },
     });
-
     if (!foundFile) {
       throw new NotFoundException('File not found');
     }
 
+    console.log(foundFile.file_type, 'file')
     const dist = this.getFilePath(hashKey, foundFile.file_type);
     const file = this.getFileStream(dist);
 
     if (isImage(`${hashKey}.${foundFile.file_type}`)) {
+      console.log('isImage')
       return this.getImageFile(file, query, res, foundFile.file_type);
     }
 
@@ -67,7 +69,7 @@ export class FilesService {
   ): Promise<StreamableFile> {
     const { hashKey } = query;
     const type = query.format ?? fileType;
-
+    console.log('type', type)
     res.header('Content-Type', type);
     res.header('ETag', hashKey);
     res.header(

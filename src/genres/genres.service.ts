@@ -10,13 +10,13 @@ import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { AddGenreDto } from './dtos/add-genre.dto';
 import { UpdateGenreDto } from './dtos/update-genre.dto';
-import { generatePaginationQuery } from 'src/helpers/helpers';
+import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
 
 @Injectable()
 export class GenresService {
   constructor(
     @Inject(Repository.GENRES) private genresRepository: typeof Genre,
-  ) {}
+  ) { }
 
   async addGenre({ name }: AddGenreDto, user: IUser) {
     try {
@@ -64,14 +64,14 @@ export class GenresService {
   }
 
   async findAllWithPaginate(query: IPaginationQueryOptions) {
-    const { page, perPage, sortBy, whereConditions, include } =
-      generatePaginationQuery(query, Genre);
+    const { page, perPage, sortBy, where, include, limit, offset } =
+      buildQueryOptions(query, Genre);
 
     const { count, rows } = await this.genresRepository.findAndCountAll({
-      limit: perPage,
-      offset: perPage * (page - 1),
-      where: this.genresRepository.sequelize.literal(whereConditions),
-      include: include.length > 0 ? include : undefined,
+      limit,
+      offset,
+      where,
+      include,
       order: sortBy ? this.genresRepository.sequelize.literal(sortBy) : [],
     });
     return {
