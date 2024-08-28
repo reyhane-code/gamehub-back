@@ -8,9 +8,9 @@ import {
 } from '@nestjs/common';
 import { Like } from 'models/like.model';
 import { Repository, LikeAbleEntity } from 'src/enums/database.enum';
-import { expandHandler, generatePaginationQuery } from 'src/helpers/helpers';
-import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
+import { expandHandler } from 'src/helpers/helpers';
 import { IGetUseLikesQuery } from './intefaces/get-user-likes-query';
+import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
 
 @Injectable()
 export class LikesService {
@@ -78,7 +78,7 @@ export class LikesService {
     query: IGetUseLikesQuery,
   ) {
     const association = Like.associations[`${entityType}`].target;
-    const { page, perPage } = generatePaginationQuery(query, Like);
+    const { page, perPage,limit,offset } = buildQueryOptions(query, Like);
     const { rows, count } = await this.likesRepository.findAndCountAll({
       where: {
         user_id: userId,
@@ -89,8 +89,8 @@ export class LikesService {
         include: query.expand ? expandHandler(query.expand, association) : [],
       },
       distinct: true,
-      limit: perPage,
-      offset: (page - 1) * perPage,
+      limit,
+      offset,
     });
     const items = rows.map((item) => item[item.entity_type]);
     return {

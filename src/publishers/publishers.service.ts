@@ -10,15 +10,15 @@ import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { AddPublisherDto } from './dtos/add-publisher.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdatePublisherDto } from './dtos/update-publisher.dto';
-import { generatePaginationQuery } from 'src/helpers/helpers';
-import { Op } from 'sequelize';
+import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
+
 
 @Injectable()
 export class PublishersService {
   constructor(
     @Inject(Repository.PUBLISHERS)
     private publishersRepository: typeof Publisher,
-  ) {}
+  ) { }
 
   async addPublisher({ name }: AddPublisherDto, user: IUser) {
     try {
@@ -65,14 +65,14 @@ export class PublishersService {
   }
 
   async findAllWithPaginate(query: IPaginationQueryOptions) {
-    const { page, perPage, sortBy, whereConditions, include } =
-      generatePaginationQuery(query, Publisher);
+    const { page, perPage, sortBy, where, include, limit, offset } =
+      buildQueryOptions(query, Publisher);
 
     const { count, rows } = await this.publishersRepository.findAndCountAll({
-      limit: perPage,
-      offset: perPage * (page - 1),
-      where: this.publishersRepository.sequelize.literal(whereConditions),
-      include: include.length > 0 ? include : undefined,
+      limit,
+      offset,
+      where,
+      include,
       order: sortBy ? this.publishersRepository.sequelize.literal(sortBy) : [],
     });
     return {

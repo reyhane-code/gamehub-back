@@ -23,5 +23,7 @@ export const generateHashKey = (desiredLength: number = 15) => {
 };
 
 export const isImage = (filename: string): boolean => {
-  return /^(jpg|jpeg|png|gif)$/.test(filename);
+  console.log('filtename', filename)
+  return /\.(jpg|jpeg|png|gif)$/i.test(filename);
 };
+

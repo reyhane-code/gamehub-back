@@ -12,8 +12,6 @@ import { AuthGuard } from '../guards/auth.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { LikeAbleEntity } from 'src/enums/database.enum';
-import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
-import { paginationDefault } from 'src/constance';
 import { IGetUseLikesQuery } from './intefaces/get-user-likes-query';
 
 @Controller('likes')
