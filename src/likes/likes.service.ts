@@ -14,19 +14,14 @@ import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
 
 @Injectable()
 export class LikesService {
-  constructor(@Inject(Repository.LIKES) private likesRepository: typeof Like) {}
+  constructor(@Inject(Repository.LIKES) private likesRepository: typeof Like) { }
 
   async likeEntity(
     userId: number,
     entityId: number,
     entityType: LikeAbleEntity,
   ) {
-    const like = await this.likesRepository.findOne({
-      where: {
-        user_id: userId,
-        [`${entityType}_id`]: entityId,
-      },
-    });
+    const like = await this.didUserLike(userId, entityId, entityType)
     if (like) {
       throw new ConflictException('You have liked this before');
     }
@@ -78,7 +73,7 @@ export class LikesService {
     query: IGetUseLikesQuery,
   ) {
     const association = Like.associations[`${entityType}`].target;
-    const { page, perPage,limit,offset } = buildQueryOptions(query, Like);
+    const { page, perPage, limit, offset } = buildQueryOptions(query, Like);
     const { rows, count } = await this.likesRepository.findAndCountAll({
       where: {
         user_id: userId,
@@ -150,4 +145,15 @@ export class LikesService {
       throw new Error(`Could not retrieve likes count for ${entityType}s.`);
     }
   }
+
+  async didUserLike(userId: number, entityId: number, entityType: LikeAbleEntity): Promise<boolean> {
+    const likeExists = await this.likesRepository.findOne({
+      where: {
+        user_id: userId,
+        [`${entityType}_id`]: entityId,
+      },
+    });
+    return likeExists ? true : false;
+  }
+
 }

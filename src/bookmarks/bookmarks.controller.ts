@@ -11,21 +11,19 @@ import { BookmarksService } from './bookmarks.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { IUser } from 'src/users/interfaces/user.interface';
-import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
-import { paginationDefault } from 'src/constance';
 import { BookmarkAbleEntity } from 'src/enums/database.enum';
 import { IGetUserBookmarksQuery } from './interfaces/get-user-bookmarks-query';
 
 @Controller('bookmarks')
 export class BookmarksController {
-  constructor(private bookmarksService: BookmarksService) {}
+  constructor(private bookmarksService: BookmarksService) { }
 
   @UseGuards(AuthGuard)
   @Post('/:entityType/:entityId')
   async bookmark(
-    @Param('entityType') entityType: string,
-    @Param('entityId') entityId: number,
     @CurrentUser() user: IUser,
+    @Param('entityId') entityId: number,
+    @Param('entityType') entityType: BookmarkAbleEntity,
   ) {
     return this.bookmarksService.bookmark(user.id, entityId, entityType);
   }
@@ -33,7 +31,7 @@ export class BookmarksController {
   @UseGuards(AuthGuard)
   @Delete('/:entityType/:entityId')
   async removeBookmark(
-    @Param('entityType') entityType: string,
+    @Param('entityType') entityType: BookmarkAbleEntity,
     @Param('entityId') entityId: number,
     @CurrentUser() user: IUser,
   ) {
@@ -42,7 +40,7 @@ export class BookmarksController {
 
   @Get('/:entityType/:entityId')
   async getBookmarks(
-    @Param('entityType') entityType: string,
+    @Param('entityType') entityType: BookmarkAbleEntity,
     @Param('entityId') entityId: number,
   ) {
     return this.bookmarksService.findBookmarks(entityId, entityType);
@@ -60,5 +58,15 @@ export class BookmarksController {
       entityType,
       query,
     );
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/user/bookmarked//:entityType/:entityId')
+  didUserBookmark(
+    @CurrentUser() user: IUser,
+    @Param('entityId') entityId: number,
+    @Param('entityType') entityType: BookmarkAbleEntity,
+  ) {
+    return this.bookmarksService.didUserBookmark(user.id, entityId, entityType)
   }
 }
