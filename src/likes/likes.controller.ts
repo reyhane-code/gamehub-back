@@ -57,7 +57,7 @@ export class LikesController {
   }
 
   @UseGuards(AuthGuard)
-  @Get('/user/bookmarked//:entityType/:entityId')
+  @Get('/user/liked/:entityType/:entityId')
   didUserLike(
     @CurrentUser() user: IUser,
     @Param('entityId') entityId: number,

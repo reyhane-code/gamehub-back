@@ -61,7 +61,7 @@ export class BookmarksController {
   }
 
   @UseGuards(AuthGuard)
-  @Get('/user/bookmarked//:entityType/:entityId')
+  @Get('/user/bookmarked/:entityType/:entityId')
   didUserBookmark(
     @CurrentUser() user: IUser,
     @Param('entityId') entityId: number,
