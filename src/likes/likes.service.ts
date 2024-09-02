@@ -27,6 +27,7 @@ export class LikesService {
     }
     try {
       return this.likesRepository.create({
+
         user_id: userId,
         [`${entityType}_id`]: entityId,
         entity_type: entityType,
@@ -70,8 +71,9 @@ export class LikesService {
   async findUserLikedEntity(
     userId: number,
     entityType: LikeAbleEntity,
-    query: IGetUseLikesQuery,
+    query?: IGetUseLikesQuery,
   ) {
+    console.log('assosiation', Like.associations[`${entityType}`].target)
     const association = Like.associations[`${entityType}`].target;
     const { page, perPage, limit, offset } = buildQueryOptions(query, Like);
     const { rows, count } = await this.likesRepository.findAndCountAll({
@@ -79,10 +81,10 @@ export class LikesService {
         user_id: userId,
         entity_type: entityType,
       },
-      include: {
+      include: association ? {
         model: association,
         include: query.expand ? expandHandler(query.expand, association) : [],
-      },
+      } : [],
       distinct: true,
       limit,
       offset,

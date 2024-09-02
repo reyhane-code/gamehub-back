@@ -20,11 +20,11 @@ import { AuthGuard } from '../guards/auth.guard';
 import { Role } from 'src/enums/database.enum';
 import { TransformResponse } from 'src/custome-transformer';
 import { UserPaginationResponseDto, UserResponseDto } from './userdata.dto';
-import { query } from 'express';
+
 
 @Controller('/user')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersService) { }
 
   @Put()
   @UseGuards(AuthGuard)
@@ -62,7 +62,6 @@ export class UsersController {
 
   @Get('/identity')
   @UseGuards(AuthGuard)
-  @TransformResponse(UserResponseDto)
   async getIdentity(@CurrentUser() user: IUser) {
     return {
       id: user.id,

@@ -51,7 +51,7 @@ export class LikesController {
   async getUserLikes(
     @Param('entityType') entityType: LikeAbleEntity,
     @CurrentUser() user: IUser,
-    @Query() query: IGetUseLikesQuery,
+    @Query() query?: IGetUseLikesQuery,
   ) {
     return this.likesService.findUserLikedEntity(user.id, entityType, query);
   }
