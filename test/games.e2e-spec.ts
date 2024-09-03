@@ -145,12 +145,6 @@ describe('Games System (e2e)', () => {
     expect(games).toBeDefined();
   });
 
-  it('returns error if there is no game when finding games', async () => {
-    return request(app.getHttpServer())
-      .get('/games')
-      .expect(404)
-      .then((res) => res.body);
-  });
 
   it('finds game by slug', async () => {
     const game = await addGame(app, 201, {

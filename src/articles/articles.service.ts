@@ -157,9 +157,9 @@ export class ArticlesService {
   async updateArticle(body: UpdateArticleDto, articleId: number, user: IUser) {
     await this.findOne(articleId);
     try {
+      console.log('update body', body)
       const updatedArticle = await this.articlesRepository.update(body, {
         where: { id: articleId, user_id: user.id },
-        returning: true,
       });
       return updatedArticle;
     } catch (error) {

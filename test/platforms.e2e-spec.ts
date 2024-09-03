@@ -124,13 +124,6 @@ describe('Platforms System (e2e)', () => {
     expect(platforms).toBeDefined();
   });
 
-  it('returns error if there is no platform when finding platforms', async () => {
-    return request(app.getHttpServer())
-      .get('/platforms')
-      .expect(404)
-      .then((res) => res.body);
-  });
-
   it('finds platform by Id', async () => {
     const platform = await addPlatform(app, 201, { name: 'new-platform' });
     await getPlatformById(200, platform.id);

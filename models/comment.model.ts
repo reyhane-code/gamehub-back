@@ -9,6 +9,7 @@ import {
   BeforeUpdate,
   DeletedAt,
   HasMany,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { TableName } from 'src/enums/database.enum';
 import { User } from './user.model';
@@ -55,6 +56,13 @@ export class Comment extends Model {
 
   @HasMany(() => Like)
   likes: Like[];
+
+
+  @BelongsTo(() => Game)
+  game: Game;
+
+  @BelongsTo(() => Article)
+  article: Article;
 
   @BeforeUpdate
   static updateTimestamp(instance: Comment) {

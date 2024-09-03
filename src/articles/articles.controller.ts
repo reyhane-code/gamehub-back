@@ -24,7 +24,7 @@ import { AdminGuard } from 'src/guards/admin.guard';
 
 @Controller('articles')
 export class ArticlesController {
-  constructor(private articlesService: ArticlesService) {}
+  constructor(private articlesService: ArticlesService) { }
 
   @UseInterceptors(
     FileFieldsFastifyInterceptor(

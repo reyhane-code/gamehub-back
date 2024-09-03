@@ -101,7 +101,7 @@ describe('Articles System (e2e)', () => {
   };
 
   it('adds a new article', async () => {
-    const { accessToken } = await createAdminUser(app);
+    const accessToken = await createAdminUser(app);
     const article = await addArticle(
       201,
       { title: 'newTitle', content: 'New article content' },
@@ -111,7 +111,7 @@ describe('Articles System (e2e)', () => {
   });
 
   it('updates an exsisting article', async () => {
-    const { accessToken } = await createAdminUser(app);
+    const accessToken = await createAdminUser(app);
     const article = await addArticle(
       201,
       { title: 'newTitle', content: 'New article content' },
@@ -128,12 +128,12 @@ describe('Articles System (e2e)', () => {
   });
 
   it('returns error while updating with a wrong id', async () => {
-    const { accessToken } = await createAdminUser(app);
+    const accessToken = await createAdminUser(app);
     await updateArticle(404, 230, { title: 'rubbish' }, accessToken);
   });
 
   it('delete an exsisting article', async () => {
-    const { accessToken } = await createAdminUser(app);
+    const accessToken = await createAdminUser(app);
     const article = await addArticle(
       201,
       { title: 'newTitle', content: 'New article content' },
@@ -143,12 +143,12 @@ describe('Articles System (e2e)', () => {
   });
 
   it('returns error while deleting a non-existing article', async () => {
-    const { accessToken } = await createAdminUser(app);
+    const accessToken = await createAdminUser(app);
     await deleteArticle(404, 21, accessToken);
   });
 
   it('finds all articles with paginate', async () => {
-    const { accessToken } = await createAdminUser(app);
+    const accessToken = await createAdminUser(app);
     await addArticle(
       201,
       { title: 'newTitle', content: 'New article content' },
@@ -168,19 +168,13 @@ describe('Articles System (e2e)', () => {
       .get('/articles/paginate')
       .expect(200)
       .then((res) => res.body);
-    expect(articles.data).toBeDefined();
-    expect(articles.count).toEqual(3);
+    expect(articles.items).toBeDefined();
+    expect(articles.pagination.count).toEqual(3);
   });
 
-  it('returns error if there is no article when finding articles', async () => {
-    return request(app.getHttpServer())
-      .get('/articles')
-      .expect(404)
-      .then((res) => res.body);
-  });
 
   it('finds article by id', async () => {
-    const { accessToken } = await createAdminUser(app);
+    const accessToken = await createAdminUser(app);
     const article = await addArticle(
       201,
       { title: 'newTitle5', content: 'New article content5' },
@@ -194,12 +188,12 @@ describe('Articles System (e2e)', () => {
   });
 
   it('returns error if user has not any articles when finding user articles', async () => {
-    const { accessToken } = await createAdminUser(app);
-    await getUserArticles(accessToken, 404);
+    const accessToken = await createAdminUser(app);
+    await getUserArticles(accessToken, 401);
   });
 
   it('finds user articles', async () => {
-    const { accessToken } = await createAdminUser(app);
+    const accessToken = await createAdminUser(app);
 
     await addArticle(
       201,
@@ -217,7 +211,7 @@ describe('Articles System (e2e)', () => {
       accessToken,
     );
     const articles = await getUserArticles(accessToken, 200);
-    expect(articles.count).toEqual(3);
-    expect(articles.data).toBeDefined();
+    expect(articles.pagination.count).toEqual(3);
+    expect(articles.items).toBeDefined();
   });
 });

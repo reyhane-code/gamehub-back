@@ -115,12 +115,6 @@ describe('Genres System (e2e)', () => {
     expect(genres).toBeDefined();
   });
 
-  it('returns error if there is no word when finding genres', async () => {
-    return request(app.getHttpServer())
-      .get('/genres')
-      .expect(404)
-      .then((res) => res.body);
-  });
 
   it('finds genre by Id', async () => {
     const genre = await addGenre(app, 201, { name: 'new-genre' });

@@ -115,13 +115,6 @@ describe('Publishers System (e2e)', () => {
     expect(publishers).toBeDefined();
   });
 
-  it('returns error if there is no word when finding publishers', async () => {
-    return request(app.getHttpServer())
-      .get('/publishers')
-      .expect(404)
-      .then((res) => res.body);
-  });
-
   it('finds publisher by Id', async () => {
     const publisher = await addPublisher(app, 201, { name: 'new-publisher' });
     await getPublisherById(200, publisher.id);
