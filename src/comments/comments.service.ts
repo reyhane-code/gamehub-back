@@ -21,7 +21,7 @@ export class CommentsService {
   constructor(
     @Inject(Repository.COMMENTS) private commentsRepository: typeof Comment,
     private readonly likesService: LikesService,
-  ) {}
+  ) { }
 
   async addComment(
     entityId: number,
@@ -127,9 +127,10 @@ export class CommentsService {
     const likesCount = await this.likesService.getLikesCountForAllEntities(
       LikeAbleEntity.COMMENT,
     );
+    const items = rows?.map((item) => item[item.entity_type]);
     return {
       count,
-      items: rows ?? [],
+      items: items ?? [],
       likes: likesCount,
     };
   }

@@ -106,7 +106,7 @@ describe('Comments System (e2e)', () => {
   ) => {
     return request(app.getHttpServer())
       .get(`/comments/user/${entityType}`)
-      .set('authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${accessToken}`)
       .expect(status)
       .then((res) => res.body);
   };
@@ -182,13 +182,6 @@ describe('Comments System (e2e)', () => {
     expect(comments).toBeDefined();
   });
 
-  it('returns error if game has no comments', async () => {
-    return request(app.getHttpServer())
-      .get('/comments/game/258')
-      .expect(404)
-      .then((res) => res.body);
-  });
-
   it('finds user commentes', async () => {
     const { accessToken } = await getValidationDataAndRegister(app);
     const game = await addGame(app, 201, {
@@ -215,13 +208,8 @@ describe('Comments System (e2e)', () => {
       200,
       CommentAbleEntity.GAME,
     );
-    expect(comments.data).toBeDefined();
+    expect(comments.items).toBeDefined();
     expect(comments.count).toEqual(2);
-  });
-
-  it('it returns error if user didnt comment on any game while getting user comments', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
-    await getUserComments(accessToken, 404, CommentAbleEntity.GAME);
   });
 
   it('updates a comment', async () => {

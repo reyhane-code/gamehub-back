@@ -68,7 +68,6 @@ export class GamesService {
       );
     }
 
-    // Handle image file if provided
     if (imageFile) {
       await this.gameHelperService.saveImageFileToDB(
         imageFile,
@@ -78,12 +77,10 @@ export class GamesService {
       );
     }
 
-    // Handle screenshots if provided
-    if (screenshots.length > 0) {
+    if (screenshots && screenshots.length > 0) {
       await this.gameHelperService.saveScreenshotsToDB(screenshots, game.id);
     }
 
-    // Add game to relation tables
     await this.gameHelperService.addGameToRelationTables(
       game.id,
       platformIds,

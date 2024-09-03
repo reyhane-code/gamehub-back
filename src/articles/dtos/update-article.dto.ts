@@ -1,8 +1,5 @@
 import { Expose } from 'class-transformer';
-import {
-  IsString,
-  IsOptional
-} from 'src/custom-validator';
+import { IsString, IsOptional } from 'src/custom-validator';
 
 export class UpdateArticleDto {
   @Expose()
