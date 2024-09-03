@@ -10,5 +10,6 @@ import { LikesModule } from 'src/likes/likes.module';
   controllers: [GamesController],
   providers: [GamesService, GameHelperService, ...gamesProviders],
   imports: [FilesModule, LikesModule],
+  exports: [GamesService]
 })
-export class GamesModule {}
+export class GamesModule { }
