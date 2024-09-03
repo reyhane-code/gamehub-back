@@ -91,13 +91,10 @@ export class ArticlesService {
     const articles = await this.articlesRepository.findAll({
       include: [{ model: Comment }],
     });
-    if (articles.length < 1 || !articles) {
-      throw new NotFoundException('No articles were found!');
-    }
     const likesCount = await this.likesService.getLikesCountForAllEntities(
       LikeAbleEntity.ARTICLE,
     );
-    return { articles, likes: likesCount };
+    return { items: articles ?? [], likes: likesCount };
   }
 
   async findOne(id: number) {

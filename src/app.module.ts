@@ -22,6 +22,7 @@ import { BookmarksModule } from './bookmarks/bookmarks.module';
 import { CommentsModule } from './comments/comments.module';
 import { ArticlesModule } from './articles/articles.module';
 import { HttpSecurityHeadersMiddleware } from './middlewares/http-security-headers.middleware';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { HttpSecurityHeadersMiddleware } from './middlewares/http-security-heade
     BookmarksModule,
     CommentsModule,
     ArticlesModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [

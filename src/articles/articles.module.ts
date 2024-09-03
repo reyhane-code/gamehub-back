@@ -9,5 +9,6 @@ import { FilesModule } from 'src/files/files.module';
   controllers: [ArticlesController],
   providers: [ArticlesService, ...articlesProviders],
   imports: [FilesModule, LikesModule],
+  exports: [ArticlesService]
 })
-export class ArticlesModule {}
+export class ArticlesModule { }
