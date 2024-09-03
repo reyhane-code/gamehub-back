@@ -9,9 +9,7 @@ import { Context } from './utils/context';
 import { TableName } from 'src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
 import { createAdminUser } from './utils/admin';
-import { addGenre, addPlatform, addPublisher } from './utils/add';
 import { AddArticleDto } from 'src/articles/dtos/add-article.dto';
-import { getValidationDataAndRegister } from './utils/login';
 import { UpdateArticleDto } from 'src/articles/dtos/update-article.dto';
 
 const DEFAULT_ARTICLE = {
@@ -103,7 +101,7 @@ describe('Articles System (e2e)', () => {
   };
 
   it('adds a new article', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const { accessToken } = await createAdminUser(app);
     const article = await addArticle(
       201,
       { title: 'newTitle', content: 'New article content' },
@@ -113,7 +111,7 @@ describe('Articles System (e2e)', () => {
   });
 
   it('updates an exsisting article', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const { accessToken } = await createAdminUser(app);
     const article = await addArticle(
       201,
       { title: 'newTitle', content: 'New article content' },
@@ -130,12 +128,12 @@ describe('Articles System (e2e)', () => {
   });
 
   it('returns error while updating with a wrong id', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const { accessToken } = await createAdminUser(app);
     await updateArticle(404, 230, { title: 'rubbish' }, accessToken);
   });
 
   it('delete an exsisting article', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const { accessToken } = await createAdminUser(app);
     const article = await addArticle(
       201,
       { title: 'newTitle', content: 'New article content' },
@@ -145,12 +143,12 @@ describe('Articles System (e2e)', () => {
   });
 
   it('returns error while deleting a non-existing article', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const { accessToken } = await createAdminUser(app);
     await deleteArticle(404, 21, accessToken);
   });
 
   it('finds all articles with paginate', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const { accessToken } = await createAdminUser(app);
     await addArticle(
       201,
       { title: 'newTitle', content: 'New article content' },
@@ -182,7 +180,7 @@ describe('Articles System (e2e)', () => {
   });
 
   it('finds article by id', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const { accessToken } = await createAdminUser(app);
     const article = await addArticle(
       201,
       { title: 'newTitle5', content: 'New article content5' },
@@ -196,12 +194,12 @@ describe('Articles System (e2e)', () => {
   });
 
   it('returns error if user has not any articles when finding user articles', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const { accessToken } = await createAdminUser(app);
     await getUserArticles(accessToken, 404);
   });
 
   it('finds user articles', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const { accessToken } = await createAdminUser(app);
 
     await addArticle(
       201,
