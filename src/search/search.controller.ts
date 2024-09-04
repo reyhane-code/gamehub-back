@@ -5,9 +5,9 @@ import { SearchService } from './search.service';
 export class SearchController {
     constructor(private readonly searchService: SearchService) { }
 
-    @Get('/;searchText')
-    searchInGamesAndArticles(@Param('searchText') searchText: string, @Query() query: { page: number, perPage: number }) {
-        return this.searchService.searchInGamesAndArticles(searchText, query)
+    @Get('/:searchText')
+    searchInSearchables(@Param('searchText') searchText: string, @Query() query: { page: number, perPage: number }) {
+        return this.searchService.searchInSearchables(searchText, query)
     }
 
 }

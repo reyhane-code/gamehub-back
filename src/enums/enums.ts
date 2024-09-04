@@ -27,7 +27,6 @@ export enum FilterOperationEnum {
   //! NULL | bool
   IS = "IS",
   NOT = "NOT",
-  ELM_MTC = "ELM_MTC"
 }
 export enum OperationPositionEnum {
   FILTER = "filter",

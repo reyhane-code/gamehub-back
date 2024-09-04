@@ -99,7 +99,7 @@ export class GamesService {
     return game;
   }
 
-  async getGames(query: IPaginationQueryOptions) {
+  async findGamesWithPaginate(query: IPaginationQueryOptions) {
     const { where, include, sortBy, page, perPage, limit, offset } = buildQueryOptions(query, Game)
 
     if (!include.includes({ model: Genre }) || !include.includes({ model: Platform })) {
