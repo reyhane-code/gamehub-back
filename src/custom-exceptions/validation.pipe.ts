@@ -11,33 +11,38 @@ import { HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class ValidationPipe implements PipeTransform<any> {
-
-  protected options: ValidationPipeOptions
+  protected options: ValidationPipeOptions;
   constructor(options?: ValidationPipeOptions) {
-    this.options = options
-  };
+    this.options = options;
+  }
 
   async transform(value: any, { metatype }: ArgumentMetadata) {
-    if (!metatype || !this.toValidate(metatype)) {
+    try {
+      if (!metatype || !this.toValidate(metatype)) {
+        return value;
+      }
+      const transformOptions = this.options?.transformOptions ?? {};
+      const object = plainToInstance(metatype, value, transformOptions);
+
+      const errors = await validate(object);
+      if (errors.length > 0) {
+        const errList: Array<any> = errors.map(({ property, constraints }) => {
+          if (constraints && property) {
+            return this.getErrorData(property, constraints);
+          }
+        });
+
+        throw new CustomException(
+          'invalid data',
+          HttpStatus.BAD_REQUEST,
+          errList,
+        );
+      }
+      return value;
+    } catch (e) {
+      console.log('error transform ', e);
       return value;
     }
-    const transformOptions = this.options?.transformOptions ?? {}
-    const object = plainToInstance(metatype, value, transformOptions);
-    const errors = await validate(object);
-    if (errors.length > 0) {
-      const errList: Array<any> = errors.map(({ property, constraints }) => {
-        if (constraints && property) {
-          return this.getErrorData(property, constraints);
-        }
-      });
-
-      throw new CustomException(
-        'invalid data',
-        HttpStatus.BAD_REQUEST,
-        errList,
-      );
-    }
-    return object;
   }
 
   private getErrorData(property: string, constraints: object) {
