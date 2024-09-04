@@ -31,8 +31,8 @@ export class GamesController {
   }
 
   @Get()
-  getGames(@Query() query: IPaginationQueryOptions) {
-    return this.gamesService.getGames(query);
+  findGamesWithPaginate(@Query() query: IPaginationQueryOptions) {
+    return this.gamesService.findGamesWithPaginate(query);
   }
 
   @UseGuards(AdminGuard)
