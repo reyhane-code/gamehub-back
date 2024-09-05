@@ -30,7 +30,7 @@ export class ValidationPipe implements PipeTransform<any> {
           if (constraints && property) {
             return this.getErrorData(property, constraints);
           }
-        });
+        }).filter(Boolean); // Filter out undefined values
 
         throw new CustomException(
           'invalid data',
@@ -38,12 +38,13 @@ export class ValidationPipe implements PipeTransform<any> {
           errList,
         );
       }
-      return value;
+      return object;
     } catch (e) {
-      console.log('error transform ', e);
-      return value;
+      console.error('Error during transformation:', e);
+      throw e;
     }
   }
+
 
   private getErrorData(property: string, constraints: object) {
     const errorText = constraints[Object.keys(constraints)[0]];
