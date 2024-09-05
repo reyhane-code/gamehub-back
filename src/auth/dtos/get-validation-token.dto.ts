@@ -1,14 +1,11 @@
 import { Expose } from "class-transformer";
 import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Matches } from "src/custom-validator";
 
-const phoneReg = new RegExp(
-  /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/,
-);
 
 export class GetValidationTokenDto {
 
   @Expose()
-  @Matches(phoneReg)
+  @Matches(/^09[0|1|2|3][0-9]{8}$/)
   @IsString()
   @IsNotEmpty()
   phone: string;
