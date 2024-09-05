@@ -34,7 +34,7 @@ export class ValidationPipe implements PipeTransform<any> {
 
         throw new CustomException(
           'invalid data',
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.UNPROCESSABLE_ENTITY,
           errList,
         );
       }
