@@ -60,11 +60,8 @@ export const addGame = async (
   { name, description, metacritic }: Game,
 ) => {
   const genre = await addGenre(app, 201, { name: 'new-genre' });
-  // console.log('adding genre', genre)
   const platform = await addPlatform(app, 201, { name: 'new-platform' });
-  // console.log('adding platform', platform)
   const publisher = await addPublisher(app, 201, { name: 'new-publisher' });
-  // console.log('adding publisher', publisher)
   const accessToken = await createAdminUser(app);
   return request(app.getHttpServer())
     .post('/games')

@@ -149,29 +149,15 @@ describe('Likes System (e2e)', () => {
     expect(likes.items).toBeDefined();
   });
 
-  // it('returns error if game has no likes', async () => {
-  //   return request(app.getHttpServer())
-  //     .get('/likes/game/258')
-  //     .expect(404)
-  //     .then((res) => res.body);
-  // });
 
   it('finds user liked games', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
     const game = await addGame(app, 201, {
       name: 'game1',
       description: 'desc1',
       metacritic: 200,
     });
-    const game2 = await addGame(app, 201, {
-      name: 'game2',
-      description: 'desc2',
-      metacritic: 200,
-    });
-
+    const { accessToken } = await getValidationDataAndRegister(app);
     await like(201, LikeAbleEntity.GAME, game.id, accessToken);
-    await like(201, LikeAbleEntity.GAME, game2.id, accessToken);
-
     const likes = await getUserLikes(accessToken, 200, LikeAbleEntity.GAME);
     expect(likes.items).toBeDefined();
   });

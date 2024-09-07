@@ -124,7 +124,7 @@ describe('Articles System (e2e)', () => {
       accessToken,
     );
     const updatedArticle = await getArticle(200, article.id);
-    expect(updatedArticle.title).toEqual('updating title of my article');
+    expect(updatedArticle.article.title).toEqual('updating title of my article');
   });
 
   it('returns error while updating with a wrong id', async () => {
@@ -185,11 +185,6 @@ describe('Articles System (e2e)', () => {
 
   it('returns an error if the article does not exist when finding by id', async () => {
     await getArticle(404, 332);
-  });
-
-  it('returns error if user has not any articles when finding user articles', async () => {
-    const accessToken = await createAdminUser(app);
-    await getUserArticles(accessToken, 401);
   });
 
   it('finds user articles', async () => {

@@ -1,4 +1,3 @@
-import { fileType } from 'src/enums/file-type.enum';
 import { v4 as uuidv4 } from 'uuid';
 
 export const generateHashKey = (desiredLength: number = 15) => {

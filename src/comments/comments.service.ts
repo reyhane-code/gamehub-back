@@ -15,6 +15,8 @@ import { Comment } from 'models/comment.model';
 import { UpdateCommentDto } from './dtos/update-comment.dto';
 import { Like } from 'models/like.model';
 import { LikesService } from 'src/likes/likes.service';
+import { Op } from 'sequelize';
+import { findOneById } from 'src/helpers/crud-helper';
 
 @Injectable()
 export class CommentsService {
@@ -39,9 +41,9 @@ export class CommentsService {
         parent_id: body.parent_id,
       });
 
-      return comment; // Return the created comment
+      return comment;
     } catch (error) {
-      console.error('Error adding comment:', error); // Log the error for debugging
+      console.error('Error adding comment:', error);
       throw new BadRequestException(
         'Something went wrong when posting a comment!',
       );
@@ -49,30 +51,39 @@ export class CommentsService {
   }
 
   async updateComment(commentId: number, body: UpdateCommentDto, user: IUser) {
-    await this.findOneById(commentId);
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+
     try {
-      return this.commentsRepository.update(
+      const [numberOfAffectedRows, [updatedEntity]] = await this.commentsRepository.update(
         {
           content: body.content,
           rate: body.rate,
         },
         {
-          where: { id: commentId, user_id: user.id },
+          where: {
+            id: commentId,
+            user_id: user.id,
+            createdAt: {
+              [Op.gte]: oneHourAgo,
+            },
+          },
+          returning: true
         },
+
       );
+
+      if (numberOfAffectedRows === 0) {
+        throw new BadRequestException('Comment not found or cannot be updated.');
+      }
+
+      return updatedEntity;
     } catch (error) {
-      throw new BadRequestException(
-        'Something went wrong when updating a comment!',
-      );
+      throw new BadRequestException('Something went wrong when updating a comment!');
     }
   }
 
   async findOneById(id: number) {
-    const comment = await this.commentsRepository.findOne({ where: { id } });
-    if (!comment) {
-      throw new NotFoundException('No comment was found!');
-    }
-    return comment;
+    return findOneById(this.commentsRepository, id, 'comment')
   }
 
   async findEntityComments(entityId: number, entityType: CommentAbleEntity) {
