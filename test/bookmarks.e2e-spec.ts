@@ -10,6 +10,7 @@ import { BookmarkAbleEntity, TableName } from 'src/enums/database.enum';
 import { ValidationPipe } from '@nestjs/common';
 import { addGame } from './utils/add';
 import { getValidationDataAndRegister } from './utils/login';
+import { createAdminUser } from './utils/admin';
 
 let context: Context;
 beforeAll(async () => {
@@ -142,15 +143,9 @@ describe('Bookmarks System (e2e)', () => {
     expect(bookmarks.pagination.count).toEqual(1);
   });
 
-  // it('returns error if game has no bookmarks', async () => {
-  //   return request(app.getHttpServer())
-  //     .get('/bookmarks/game/258')
-  //     .expect(404)
-  //     .then((res) => res.body);
-  // });
-
   it('finds user bookmarked games', async () => {
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const accessToken = await createAdminUser(app);
+
     const game = await addGame(app, 201, {
       name: 'game1',
       description: 'desc1',
@@ -183,8 +178,4 @@ describe('Bookmarks System (e2e)', () => {
     expect(bookmarks.pagination.count).toEqual(2);
   });
 
-  // it('it returns error if user didnt bookmark any game while getting user bookmarks', async () => {
-  //   const { accessToken } = await getValidationDataAndRegister(app);
-  //   await getUserBookmars(accessToken, 404, BookmarkAbleEntity.GAME);
-  // });
 });

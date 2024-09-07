@@ -106,7 +106,7 @@ describe('Games System (e2e)', () => {
     });
     await updateGame(200, game.id, { name: 'new-gameName' });
     const updatedgame = await getGameBySlug(200, toSlug('new-gameName'));
-    expect(updatedgame.name).toEqual('new-gameName');
+    expect(updatedgame.game.name).toEqual('new-gameName');
   });
 
   it('returns error while updating with a wrong id', async () => {
@@ -166,25 +166,25 @@ describe('Games System (e2e)', () => {
   });
 
   it('finds user games', async () => {
-    const accessToken = await createAdminUser(app);
     const genre = await addGenre(app, 201, { name: 'new-genre' });
     const platform = await addPlatform(app, 201, { name: 'new-platform' });
     const publisher = await addPublisher(app, 201, { name: 'new-publisher' });
+    const accessToken = await createAdminUser(app);
     await request(app.getHttpServer())
       .post('/games')
-      .set('authorization', `Bearer ${accessToken}`)
+      .set('Authorization', `Bearer ${accessToken}`)
       .send({
-        name: 'game1',
-        description: 'desc1',
-        metacritic: 200,
-        platformId: platform.id,
-        genreId: genre.id,
-        publisherId: publisher.id,
+        name: 'user created game',
+        description: 'stupid description so that you get off my shoulder',
+        metacritic: 5,
+        publisherIds: [publisher.id],
+        genreIds: [genre.id],
+        platformIds: [platform.id],
       })
       .expect(201)
       .then((res) => res.body);
     const games = await getUsergames(accessToken, 200);
-    expect(games.length).toEqual(1);
     expect(games).toBeDefined();
+    expect(games.items.length).toEqual(1);
   });
 });
