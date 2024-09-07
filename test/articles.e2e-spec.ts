@@ -49,7 +49,7 @@ describe('Articles System (e2e)', () => {
   const addArticle = async (
     status: number = 201,
     body: AddArticleDto = DEFAULT_ARTICLE,
-    accessToken: String,
+    accessToken: string,
   ) => {
     return request(app.getHttpServer())
       .post(`/articles`)

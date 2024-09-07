@@ -12,6 +12,7 @@ import { addGame } from './utils/add';
 import { getValidationDataAndRegister } from './utils/login';
 import { AddCommentDto } from 'src/comments/dtos/add-comment.dto';
 import { UpdateCommentDto } from 'src/comments/dtos/update-comment.dto';
+import { createAdminUser } from './utils/admin';
 
 const DEFAULT_COMMENT = {
   content: 'the comment content',
@@ -218,19 +219,53 @@ describe('Comments System (e2e)', () => {
       description: 'desc1',
       metacritic: 200,
     });
-    const { accessToken } = await getValidationDataAndRegister(app);
+    const { accessToken: access } = await getValidationDataAndRegister(app);
     const comment = await addComment(
       201,
       CommentAbleEntity.GAME,
       game.id,
       { content: 'comment num1', rate: 1 },
-      accessToken,
+      access,
     );
+
+    const accessToken = await createAdminUser(app);
+
+    await request(app.getHttpServer())
+      .put(`/comments/confirm/${comment.id}`)
+      .set('authorization', `Bearer ${accessToken}`)
+      .expect(200)
+      .then((res) => res.body);
+
     await updateComment(
       200,
       comment.id,
       { content: 'update comment content' },
-      accessToken,
+      access,
     );
   });
+
+  it('returns error if comment is not confirmed while updation', async () => {
+    const game = await addGame(app, 201, {
+      name: 'game1',
+      description: 'desc1',
+      metacritic: 200,
+    });
+    const { accessToken: access } = await getValidationDataAndRegister(app);
+    const comment = await addComment(
+      201,
+      CommentAbleEntity.GAME,
+      game.id,
+      { content: 'comment num1', rate: 1 },
+      access,
+    );
+
+    await updateComment(
+      400,
+      comment.id,
+      { content: 'update comment content' },
+      access,
+    );
+  })
+
+
 });
