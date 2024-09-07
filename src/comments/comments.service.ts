@@ -66,6 +66,7 @@ export class CommentsService {
             createdAt: {
               [Op.gte]: oneHourAgo,
             },
+            confirmed: true
           },
           returning: true
         },
@@ -154,5 +155,13 @@ export class CommentsService {
       throw new NotFoundException('No comments were found!');
     }
     return comments;
+  }
+
+  async confirmComment(id: number) {
+    try {
+      return this.commentsRepository.update({ confirmed: true }, { where: { id } })
+    } catch (error) {
+      throw new BadRequestException('Something went wrong!')
+    }
   }
 }

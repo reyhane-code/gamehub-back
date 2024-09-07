@@ -41,6 +41,9 @@ export class Comment extends Model {
   @Column({ type: DataType.INTEGER, allowNull: true })
   rate: Rate;
 
+  @Column({ type: DataType.BOOLEAN, defaultValue: false })
+  confirmed: boolean
+
   @ForeignKey(() => Comment)
   @Column({ type: DataType.INTEGER, allowNull: true })
   parent_id: number;

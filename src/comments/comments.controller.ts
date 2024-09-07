@@ -16,10 +16,11 @@ import { IUser } from 'src/users/interfaces/user.interface';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { UpdateCommentDto } from './dtos/update-comment.dto';
 import { CommentAbleEntity } from 'src/enums/database.enum';
+import { AdminGuard } from 'src/guards/admin.guard';
 
 @Controller('comments')
 export class CommentsController {
-  constructor(private commentsService: CommentsService) {}
+  constructor(private commentsService: CommentsService) { }
 
   @UseGuards(AuthGuard)
   @Post('/:entityType/:entityId')
@@ -82,5 +83,11 @@ export class CommentsController {
     @CurrentUser() user: IUser,
   ) {
     return this.commentsService.updateComment(id, body, user);
+  }
+
+  @UseGuards(AdminGuard)
+  @Put('/confirm/:id')
+  confirmComment(@Param('id') id: number) {
+    return this.commentsService.confirmComment(id)
   }
 }
