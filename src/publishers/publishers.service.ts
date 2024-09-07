@@ -11,6 +11,7 @@ import { AddPublisherDto } from './dtos/add-publisher.dto';
 import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdatePublisherDto } from './dtos/update-publisher.dto';
 import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
+import { deleteEntity, findOneById, updateEntity } from 'src/helpers/crud-helper';
 
 
 @Injectable()
@@ -29,34 +30,15 @@ export class PublishersService {
   }
 
   async deletePublisher(id: number, isSoftDelete: boolean) {
-    await this.findOneById(id);
-    if (isSoftDelete) {
-      return this.publishersRepository.destroy({ where: { id } });
-    } else {
-      return this.publishersRepository.destroy({
-        where: { id },
-        force: true,
-      });
-    }
+    return deleteEntity(this.publishersRepository, 'publisher', id, isSoftDelete)
   }
 
   async updatePublisher(id: number, { name }: UpdatePublisherDto) {
-    await this.findOneById(id);
-    try {
-      return this.publishersRepository.update({ name }, { where: { id } });
-    } catch (error) {
-      throw new BadRequestException('Something went wrong!');
-    }
+    return updateEntity<Publisher>(this.publishersRepository, 'publisher', id, { name })
   }
 
   async findOneById(id: number) {
-    const publisher = await this.publishersRepository.findOne({
-      where: { id },
-    });
-    if (!publisher) {
-      throw new NotFoundException('No publisher was found!');
-    }
-    return publisher;
+    return findOneById(this.publishersRepository, id, 'publisher')
   }
 
   async findAll() {

@@ -73,7 +73,6 @@ export class LikesService {
     entityType: LikeAbleEntity,
     query?: IGetUseLikesQuery,
   ) {
-    console.log('assosiation', Like.associations[`${entityType}`].target)
     const association = Like.associations[`${entityType}`].target;
     const { page, perPage, limit, offset } = buildQueryOptions(query, Like);
     const { rows, count } = await this.likesRepository.findAndCountAll({

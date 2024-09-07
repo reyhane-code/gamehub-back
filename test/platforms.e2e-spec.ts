@@ -148,7 +148,7 @@ describe('Platforms System (e2e)', () => {
       .expect(201)
       .then((res) => res.body);
     const platforms = await getUserPlatforms(accessToken, 200);
-    expect(platforms.length).toEqual(1);
+    expect(platforms.items.length).toEqual(1);
     expect(platforms).toBeDefined();
   });
 });

@@ -15,6 +15,7 @@ import { Comment } from 'models/comment.model';
 import { FilesService } from 'src/files/files.service';
 import { LikesService } from 'src/likes/likes.service';
 import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
+import { deleteEntity, findOneById, updateEntity } from 'src/helpers/crud-helper';
 
 @Injectable()
 export class ArticlesService {
@@ -61,13 +62,8 @@ export class ArticlesService {
   }
 
   async findArticleById(id: number) {
-    const article = await this.articlesRepository.findOne({
-      where: { id },
-    });
+    const article = await findOneById(this.articlesRepository, id, 'article')
 
-    if (!article) {
-      throw new NotFoundException('No article was found!');
-    }
     await this.articlesRepository.update(
       { view: article.view + 1 },
       { where: { id: article.id } },
@@ -95,16 +91,6 @@ export class ArticlesService {
       LikeAbleEntity.ARTICLE,
     );
     return { items: articles ?? [], likes: likesCount };
-  }
-
-  async findOne(id: number) {
-    const article = await this.articlesRepository.findOne({
-      where: { id },
-    });
-    if (!article) {
-      throw new NotFoundException('No article was found!');
-    }
-    return article;
   }
 
   async findArticlesWithPaginate(query: IPaginationQueryOptions) {
@@ -146,35 +132,16 @@ export class ArticlesService {
       offset,
     });
     return {
-      paginations: { count, page, perPage },
+      pagination: { count: count ?? 0, page, perPage },
       items: rows ?? [],
     };
   }
 
   async updateArticle(body: UpdateArticleDto, articleId: number, user: IUser) {
-    await this.findOne(articleId);
-    try {
-      console.log('update body', body)
-      const updatedArticle = await this.articlesRepository.update(body, {
-        where: { id: articleId, user_id: user.id },
-      });
-      return updatedArticle;
-    } catch (error) {
-      throw new BadRequestException('Something went wrong!');
-    }
+    return updateEntity<Article>(this.articlesRepository, 'article', articleId, body, user.id)
   }
 
   async deleteArticle(articleId: number, isSoftDelete: boolean, user: IUser) {
-    await this.findOne(articleId);
-    if (isSoftDelete) {
-      return this.articlesRepository.destroy({
-        where: { id: articleId, user_id: user.id },
-      });
-    } else {
-      return this.articlesRepository.destroy({
-        where: { id: articleId, user_id: user.id },
-        force: true,
-      });
-    }
+    return deleteEntity(this.articlesRepository, 'article', articleId, isSoftDelete, user.id)
   }
 }

@@ -61,6 +61,7 @@ export class UsersController {
   }
 
   @Get('/identity')
+  //Todo: check if password should be returned
   @UseGuards(AuthGuard)
   async getIdentity(@CurrentUser() user: IUser) {
     return {

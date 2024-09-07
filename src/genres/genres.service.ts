@@ -11,6 +11,7 @@ import { IUser } from 'src/users/interfaces/user.interface';
 import { AddGenreDto } from './dtos/add-genre.dto';
 import { UpdateGenreDto } from './dtos/update-genre.dto';
 import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
+import { deleteEntity, findOneById, updateEntity } from 'src/helpers/crud-helper';
 
 @Injectable()
 export class GenresService {
@@ -30,32 +31,15 @@ export class GenresService {
   }
 
   async deleteGenre(genreId: number, isSoftDelete: boolean) {
-    await this.findOneById(genreId);
-    if (isSoftDelete) {
-      return this.genresRepository.destroy({ where: { id: genreId } });
-    } else {
-      return this.genresRepository.destroy({
-        where: { id: genreId },
-        force: true,
-      });
-    }
+    return deleteEntity(this.genresRepository, 'genre', genreId, isSoftDelete)
   }
 
   async updateGenre(genreId: number, { name }: UpdateGenreDto) {
-    await this.findOneById(genreId);
-    try {
-      return this.genresRepository.update({ name }, { where: { id: genreId } });
-    } catch (error) {
-      throw new BadRequestException('something went wrong!');
-    }
+    return updateEntity<Genre>(this.genresRepository, 'genre', genreId, { name })
   }
 
   async findOneById(id: number) {
-    const genre = await this.genresRepository.findOne({ where: { id } });
-    if (!genre) {
-      throw new NotFoundException('No genre was found!');
-    }
-    return genre;
+    return findOneById(this.genresRepository, id, 'genre')
   }
 
   async findAll() {

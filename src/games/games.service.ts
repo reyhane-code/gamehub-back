@@ -18,7 +18,7 @@ import { LikesService } from 'src/likes/likes.service';
 import { Screenshot } from 'models/screenshot.model';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { buildQueryOptions } from 'src/helpers/dynamic-query-helper'
-import { inspect } from 'util';
+import { deleteEntity, findOneById } from 'src/helpers/crud-helper';
 
 @Injectable()
 export class GamesService {
@@ -92,11 +92,7 @@ export class GamesService {
   }
 
   async findOneById(id: number) {
-    const game = await this.gamesRepository.findOne({ where: { id } });
-    if (!game) {
-      throw new NotFoundException('NO game was found.');
-    }
-    return game;
+    return findOneById(this.gamesRepository, id, 'game')
   }
 
   async findGamesWithPaginate(query: IPaginationQueryOptions) {
@@ -107,7 +103,6 @@ export class GamesService {
       include.push({ model: Platform });
     }
     include.push({ model: Publisher });
-    console.log(inspect(include, null, 10))
 
 
     const { count, rows } = await this.gamesRepository.findAndCountAll({
@@ -140,15 +135,7 @@ export class GamesService {
   }
 
   async deleteGame(gameId: number, isSoftDelete: boolean) {
-    await this.findOneById(gameId);
-    if (isSoftDelete) {
-      return this.gamesRepository.destroy({ where: { id: gameId } });
-    } else {
-      return this.gamesRepository.destroy({
-        where: { id: gameId },
-        force: true,
-      });
-    }
+    return deleteEntity(this.gamesRepository, 'game', gameId, isSoftDelete)
   }
 
   async updateGame(
@@ -163,7 +150,7 @@ export class GamesService {
   ) {
     const foundGame = await this.findOneById(id);
     try {
-      await this.gamesRepository.update(
+      return this.gamesRepository.update(
         {
           name,
           slug: name ? toSlug(name) : foundGame.slug,
@@ -183,8 +170,8 @@ export class GamesService {
     const games = await this.gamesRepository.findAll({
       where: { user_id: user.id },
     });
-    if (games.length < 1) {
-      throw new NotFoundException('This user does not have any games!');
+    return {
+      items: games ?? []
     }
   }
 
