@@ -6,8 +6,8 @@ export class SearchController {
     constructor(private readonly searchService: SearchService) { }
 
     @Get('/:searchText')
-    searchInSearchables(@Param('searchText') searchText: string, @Query() query: { page: number, perPage: number }) {
-        return this.searchService.searchInSearchables(searchText, query)
+    searchInSearchables(@Param('searchText') searchText: string) {
+        return this.searchService.searchInSearchables(searchText)
     }
 
 }

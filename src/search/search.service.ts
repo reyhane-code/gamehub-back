@@ -11,10 +11,8 @@ export class SearchService {
 
     ) { }
 
-    async searchInSearchables(searchText: string, query: { page: number, perPage: number }) {
+    async searchInSearchables(searchText: string) {
         const articlesResult = await this.articlesService.findArticlesWithPaginate({
-            page: query.page,
-            perPage: query.perPage,
             search: [
                 {
                     field: 'title',
@@ -25,8 +23,6 @@ export class SearchService {
         })
 
         const gamesResult = await this.gamesService.findGamesWithPaginate({
-            page: query.page,
-            perPage: query.perPage,
             search: [
                 {
                     field: 'name',
