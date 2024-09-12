@@ -22,7 +22,7 @@ import { AdminGuard } from 'src/guards/admin.guard';
 
 @Controller('/auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @Post('/login')
   async login(
@@ -49,10 +49,24 @@ export class AuthController {
     return this.authService.getValidationToken(body);
   }
 
-  @Get('/identity')
+  @Post('/get-validation-token/admin')
+  async getAdminValidationToken(@Body() body: GetValidationTokenDto) {
+    return this.authService.getAdminValidationToken(body);
+  }
+
   @UseGuards(AdminGuard)
+  @Get('/identity')
   async getIdentity(@CurrentUser() user: IUser) {
-    return user;
+    return {
+      id: user.id,
+      username: user.username,
+      phone: user.phone,
+      email: user.email,
+      hasPassword: user.password ? true : false,
+      first_name: user.firstName,
+      last_name: user.lastName,
+      role: user.role
+    };
   }
 
   @Delete('/logout')
