@@ -61,7 +61,6 @@ export class UsersController {
   }
 
   @Get('/identity')
-  //Todo: check if password should be returned
   @UseGuards(AuthGuard)
   async getIdentity(@CurrentUser() user: IUser) {
     return {
@@ -69,7 +68,7 @@ export class UsersController {
       username: user.username,
       phone: user.phone,
       email: user.email,
-      password: user.password,
+      hasPassword: user.password ? true : false,
       first_name: user.firstName,
       last_name: user.lastName,
     };

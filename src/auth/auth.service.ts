@@ -19,7 +19,7 @@ import { LoginWithPasswordDto } from './dtos/login-with-password.dto';
 import { GetValidationTokenDto } from './dtos/get-validation-token.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { User } from 'models/user.model';
-import { Repository } from '../enums/database.enum';
+import { Repository, Role } from '../enums/database.enum';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +30,7 @@ export class AuthService {
 
     @Inject(CACHE_MANAGER) protected cacheManager: Cache,
     @Inject(Repository.USERS) private usersRepository: typeof User,
-  ) {}
+  ) { }
 
   private async verifyRefreshTokenAndGetUserId(
     refreshToken: string,
@@ -76,8 +76,8 @@ export class AuthService {
     };
   }
 
-  async generateValidationTokenAndCode(phoneNumber: string | number) {
-    const code = this.generate(4);
+  async generateValidationTokenAndCode(phoneNumber: string | number, codeDigitCount: number) {
+    const code = this.generate(codeDigitCount);
     const payload = { code, phoneNumber };
     const baseOptions = this.getBaseOptionsTokens(phoneNumber);
     const validationToken = await this.jwtService.sign(payload, {
@@ -180,7 +180,7 @@ export class AuthService {
     const hasPassword = Boolean(user?.password);
     if (!hasPassword || forceSendSms) {
       const { validationToken, code } =
-        await this.generateValidationTokenAndCode(phone);
+        await this.generateValidationTokenAndCode(phone, 4);
 
       const message = `با سلام کد تایید شما در بیس پروژه : ${code}`;
 
@@ -211,6 +211,37 @@ export class AuthService {
     };
   }
 
+  //Todo: check if forceSendSms and trynumber needed
+  async generateAdminValidationTokenAndSendCode(
+    phone: string,
+    forceSendSms: boolean = false,
+    tryNumber: number = 0,
+  ): Promise<any> {
+    const user = await this.usersRepository.findOne({ where: { phone } });
+
+    if (!user || user.role == Role.USER) {
+      throw new UnauthorizedException('You are not an admin')
+    }
+
+    const { validationToken, code } = await this.generateValidationTokenAndCode(phone, 5);
+
+    const message = `با سلام کد تایید شما در بیس پروژه : ${code}`;
+
+    // Send the SMS (uncomment and implement the SMS sending logic)
+    // const sendSmsStatus = await this.smsService.sendSms({
+    //   message,
+    //   senderNumber: SmsSenderNumbers.NUMBER_3500,
+    //   recipientList: [phone],
+    // });
+
+    return {
+      validationToken,
+      code,
+      // sendSmsStatus: SmsStatus.SUCCESS, 
+    };
+  }
+
+
   async sendAuthTokenAndIdentity(phone: string) {
     let user = await this.usersRepository.findOne({ where: { phone } });
     if (!user) {
@@ -222,7 +253,14 @@ export class AuthService {
     return {
       refreshToken,
       accessToken,
-      identity: user,
+      identity: {
+        id: user.id,
+        username: user.username,
+        phone: user.phone,
+        email: user.email,
+        hasPassword: user.password ? true : false,
+        role: user.role
+      },
     };
   }
   async checkCodeAndLoginOrRegister(validationToken: string, code: string) {
@@ -280,6 +318,19 @@ export class AuthService {
     }
   }
 
+  async getAdminValidationToken({
+    phone,
+    tryNumber,
+    forceSendSms,
+  }: GetValidationTokenDto) {
+    try {
+      return this.generateAdminValidationTokenAndSendCode(
+        phone,
+      );
+    } catch (error) {
+      throw new BadRequestException('Something went wrong!');
+    }
+  }
   async logout(user: IUser, accessToken: string) {
     await this.cacheManager.del(`${user.id.toString()}-refresh`);
     await this.cacheManager.set(`block-${user.id}`, accessToken, {
