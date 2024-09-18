@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -21,9 +22,9 @@ export class AdminGuard implements CanActivate {
       currentUser &&
       (currentUser.role === Role.SUPER || currentUser.role === Role.ADMIN)
     ) {
-      return true; // Allow access for super and admin roles
+      return true;
     }
 
-    return false; // Deny access for other roles
+    throw new ForbiddenException('You can not access this route!')
   }
 }

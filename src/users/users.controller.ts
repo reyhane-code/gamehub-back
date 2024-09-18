@@ -19,7 +19,9 @@ import { UsersService } from './users.service';
 import { AuthGuard } from '../guards/auth.guard';
 import { Role } from 'src/enums/database.enum';
 import { TransformResponse } from 'src/custome-transformer';
-import { UserPaginationResponseDto, UserResponseDto } from './userdata.dto';
+import { UserIdentityDto } from './user-identity.dto';
+import { AdminGuard } from 'src/guards/admin.guard';
+import { AdminIdentityDto } from './admin-identity.dto';
 
 
 @Controller('/user')
@@ -44,7 +46,6 @@ export class UsersController {
 
   @Get()
   @UseGuards(AuthGuard)
-  @TransformResponse(UserPaginationResponseDto)
   async getUsers(@Query() query: IPaginationQueryOptions = paginationDefault) {
     return this.usersService.allUsers(query);
   }
@@ -61,16 +62,17 @@ export class UsersController {
   }
 
   @Get('/identity')
+  @TransformResponse(UserIdentityDto)
   @UseGuards(AuthGuard)
   async getIdentity(@CurrentUser() user: IUser) {
-    return {
-      id: user.id,
-      username: user.username,
-      phone: user.phone,
-      email: user.email,
-      hasPassword: user.password ? true : false,
-      first_name: user.firstName,
-      last_name: user.lastName,
-    };
+    return user;
   }
+
+  @UseGuards(AdminGuard)
+  @Get('/admin/identity')
+  @TransformResponse(AdminIdentityDto)
+  async getAdminIdentity(@CurrentUser() user: IUser) {
+    return user;
+  }
+
 }
