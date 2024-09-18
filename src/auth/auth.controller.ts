@@ -54,21 +54,6 @@ export class AuthController {
     return this.authService.getAdminValidationToken(body);
   }
 
-  @UseGuards(AdminGuard)
-  @Get('/identity')
-  async getIdentity(@CurrentUser() user: IUser) {
-    return {
-      id: user.id,
-      username: user.username,
-      phone: user.phone,
-      email: user.email,
-      hasPassword: user.password ? true : false,
-      first_name: user.firstName,
-      last_name: user.lastName,
-      role: user.role
-    };
-  }
-
   @Delete('/logout')
   @UseGuards(AuthGuard)
   logout(@CurrentUser() user: IUser, @Headers() headers: any) {
