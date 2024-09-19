@@ -115,8 +115,7 @@ export const buildQueryOptions = (queryVal: any, model: typeof Model) => {
     const isDescending = sortBy.startsWith('-');
     const columnName = isDescending ? sortBy.slice(1) : sortBy;
 
-    sortBy = `${columnName} ${isDescending ? SortOperation.DESC : SortOperation.ASC}`;
-
+    sortBy = `"${model.name}"."${columnName}" ${isDescending ? SortOperation.DESC : SortOperation.ASC}`;
   }
 
   const include = filterInclude.concat(searchInclude)
