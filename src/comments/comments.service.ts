@@ -18,6 +18,8 @@ import { LikesService } from 'src/likes/likes.service';
 import { Op } from 'sequelize';
 import { findOneById } from 'src/helpers/crud-helper';
 import { User } from 'models/user.model';
+import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
+import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
 
 @Injectable()
 export class CommentsService {
@@ -40,6 +42,7 @@ export class CommentsService {
         content: body.content,
         rate: body.rate,
         parent_id: body.parent_id,
+        parent_user_id: body.parent_user_id
       });
 
       return comment;
@@ -88,19 +91,22 @@ export class CommentsService {
     return findOneById(this.commentsRepository, id, 'comment')
   }
 
-  async findEntityComments(entityId: number, entityType: CommentAbleEntity) {
+  async findEntityComments(entityId: number, entityType: CommentAbleEntity, query: IPaginationQueryOptions) {
+    const { page, perPage, limit, offset, } = buildQueryOptions(query, Comment);
     const { rows, count } = await this.commentsRepository.findAndCountAll({
       where: { [`${entityType}_id`]: entityId },
       include: [{
         model: User,
         attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] }
       }],
+      limit,
+      offset
     });
     const likesCount = await this.likesService.getLikesCountForAllEntities(
       LikeAbleEntity.COMMENT,
     );
     return {
-      count,
+      pagination: { count, page, perPage },
       items: rows ?? [],
       likes: likesCount,
     };
@@ -109,7 +115,7 @@ export class CommentsService {
   async findCommentReplies(parentId: number) {
     const { rows, count } = await this.commentsRepository.findAndCountAll({
       where: { parent_id: parentId },
-      include: { model: Like },
+      include: [{ model: Like }, { model: User }],
       distinct: true,
     });
     //TODO: check what to do??
