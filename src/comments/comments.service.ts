@@ -91,7 +91,10 @@ export class CommentsService {
   async findEntityComments(entityId: number, entityType: CommentAbleEntity) {
     const { rows, count } = await this.commentsRepository.findAndCountAll({
       where: { [`${entityType}_id`]: entityId },
-      include: [{ model: User }],
+      include: [{
+        model: User,
+        attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] }
+      }],
     });
     const likesCount = await this.likesService.getLikesCountForAllEntities(
       LikeAbleEntity.COMMENT,

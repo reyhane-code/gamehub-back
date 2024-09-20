@@ -60,12 +60,14 @@ export class Comment extends Model {
   @HasMany(() => Like)
   likes: Like[];
 
-
   @BelongsTo(() => Game)
   game: Game;
 
   @BelongsTo(() => Article)
   article: Article;
+
+  @BelongsTo(() => User)
+  user: User;
 
   @BeforeUpdate
   static updateTimestamp(instance: Comment) {

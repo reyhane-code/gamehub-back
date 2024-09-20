@@ -20,5 +20,9 @@ export class UserIdentityDto {
   @Expose()
   @Transform(({ obj }) => !!obj.password) // Transform based on the presence of password
   hasPassword: boolean;
+
+  @Expose()
+  @Transform(({ obj }) => !!obj.username || !!(obj.first_name && obj.last_name)) // Transform based on the presence of username or name
+  isInfoCompleted: boolean;
 }
 
