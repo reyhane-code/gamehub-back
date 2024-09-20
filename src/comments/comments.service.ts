@@ -17,6 +17,7 @@ import { Like } from 'models/like.model';
 import { LikesService } from 'src/likes/likes.service';
 import { Op } from 'sequelize';
 import { findOneById } from 'src/helpers/crud-helper';
+import { User } from 'models/user.model';
 
 @Injectable()
 export class CommentsService {
@@ -90,6 +91,7 @@ export class CommentsService {
   async findEntityComments(entityId: number, entityType: CommentAbleEntity) {
     const { rows, count } = await this.commentsRepository.findAndCountAll({
       where: { [`${entityType}_id`]: entityId },
+      include: [{ model: User }],
     });
     const likesCount = await this.likesService.getLikesCountForAllEntities(
       LikeAbleEntity.COMMENT,
