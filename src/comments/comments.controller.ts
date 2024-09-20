@@ -17,6 +17,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { UpdateCommentDto } from './dtos/update-comment.dto';
 import { CommentAbleEntity } from 'src/enums/database.enum';
 import { AdminGuard } from 'src/guards/admin.guard';
+import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 
 @Controller('comments')
 export class CommentsController {
@@ -51,8 +52,9 @@ export class CommentsController {
   async getComments(
     @Param('entityType') entityType: CommentAbleEntity,
     @Param('entityId') entityId: number,
+    @Query() query: IPaginationQueryOptions
   ) {
-    return this.commentsService.findEntityComments(entityId, entityType);
+    return this.commentsService.findEntityComments(entityId, entityType, query);
   }
 
   @Get('/replies/:id')

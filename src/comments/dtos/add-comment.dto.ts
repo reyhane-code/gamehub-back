@@ -23,6 +23,12 @@ export class AddCommentDto {
   @IsOptional()
   parent_id?: number;
 
+  @Expose()
+  @IsNumber()
+  @IsOptional()
+  parent_user_id?: number;
+
+
   constructor(partial: Partial<AddCommentDto>) {
     Object.assign(this, partial);
   }

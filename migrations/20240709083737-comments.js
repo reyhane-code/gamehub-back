@@ -29,6 +29,11 @@ module.exports = {
         allowNull: true,
         references: { model: 'comments', key: 'id' },
       },
+      parent_user_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: { model: 'users', key: 'id' },
+      },
       entity_type: {
         type: Sequelize.STRING,
         allowNull: false,
