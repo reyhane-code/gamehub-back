@@ -112,19 +112,33 @@ export class CommentsService {
     };
   }
 
+  //Todo: check which option is better
   async findCommentReplies(parentId: number) {
+    // const commnet = await this.commentsRepository.findOne({
+    // where: { id: parentId },
+    // include: [{ model: User, attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] } }]
+    // })
     const { rows, count } = await this.commentsRepository.findAndCountAll({
       where: { parent_id: parentId },
-      include: [{ model: Like }, { model: User }],
+      include: [{ model: Like }, {
+        model: User,
+        attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] }
+      }, {
+        model: Comment,
+        where: { id: parentId },
+        attributes: { exclude: ['user_id', 'game_id', 'article_id', 'entity_type', 'content', 'rate', 'confirmed', 'parent_id', 'parent_user_id', 'createdAt', 'updatedAt', 'deletedAt'] },
+        include: [{ model: User, attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] } }]
+      }],
       distinct: true,
     });
     //TODO: check what to do??
-    // const likesCount = await this.likesService.getLikesCountForAllEntities(
+    // const likesCount = await this.likesService.getLikesCountForAllEntitiesWithIds(
     //   LikeAbleEntity.COMMENT,
     // );
     return {
       count,
-      items: rows ?? [],
+      // items: [{ parent_user: commnet.user }, ...rows] ?? [],
+      items: rows ?? []
     };
   }
 
