@@ -73,6 +73,9 @@ export class Comment extends Model {
   @BelongsTo(() => User)
   user: User;
 
+  @BelongsTo(() => Comment)
+  parent: Comment;
+
   @BeforeUpdate
   static updateTimestamp(instance: Comment) {
     instance.updatedAt = new Date();
