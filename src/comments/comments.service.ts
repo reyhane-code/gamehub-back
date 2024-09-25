@@ -25,6 +25,7 @@ import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
 export class CommentsService {
   constructor(
     @Inject(Repository.COMMENTS) private commentsRepository: typeof Comment,
+    @Inject(Repository.LIKES) private likeRepository: typeof Like,
     private readonly likesService: LikesService,
   ) { }
 
@@ -98,37 +99,67 @@ export class CommentsService {
       include: [{
         model: User,
         attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] }
+      }, {
+        model: Like,
+        attributes: []
       }],
+      attributes: {
+        include: [
+          [this.commentsRepository.sequelize.fn('COUNT', this.likeRepository.sequelize.col('id')), 'likeCount'], // Count of likes
+        ],
+      },
+      group: ['Comment.id'],
       limit,
       offset
     });
-    const likesCount = await this.likesService.getLikesCountForAllEntities(
-      LikeAbleEntity.COMMENT,
-    );
+    // const likesCount = await this.likesService.getLikesCountForAllEntities(
+    //   LikeAbleEntity.COMMENT,
+    // );
     return {
       pagination: { count, page, perPage },
       items: rows ?? [],
-      likes: likesCount,
+      // likes: likesCount,
     };
   }
 
+  //   async findCommentsWithLikes(postId: number, limit: number, offset: number) {
+  //     const result = await this.commentModel.findAndCountAll({
+  //       where: { postId }, // Filter comments by post ID
+  //       include: [
+  //         {
+  //           model: User,
+  //           attributes: ['id', 'name'], // Include user details if needed
+  //         },
+  //         {
+  //           model: Like,
+  //           attributes: [], // We don't need to select any fields from Like
+  //         },
+  //       ],
+  //       attributes: {
+  //         include: [
+  //           [this.sequelize.fn('COUNT', this.sequelize.col('likes.id')), 'likeCount'], // Count of likes
+  //         ],
+  //       },
+  //       group: ['Comment.id', 'User.id'], // Group by Comment ID and User ID
+  //       limit, // Limit the number of records returned
+  //       offset, // Offset for pagination
+  //     });
+
+  //     return result; // This will return both the comments and the total count
+  //   }
+  // }
+
+
+
+
   //Todo: check which option is better
   async findCommentReplies(parentId: number) {
-    // const commnet = await this.commentsRepository.findOne({
-    // where: { id: parentId },
-    // include: [{ model: User, attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] } }]
-    // })
     const { rows, count } = await this.commentsRepository.findAndCountAll({
       where: { parent_id: parentId },
       include: [{ model: Like }, {
         model: User,
         attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] }
-      }, {
-        model: Comment,
-        where: { id: parentId },
-        attributes: { exclude: ['user_id', 'game_id', 'article_id', 'entity_type', 'content', 'rate', 'confirmed', 'parent_id', 'parent_user_id', 'createdAt', 'updatedAt', 'deletedAt'] },
-        include: [{ model: User, attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] } }]
-      }],
+      },],
       distinct: true,
     });
     //TODO: check what to do??
@@ -137,10 +168,17 @@ export class CommentsService {
     // );
     return {
       count,
-      // items: [{ parent_user: commnet.user }, ...rows] ?? [],
       items: rows ?? []
     };
   }
+
+
+  //{
+  // model: Comment,
+  // where: { id: parentId },
+  // attributes: { exclude: ['user_id', 'game_id', 'article_id', 'entity_type', 'content', 'rate', 'confirmed', 'parent_id', 'parent_user_id', 'createdAt', 'updatedAt', 'deletedAt'] },
+  // include: [{ model: User, attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] }, }]
+  // }
 
   async deleteComment(id: number, isSoftDelete: boolean, user: IUser) {
     await this.findOneById(id);
