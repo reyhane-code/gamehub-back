@@ -9,4 +9,4 @@ import { LikesModule } from 'src/likes/likes.module';
   providers: [CommentsService, ...commentsProviders],
   imports: [LikesModule],
 })
-export class CommentsModule {}
+export class CommentsModule { }
