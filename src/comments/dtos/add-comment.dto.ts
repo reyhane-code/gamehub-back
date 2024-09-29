@@ -26,7 +26,7 @@ export class AddCommentDto {
   @Expose()
   @IsNumber()
   @IsOptional()
-  parent_user_id?: number;
+  parent_reply_id?: number;
 
 
   constructor(partial: Partial<AddCommentDto>) {
