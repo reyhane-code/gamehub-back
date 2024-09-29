@@ -48,9 +48,9 @@ export class Comment extends Model {
   @Column({ type: DataType.INTEGER, allowNull: true })
   parent_id: number;
 
-  @ForeignKey(() => User)
+  @ForeignKey(() => Comment)
   @Column({ type: DataType.INTEGER, allowNull: true })
-  parent_user_id: number;
+  parent_reply_id: number;
 
   @CreatedAt
   createdAt: Date;

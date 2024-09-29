@@ -57,9 +57,9 @@ export class CommentsController {
     return this.commentsService.findEntityComments(entityId, entityType, query);
   }
 
-  @Get('/replies/:id')
-  getReplies(@Param('id') parentId: number) {
-    return this.commentsService.findCommentReplies(parentId);
+  @Get('/replies/:id/:replyId?')
+  getReplies(@Param('id') parentId: number, @Param('replyId') replyId?: number) {
+    return this.commentsService.findCommentReplies(parentId, replyId);
   }
 
   @Get()

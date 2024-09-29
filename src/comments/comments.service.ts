@@ -20,6 +20,7 @@ import { findOneById } from 'src/helpers/crud-helper';
 import { User } from 'models/user.model';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
+import sequelize from 'sequelize';
 
 @Injectable()
 export class CommentsService {
@@ -43,7 +44,7 @@ export class CommentsService {
         content: body.content,
         rate: body.rate,
         parent_id: body.parent_id,
-        parent_user_id: body.parent_user_id
+        parent_reply_id: body.parent_reply_id
       });
 
       return comment;
@@ -92,35 +93,58 @@ export class CommentsService {
     return findOneById(this.commentsRepository, id, 'comment')
   }
 
+
   async findEntityComments(entityId: number, entityType: CommentAbleEntity, query: IPaginationQueryOptions) {
-    const { page, perPage, limit, offset, } = buildQueryOptions(query, Comment);
+    const { page, perPage, limit, offset } = buildQueryOptions(query, Comment);
+
     const { rows, count } = await this.commentsRepository.findAndCountAll({
-      where: { [`${entityType}_id`]: entityId },
-      include: [{
-        model: User,
-        attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] }
-      }, {
-        model: Like,
-        attributes: []
-      }],
-      attributes: {
-        include: [
-          [this.commentsRepository.sequelize.fn('COUNT', this.likeRepository.sequelize.col('id')), 'likeCount'], // Count of likes
-        ],
+      where: {
+        [`${entityType}_id`]: entityId,
+        parent_id: { [Op.ne]: null },
       },
-      group: ['Comment.id'],
+      include: [
+        {
+          model: User,
+          attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] },
+        },
+        {
+          model: Like,
+          attributes: [],
+        },
+      ],
+      attributes: {
+        include: [[sequelize.fn('COUNT', sequelize.col('likes.id')), 'likeCount']],
+      },
+      group: ['Comment.id'], // Group by comment ID
       limit,
-      offset
+      offset,
     });
-    // const likesCount = await this.likesService.getLikesCountForAllEntities(
-    //   LikeAbleEntity.COMMENT,
-    // );
+
     return {
       pagination: { count, page, perPage },
       items: rows ?? [],
-      // likes: likesCount,
     };
   }
+  // async findEntityComments(entityId: number, entityType: CommentAbleEntity, query: IPaginationQueryOptions) {
+  //   const { page, perPage, limit, offset, } = buildQueryOptions(query, Comment);
+  //   const { rows, count } = await this.commentsRepository.findAndCountAll({
+  //     where: { [`${entityType}_id`]: entityId },
+  //     include: [{
+  //       model: User,
+  //       attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] }
+  //     }],
+  //     limit,
+  //     offset
+  //   });
+  //   // const likesCount = await this.likesService.getLikesCountForAllEntities(
+  //   //   LikeAbleEntity.COMMENT,
+  //   // );
+  //   return {
+  //     pagination: { count, page, perPage },
+  //     items: rows ?? [],
+  //     // likes: likesCount,
+  //   };
+  // }
 
   //   async findCommentsWithLikes(postId: number, limit: number, offset: number) {
   //     const result = await this.commentModel.findAndCountAll({
@@ -152,14 +176,22 @@ export class CommentsService {
 
 
 
-  //Todo: check which option is better
-  async findCommentReplies(parentId: number) {
+  async findCommentReplies(parentId: number, replyId?: number) {
+    const parentReplyUserAssosiation = replyId ? {
+      model: Comment,
+      where: { id: replyId },
+      attributes: { exclude: ['user_id', 'game_id', 'article_id', 'entity_type', 'content', 'rate', 'confirmed', 'parent_id', 'parent_user_id', 'createdAt', 'updatedAt', 'deletedAt'] },
+      include: [{ model: User, attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] }, }]
+    } : null
+
     const { rows, count } = await this.commentsRepository.findAndCountAll({
       where: { parent_id: parentId },
       include: [{ model: Like }, {
         model: User,
         attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] }
-      },],
+      },
+        parentReplyUserAssosiation
+      ],
       distinct: true,
     });
     //TODO: check what to do??
@@ -173,12 +205,6 @@ export class CommentsService {
   }
 
 
-  //{
-  // model: Comment,
-  // where: { id: parentId },
-  // attributes: { exclude: ['user_id', 'game_id', 'article_id', 'entity_type', 'content', 'rate', 'confirmed', 'parent_id', 'parent_user_id', 'createdAt', 'updatedAt', 'deletedAt'] },
-  // include: [{ model: User, attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] }, }]
-  // }
 
   async deleteComment(id: number, isSoftDelete: boolean, user: IUser) {
     await this.findOneById(id);
