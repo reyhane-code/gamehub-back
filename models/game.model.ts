@@ -20,7 +20,6 @@ import { PlatformGame } from './platform_game.model';
 import { PublisherGame } from './publisher_game.model';
 import { User } from './user.model';
 import { Like } from './like.model';
-import { Comment } from './comment.model';
 import { Bookmark } from './bookmark.model';
 import { Screenshot } from './screenshot.model';
 
@@ -62,9 +61,6 @@ export class Game extends Model {
 
   @HasMany(() => Screenshot)
   screenshots: Screenshot[];
-
-  @HasMany(() => Comment)
-  comments: Comment[];
 
   @HasMany(() => Bookmark)
   bookmarks: Bookmark[];

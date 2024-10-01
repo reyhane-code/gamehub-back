@@ -14,7 +14,6 @@ import { TableName } from 'src/enums/database.enum';
 import { User } from './user.model';
 import { Bookmark } from './bookmark.model';
 import { Like } from './like.model';
-import { Comment } from './comment.model';
 
 @Table({ tableName: TableName.ARTICLES })
 export class Article extends Model {
@@ -49,9 +48,6 @@ export class Article extends Model {
 
   @HasMany(() => Like)
   likes: Like[];
-
-  @HasMany(() => Comment)
-  comments: Comment[];
 
   @BeforeUpdate
   static updateTimestamp(instance: Article) {

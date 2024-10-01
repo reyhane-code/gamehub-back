@@ -9,7 +9,6 @@ export enum TableName {
   PLATFORM_GAMES = 'platform_games',
   LIKES = 'likes',
   BOOKMARKS = 'bookmarks',
-  COMMENTS = 'comments',
   ARTICLES = 'articles',
   FILES = 'files',
   SCREENSHOTS = 'screenshots',
@@ -26,7 +25,6 @@ export enum Repository {
   PLATFORM_GAMES = 'PLATFORM_GAMES_REPOSITORY',
   LIKES = 'LIKES_REPOSITORY',
   BOOKMARKS = 'BOOKMARKS_REPOSITORY',
-  COMMENTS = 'COMMENTS_REPOSITORY',
   ARTICLES = 'ARTICLES_REPOSITORY',
   FILES = 'FILES_REPOSITORY',
   SCREENSHOTS = 'SCREENSHOTS_REPOSITORY',
@@ -43,13 +41,7 @@ export enum BookmarkAbleEntity {
   ARTICLE = 'article',
 }
 
-export enum CommentAbleEntity {
-  GAME = 'game',
-  ARTICLE = 'article',
-}
-
 export enum LikeAbleEntity {
   GAME = 'game',
   ARTICLE = 'article',
-  COMMENT = 'comment',
 }

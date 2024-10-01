@@ -11,7 +11,6 @@ import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdateArticleDto } from './dtos/update-article.dto';
 import { LikeAbleEntity, Repository } from 'src/enums/database.enum';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
-import { Comment } from 'models/comment.model';
 import { FilesService } from 'src/files/files.service';
 import { LikesService } from 'src/likes/likes.service';
 import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
@@ -85,7 +84,6 @@ export class ArticlesService {
 
   async findArticles() {
     const articles = await this.articlesRepository.findAll({
-      include: [{ model: Comment }],
     });
     const likesCount = await this.likesService.getLikesCountForAllEntities(
       LikeAbleEntity.ARTICLE,
@@ -123,7 +121,6 @@ export class ArticlesService {
 
   async findUserArticles(user: IUser, query: IPaginationQueryOptions) {
     const { page, perPage, limit, offset, include } = buildQueryOptions(query, Article);
-    include.push({ model: Comment })
     const { rows, count } = await this.articlesRepository.findAndCountAll({
       where: { user_id: user.id },
       include,
