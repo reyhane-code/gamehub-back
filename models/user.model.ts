@@ -15,7 +15,6 @@ import { Like } from './like.model';
 import { Platform } from './platform.model';
 import { Genre } from './genre.model';
 import { Publisher } from './publisher.model';
-import { Comment } from './comment.model';
 
 @Table({ tableName: TableName.USERS })
 export class User extends Model {
@@ -54,9 +53,6 @@ export class User extends Model {
 
   @HasMany(() => Game)
   games: Game[];
-
-  @HasMany(() => Comment)
-  comments: Comment[];
 
   @HasMany(() => Like)
   likes: Like[];
