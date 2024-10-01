@@ -134,6 +134,22 @@ export class GamesService {
     };
   }
 
+
+  async findAllGames(query: IPaginationQueryOptions) {
+    const { page, perPage, limit, offset } = buildQueryOptions(query, Game)
+    const { count, rows } = await this.gamesRepository.findAndCountAll({
+      limit,
+      offset,
+    });
+    return {
+      pagination: {
+        count,
+        page,
+        perPage,
+      },
+      items: rows ?? [],
+    };
+  }
   async deleteGame(gameId: number, isSoftDelete: boolean) {
     return deleteEntity(this.gamesRepository, 'game', gameId, isSoftDelete)
   }

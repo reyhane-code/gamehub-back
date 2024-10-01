@@ -93,6 +93,19 @@ export class ArticlesService {
     return { items: articles ?? [], likes: likesCount };
   }
 
+  async findAllArticles(query: IPaginationQueryOptions) {
+    const { limit, offset, page, perPage } = buildQueryOptions(query, Article)
+    const { count, rows } = await this.articlesRepository.findAndCountAll({
+      limit,
+      offset
+    })
+
+    return {
+      pagination: { count, page, perPage },
+      items: rows ?? []
+    }
+  }
+
   async findArticlesWithPaginate(query: IPaginationQueryOptions) {
     const { where, limit, offset, include, sortBy, page, perPage } = buildQueryOptions(query, Article)
     const { rows, count } = await this.articlesRepository.findAndCountAll({

@@ -45,8 +45,14 @@ export class ArticlesController {
   }
 
   @Get()
-  getArticles() {
+  getArticlesWithAssosiations() {
     return this.articlesService.findArticles();
+  }
+
+  @UseGuards(AdminGuard)
+  @Get('/all')
+  getArticles(@Query() query: IPaginationQueryOptions = paginationDefault) {
+    return this.articlesService.findAllArticles(query);
   }
 
   @Get('/paginate')

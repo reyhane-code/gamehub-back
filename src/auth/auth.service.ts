@@ -6,6 +6,7 @@ import {
   UnauthorizedException,
   PreconditionFailedException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
@@ -14,7 +15,6 @@ import { IUser } from '../users/interfaces/user.interface';
 import { Cache } from 'cache-manager';
 import { SmsService } from '../sms/sms.service';
 import { LoginOrRegisterDto } from './dtos/login-or-register.dto';
-import { SmsSenderNumbers, SmsStatus } from '../sms/enum/sms.enum';
 import { LoginWithPasswordDto } from './dtos/login-with-password.dto';
 import { GetValidationTokenDto } from './dtos/get-validation-token.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -220,7 +220,7 @@ export class AuthService {
     const user = await this.usersRepository.findOne({ where: { phone } });
 
     if (!user || user.role == Role.USER) {
-      throw new UnauthorizedException('You are not an admin')
+      throw new ForbiddenException('You are not an admin')
     }
 
     const { validationToken, code } = await this.generateValidationTokenAndCode(phone, 5);

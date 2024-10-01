@@ -93,7 +93,7 @@ export class UsersService {
         page,
         perPage,
       },
-      items: rows,
+      items: rows ?? [],
     };
   }
 

@@ -62,9 +62,12 @@ export class CommentsController {
     return this.commentsService.findCommentReplies(parentId, replyId);
   }
 
+  @UseGuards(AdminGuard)
   @Get()
-  getAllComments() {
-    return this.commentsService.findAllComments();
+  getAllComments(
+    @Query() query: IPaginationQueryOptions
+  ) {
+    return this.commentsService.findAllComments(query);
   }
 
   @UseGuards(AuthGuard)

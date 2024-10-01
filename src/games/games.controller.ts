@@ -23,7 +23,7 @@ import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 
 @Controller('games')
 export class GamesController {
-  constructor(private gamesService: GamesService) {}
+  constructor(private gamesService: GamesService) { }
 
   @Get('/:slug')
   getGame(@Param('slug') slug: string) {
@@ -33,6 +33,13 @@ export class GamesController {
   @Get()
   findGamesWithPaginate(@Query() query: IPaginationQueryOptions) {
     return this.gamesService.findGamesWithPaginate(query);
+  }
+
+
+  @UseGuards(AdminGuard)
+  @Get('/all')
+  findAllGamesWithPaginate(@Query() query: IPaginationQueryOptions) {
+    return this.gamesService.findAllGames(query);
   }
 
   @UseGuards(AdminGuard)

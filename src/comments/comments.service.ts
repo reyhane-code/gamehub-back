@@ -20,11 +20,14 @@ import { findOneById } from 'src/helpers/crud-helper';
 import { User } from 'models/user.model';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
 import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
-import sequelize from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
+
 
 @Injectable()
 export class CommentsService {
   constructor(
+    @Inject('SEQUELIZE')
+    private readonly sequelize: Sequelize,
     @Inject(Repository.COMMENTS) private commentsRepository: typeof Comment,
     @Inject(Repository.LIKES) private likeRepository: typeof Like,
     private readonly likesService: LikesService,
@@ -93,29 +96,24 @@ export class CommentsService {
     return findOneById(this.commentsRepository, id, 'comment')
   }
 
-
   async findEntityComments(entityId: number, entityType: CommentAbleEntity, query: IPaginationQueryOptions) {
     const { page, perPage, limit, offset } = buildQueryOptions(query, Comment);
 
-    const { rows, count } = await this.commentsRepository.findAndCountAll({
-      where: {
-        [`${entityType}_id`]: entityId,
-        parent_id: { [Op.ne]: null },
-      },
+    const { count, rows } = await this.commentsRepository.findAndCountAll({
+      where: { [`${entityType}_id`]: entityId, confirmed: true },
       include: [
         {
-          model: User,
-          attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] },
-        },
-        {
           model: Like,
-          attributes: [],
+          required: false, // This will perform a LEFT JOIN
+          where: { deletedAt: null }, // Ensure only non-deleted likes are counted
         },
       ],
-      attributes: {
-        include: [[sequelize.fn('COUNT', sequelize.col('likes.id')), 'likeCount']],
-      },
-      group: ['Comment.id'], // Group by comment ID
+      // attributes: {
+      //   include: [
+      //     [this.commentsRepository.sequelize.fn('COUNT', this.commentsRepository.sequelize.col('likes.id')), 'likes_count'], // Count likes correctly
+      //   ],
+      // },
+      // group: ['Comment.id'], // Group by comment ID
       limit,
       offset,
     });
@@ -125,6 +123,35 @@ export class CommentsService {
       items: rows ?? [],
     };
   }
+
+
+  // async findEntityComments(entityId: number, entityType: CommentAbleEntity, query: IPaginationQueryOptions) {
+  //   const { page, perPage, limit, offset } = buildQueryOptions(query, Comment);
+
+  //   const { rows, count } = await this.commentsRepository.findAndCountAll({
+  //     where: {
+  //       [`${entityType}_id`]: entityId,
+  //       parent_id: { [Op.ne]: null },
+  //     },
+  //     include: [
+  //       {
+  //         model: User,
+  //         attributes: { exclude: ['password', 'phone', 'email', 'role', 'active', 'createdAt', 'updatedAt', 'deletedAt'] },
+  //       },
+  //       {
+  //         model: Like,
+  //         attributes: [],
+  //       },
+  //     ],
+  //     limit,
+  //     offset,
+  //   });
+
+  //   return {
+  //     pagination: { count, page, perPage },
+  //     items: rows ?? [],
+  //   };
+  // }
   // async findEntityComments(entityId: number, entityType: CommentAbleEntity, query: IPaginationQueryOptions) {
   //   const { page, perPage, limit, offset, } = buildQueryOptions(query, Comment);
   //   const { rows, count } = await this.commentsRepository.findAndCountAll({
@@ -236,14 +263,20 @@ export class CommentsService {
     };
   }
 
-  async findAllComments() {
-    const comments = await this.commentsRepository.findAll({
-      include: { model: Like },
+  async findAllComments(query: IPaginationQueryOptions) {
+    const { page, perPage, limit, offset } = buildQueryOptions(query, Comment);
+    const { count, rows } = await this.commentsRepository.findAndCountAll({
+      limit, offset
     });
-    if (!comments) {
-      throw new NotFoundException('No comments were found!');
+
+    return {
+      pagination: {
+        count,
+        page,
+        perPage
+      },
+      items: rows ?? []
     }
-    return comments;
   }
 
   async confirmComment(id: number) {
