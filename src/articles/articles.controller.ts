@@ -44,9 +44,12 @@ export class ArticlesController {
     return this.articlesService.createArticle(body, user, imageFile);
   }
 
-  @Get()
-  getArticles() {
-    return this.articlesService.findArticles();
+  @Get('/all')
+  getArticles(
+    @Query() query: IPaginationQueryOptions = paginationDefault,
+
+  ) {
+    return this.articlesService.findArticles(query);
   }
 
   @Get('/paginate')

@@ -200,7 +200,7 @@ export class AuthService {
 
       return {
         validationToken,
-        code, // todo: must be remove
+        code, // todo: remove for production
         hasPassword,
         // sendSmsStatus: SmsStatus.SUCCESS, // must be change to sendSmsStatus from smsService.sendSms
       };
@@ -211,7 +211,6 @@ export class AuthService {
     };
   }
 
-  //Todo: check if forceSendSms and trynumber needed
   async generateAdminValidationTokenAndSendCode(
     phone: string,
     forceSendSms: boolean = false,
@@ -227,6 +226,7 @@ export class AuthService {
 
     const message = `با سلام کد تایید شما در بیس پروژه : ${code}`;
 
+
     // Send the SMS (uncomment and implement the SMS sending logic)
     // const sendSmsStatus = await this.smsService.sendSms({
     //   message,
@@ -236,6 +236,7 @@ export class AuthService {
 
     return {
       validationToken,
+      //todo: remove code for production
       code,
       // sendSmsStatus: SmsStatus.SUCCESS, 
     };
