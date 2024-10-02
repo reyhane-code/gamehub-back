@@ -82,13 +82,14 @@ export class ArticlesService {
     return article;
   }
 
-  async findArticles() {
-    const articles = await this.articlesRepository.findAll({
+  async findArticles(query: IPaginationQueryOptions) {
+    const { limit, offset, page, perPage } = buildQueryOptions(query, Article)
+
+    const { count, rows } = await this.articlesRepository.findAndCountAll({
+      limit,
+      offset
     });
-    const likesCount = await this.likesService.getLikesCountForAllEntities(
-      LikeAbleEntity.ARTICLE,
-    );
-    return { items: articles ?? [], likes: likesCount };
+    return { pagination: { count, page, perPage }, items: rows ?? [] };
   }
 
   async findArticlesWithPaginate(query: IPaginationQueryOptions) {
