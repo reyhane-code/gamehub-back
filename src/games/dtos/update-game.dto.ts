@@ -20,7 +20,7 @@ export class UpdateGameDto {
   @Expose()
   @IsString()
   @IsOptional()
-  background_image?: string;
+  image?: string;
 
   @Expose()
   @IsNumber()
