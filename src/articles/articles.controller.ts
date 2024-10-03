@@ -59,14 +59,16 @@ export class ArticlesController {
     return this.articlesService.findArticlesWithPaginate(query);
   }
 
+  //adds to view
   @Get('/:id')
   getArticleById(@Param('id') id: number) {
     return this.articlesService.findArticleById(id);
   }
 
-  @Get('find/:title')
-  getArticleByTitle(@Param('title') title: string) {
-    return this.articlesService.findArticleByTitle(title);
+  //does not add to view
+  @Get('/find/:id')
+  getArticle(@Param('id') id: number) {
+    return this.articlesService.findArticle(id);
   }
 
   @UseGuards(AdminGuard)

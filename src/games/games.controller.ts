@@ -30,6 +30,11 @@ export class GamesController {
     return this.gamesService.findGameBySlug(slug);
   }
 
+  @Get('/find/:id')
+  findGame(@Param('id') id: number) {
+    return this.gamesService.findGame(id);
+  }
+
   @Get()
   findGamesWithPaginate(@Query() query: IPaginationQueryOptions) {
     return this.gamesService.findGamesWithPaginate(query);

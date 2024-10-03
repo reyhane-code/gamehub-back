@@ -142,4 +142,9 @@ export class ArticlesService {
   async deleteArticle(articleId: number, isSoftDelete: boolean, user: IUser) {
     return deleteEntity(this.articlesRepository, 'article', articleId, isSoftDelete, user.id)
   }
+
+  async findArticle(id: number) {
+    return this.articlesRepository.findOne({ where: { id } });
+
+  }
 }
