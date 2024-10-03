@@ -215,4 +215,8 @@ export class GamesService {
     );
     return { game, likes: likesCount };
   }
+
+  findGame(id: number) {
+    return findOneById(this.gamesRepository, id, 'game')
+  }
 }
