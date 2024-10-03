@@ -35,7 +35,7 @@ export class Game extends Model {
   slug: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  background_image: string;
+  image: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
   rating_top: string;
