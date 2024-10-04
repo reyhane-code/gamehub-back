@@ -19,11 +19,6 @@ module.exports = {
         allowNull: true,
         references: { model: 'games', key: 'id' },
       },
-      comment_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: { model: 'comments', key: 'id' },
-      },
       article_id: {
         type: Sequelize.INTEGER,
         allowNull: true,

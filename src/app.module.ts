@@ -19,7 +19,6 @@ import { LikesModule } from './likes/likes.module';
 import { FilesModule } from './files/files.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { BookmarksModule } from './bookmarks/bookmarks.module';
-import { CommentsModule } from './comments/comments.module';
 import { ArticlesModule } from './articles/articles.module';
 import { HttpSecurityHeadersMiddleware } from './middlewares/http-security-headers.middleware';
 import { SearchModule } from './search/search.module';
@@ -48,7 +47,6 @@ import { SearchModule } from './search/search.module';
     LikesModule,
     FilesModule,
     BookmarksModule,
-    CommentsModule,
     ArticlesModule,
     SearchModule,
   ],

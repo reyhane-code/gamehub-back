@@ -11,7 +11,6 @@ import { IUser } from 'src/users/interfaces/user.interface';
 import { UpdateArticleDto } from './dtos/update-article.dto';
 import { LikeAbleEntity, Repository } from 'src/enums/database.enum';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
-import { Comment } from 'models/comment.model';
 import { FilesService } from 'src/files/files.service';
 import { LikesService } from 'src/likes/likes.service';
 import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
@@ -83,14 +82,14 @@ export class ArticlesService {
     return article;
   }
 
-  async findArticles() {
-    const articles = await this.articlesRepository.findAll({
-      include: [{ model: Comment }],
+  async findArticles(query: IPaginationQueryOptions) {
+    const { limit, offset, page, perPage } = buildQueryOptions(query, Article)
+
+    const { count, rows } = await this.articlesRepository.findAndCountAll({
+      limit,
+      offset
     });
-    const likesCount = await this.likesService.getLikesCountForAllEntities(
-      LikeAbleEntity.ARTICLE,
-    );
-    return { items: articles ?? [], likes: likesCount };
+    return { pagination: { count, page, perPage }, items: rows ?? [] };
   }
 
   async findArticlesWithPaginate(query: IPaginationQueryOptions) {
@@ -123,7 +122,6 @@ export class ArticlesService {
 
   async findUserArticles(user: IUser, query: IPaginationQueryOptions) {
     const { page, perPage, limit, offset, include } = buildQueryOptions(query, Article);
-    include.push({ model: Comment })
     const { rows, count } = await this.articlesRepository.findAndCountAll({
       where: { user_id: user.id },
       include,
@@ -143,5 +141,10 @@ export class ArticlesService {
 
   async deleteArticle(articleId: number, isSoftDelete: boolean, user: IUser) {
     return deleteEntity(this.articlesRepository, 'article', articleId, isSoftDelete, user.id)
+  }
+
+  async findArticle(id: number) {
+    return this.articlesRepository.findOne({ where: { id } });
+
   }
 }

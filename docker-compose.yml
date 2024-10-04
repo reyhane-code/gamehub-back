@@ -65,6 +65,7 @@ services:
     # - redis:/var/lib/redis/data
     # - ./redis.conf:/usr/local/etc/redis/redis.conf
 
+<<<<<<< HEAD
   # migrate:
   #   image: mortezahatamikia/base-node
   #   working_dir: /gamehub/src/app
@@ -87,3 +88,25 @@ services:
   #   command: sh -c "sleep 4 && npx sequelize-cli db:seed:all"
 volumes:
   postgres:
+=======
+  migrate:
+    image: mortezahatamikia/base-node
+    working_dir: /gamehub/src/app
+    volumes:
+      - .:/gamehub/src/app
+    depends_on:
+      - postgres
+    command: sh -c "sleep 2 && npx sequelize db:migrate"
+
+  seed:
+    image: mortezahatamikia/base-node
+    working_dir: /gamehub/src/app
+    volumes:
+      - .:/gamehub/src/app
+    depends_on:
+      - postgres
+      - redis
+      - migrate
+      - api
+    command: sh -c "sleep 4 && npx sequelize-cli db:seed:all"
+>>>>>>> f79a4e525789171a6e0484c9d83d44e5b6197560

@@ -1,6 +1,5 @@
 import { Article } from 'models/article.model';
 import { Bookmark } from 'models/bookmark.model';
-import { Comment } from 'models/comment.model';
 import { File } from 'models/file.model';
 import { Game } from 'models/game.model';
 import { Genre } from 'models/genre.model';
@@ -37,7 +36,6 @@ export const databaseProviders = [
         PublisherGame,
         Like,
         Bookmark,
-        Comment,
         Article,
         File,
         Screenshot,

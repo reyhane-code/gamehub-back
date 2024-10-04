@@ -57,7 +57,7 @@ export class GamesService {
         name,
         slug: toSlug(name),
         description,
-        background_image: imageHashKey,
+        image: imageHashKey,
         rating_top,
         metacritic,
         user_id: user.id,
@@ -134,6 +134,27 @@ export class GamesService {
     };
   }
 
+
+  async findAllGames(query: IPaginationQueryOptions) {
+    const { page, perPage, limit, offset } = buildQueryOptions(query, Game)
+
+    const { count, rows } = await this.gamesRepository.findAndCountAll({
+      limit,
+      offset,
+      distinct: true,
+    });
+
+
+    return {
+      pagination: {
+        count,
+        page,
+        perPage,
+      },
+      items: rows ?? [],
+    };
+  }
+
   async deleteGame(gameId: number, isSoftDelete: boolean) {
     return deleteEntity(this.gamesRepository, 'game', gameId, isSoftDelete)
   }
@@ -142,7 +163,7 @@ export class GamesService {
     {
       name,
       description,
-      background_image,
+      image,
       rating_top,
       metacritic,
     }: UpdateGameDto,
@@ -155,7 +176,7 @@ export class GamesService {
           name,
           slug: name ? toSlug(name) : foundGame.slug,
           description,
-          background_image,
+          image,
           rating_top,
           metacritic,
         },
@@ -194,4 +215,5 @@ export class GamesService {
     );
     return { game, likes: likesCount };
   }
+
 }
