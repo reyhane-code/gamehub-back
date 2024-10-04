@@ -2,8 +2,7 @@ import { Expose } from 'class-transformer';
 import {
   IsString,
   IsOptional,
-  IsEmail,
-  MinLength,
+  IsEmail
 } from '../../custom-validator';
 
 export class UpdateUserDto {
@@ -15,13 +14,11 @@ export class UpdateUserDto {
   @Expose()
   @IsString()
   @IsOptional()
-  @MinLength(2)
   first_name?: string;
 
   @Expose()
   @IsString()
   @IsOptional()
-  @MinLength(2)
   last_name?: string;
 
   @Expose()
