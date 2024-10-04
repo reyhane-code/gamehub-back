@@ -236,7 +236,8 @@ export class AuthService {
 
     return {
       validationToken,
-      code, //todo: remove code for production
+      //todo: remove code for production
+      code,
       // sendSmsStatus: SmsStatus.SUCCESS, 
     };
   }
