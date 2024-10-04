@@ -30,7 +30,7 @@ services:
       POSTGRES_PORT: '5432'
     depends_on:
       - postgres
-      - migrate
+      # - migrate
       - redis
 
   postgres:
@@ -39,7 +39,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./postgres-data:/var/lib/postgres
+      - postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: 'rewq4321'
       POSTGRES_USER: 'postgres'
@@ -65,23 +65,25 @@ services:
     # - redis:/var/lib/redis/data
     # - ./redis.conf:/usr/local/etc/redis/redis.conf
 
-  migrate:
-    image: mortezahatamikia/base-node
-    working_dir: /gamehub/src/app
-    volumes:
-      - .:/gamehub/src/app
-    depends_on:
-      - postgres
-    command: sh -c "sleep 3 && npx sequelize db:migrate"
+  # migrate:
+  #   image: mortezahatamikia/base-node
+  #   working_dir: /gamehub/src/app
+  #   volumes:
+  #     - .:/gamehub/src/app
+  #   depends_on:
+  #     - postgres
+  #   command: sh -c "sleep 2 && npx sequelize db:migrate"
 
-  seed:
-    image: mortezahatamikia/base-node
-    working_dir: /gamehub/src/app
-    volumes:
-      - .:/gamehub/src/app
-    depends_on:
-      - postgres
-      - redis
-      - migrate
-      - api
-    command: sh -c "sleep 5 && npx sequelize-cli db:seed:all"
+  # seed:
+  #   image: mortezahatamikia/base-node
+  #   working_dir: /gamehub/src/app
+  #   volumes:
+  #     - .:/gamehub/src/app
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #     - migrate
+  #     - api
+  #   command: sh -c "sleep 4 && npx sequelize-cli db:seed:all"
+volumes:
+  postgres:
