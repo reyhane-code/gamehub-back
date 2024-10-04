@@ -1,4 +1,4 @@
-export enum ImgaeFit {
+export enum ImageFit {
   COVER = 'cover',
   CONTAIN = 'contain',
   FILL = 'fill',

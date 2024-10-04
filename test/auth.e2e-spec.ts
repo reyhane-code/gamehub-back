@@ -172,7 +172,6 @@ describe('Authentication System (e2e)', () => {
   //   const { accessToken } = await getValidationDataAndRegister();
   //   await logout(200, accessToken);
   //   const body = await getValidationTokenAndCode(200, DEFAULT_PHONE, false);
-  //   console.log(body);
   //   expect(body.hasPassword).toBeDefined();
   //   expect(body.hasPassword).toEqual(false);
   // });

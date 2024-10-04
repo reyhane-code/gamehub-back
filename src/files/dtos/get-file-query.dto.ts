@@ -1,15 +1,13 @@
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 import {
   IsOptional,
-  IsString,
-  IsNumber,
-  Min,
+  IsString, Min,
   Max,
   IsEnum,
-  IsNotEmpty,
+  IsNotEmpty
 } from '../../custom-validator';
 import { ImageFormat } from '../enums/image-format';
-import { ImgaeFit } from '../enums/image-fit.enum';
+import { ImageFit } from '../enums/image-fit.enum';
 
 export class GetFileQueryDto {
   @Expose()
@@ -18,17 +16,17 @@ export class GetFileQueryDto {
   hashKey: string;
 
   @Expose()
-  @IsNumber()
+  @Transform(({ value }) => Number(value))
   @IsOptional()
   width?: number;
 
   @Expose()
-  @IsNumber()
+  @Transform(({ value }) => Number(value))
   @IsOptional()
   height?: number;
 
   @Expose()
-  @IsNumber()
+  @Transform(({ value }) => Number(value))
   @Min(0)
   @Max(100)
   @IsOptional()
@@ -40,9 +38,9 @@ export class GetFileQueryDto {
   format?: ImageFormat;
 
   @Expose()
-  @IsEnum(ImgaeFit)
+  @IsEnum(ImageFit)
   @IsOptional()
-  fit?: ImgaeFit;
+  fit?: ImageFit;
 
   constructor(partial: Partial<GetFileQueryDto>) {
     Object.assign(this, partial);
