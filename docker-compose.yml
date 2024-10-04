@@ -4,8 +4,7 @@ services:
     container_name: gamehub-container
     build: .
     volumes:
-      - .:/code
-      - .:/files
+      - files:/gamehub/src/app/files
     # x-develop:
     #   watch:
     #     - action: sync
@@ -65,25 +64,26 @@ services:
     # - redis:/var/lib/redis/data
     # - ./redis.conf:/usr/local/etc/redis/redis.conf
 
-  # migrate:
-  #   image: mortezahatamikia/base-node
-  #   working_dir: /gamehub/src/app
-  #   volumes:
-  #     - .:/gamehub/src/app
-  #   depends_on:
-  #     - postgres
-  #   command: sh -c "sleep 2 && npx sequelize db:migrate"
+    # migrate:
+    #   image: mortezahatamikia/base-node
+    #   working_dir: /gamehub/src/app
+    #   volumes:
+    #     - .:/gamehub/src/app
+    #   depends_on:
+    #     - postgres
+    #   command: sh -c "sleep 2 && npx sequelize db:migrate"
 
-  # seed:
-  #   image: mortezahatamikia/base-node
-  #   working_dir: /gamehub/src/app
-  #   volumes:
-  #     - .:/gamehub/src/app
-  #   depends_on:
-  #     - postgres
-  #     - redis
-  #     - migrate
-  #     - api
-  #   command: sh -c "sleep 4 && npx sequelize-cli db:seed:all"
+    # seed:
+    #   image: mortezahatamikia/base-node
+    #   working_dir: /gamehub/src/app
+    #   volumes:
+    #     - .:/gamehub/src/app
+    #   depends_on:
+    #     - postgres
+    #     - redis
+    #     - migrate
+    #     - api
+    #   command: sh -c "sleep 4 && npx sequelize-cli db:seed:all"
 volumes:
   postgres:
+  files:
