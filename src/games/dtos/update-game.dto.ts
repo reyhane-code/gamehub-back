@@ -1,9 +1,6 @@
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 import {
-  IsNumber,
-  IsString,
-  IsNotEmpty,
-  IsOptional,
+  IsString, IsOptional
 } from 'src/custom-validator';
 
 export class UpdateGameDto {
@@ -23,12 +20,12 @@ export class UpdateGameDto {
   image?: string;
 
   @Expose()
-  @IsNumber()
+  @Transform(({ value }) => Number(value))
   @IsOptional()
   rating_top?: number;
 
   @Expose()
-  @IsNumber()
+  @Transform(({ value }) => Number(value))
   @IsOptional()
   metacritic?: number;
 

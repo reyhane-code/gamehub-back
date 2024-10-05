@@ -15,6 +15,7 @@ import { FilesService } from 'src/files/files.service';
 import { LikesService } from 'src/likes/likes.service';
 import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
 import { deleteEntity, findOneById, updateEntity } from 'src/helpers/crud-helper';
+import { title } from 'process';
 
 @Injectable()
 export class ArticlesService {
@@ -135,12 +136,51 @@ export class ArticlesService {
     };
   }
 
-  async updateArticle(body: UpdateArticleDto, articleId: number, user: IUser) {
-    return updateEntity<Article>(this.articlesRepository, 'article', articleId, body, user.id)
+  async updateArticle(body: UpdateArticleDto, articleId: number, user: IUser,
+    imageFile?: Express.Multer.File,
+  ) {
+    console.log('image file from update', imageFile)
+    await findOneById(this.articlesRepository, articleId, 'article')
+    let updateBody
+    if (imageFile) {
+      const [hashKey = null, fileExtension] =
+        imageFile?.filename?.split('.') || [];
+
+      updateBody = {
+        title: body.title,
+        content: body.content,
+        image: hashKey
+
+      }
+      console.log('update body', updateBody)
+      await this.filesService.saveImageFileToDB(
+        imageFile,
+        imageFile.filename,
+        hashKey,
+        fileExtension,
+      );
+    } else {
+      updateBody = body
+    }
+    try {
+      const [numberOfAffectedRows, [updatedArticle]] = await this.articlesRepository.update(updateBody, {
+        where: { id: articleId },
+        returning: true,
+      });
+
+      if (numberOfAffectedRows === 0) {
+        throw new BadRequestException('No rows were updated. Please check the entity ID and user ID.');
+      }
+
+      return updatedArticle;
+    } catch (error) {
+      console.error('Update error:', error);
+      throw new BadRequestException('Something went wrong during the update!');
+    }
   }
 
   async deleteArticle(articleId: number, isSoftDelete: boolean, user: IUser) {
-    return deleteEntity(this.articlesRepository, 'article', articleId, isSoftDelete, user.id)
+    return deleteEntity(this.articlesRepository, 'article', articleId, isSoftDelete)
   }
 
   async findArticle(id: number) {

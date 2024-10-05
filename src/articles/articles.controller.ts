@@ -80,14 +80,24 @@ export class ArticlesController {
     return this.articlesService.findUserArticles(user, query);
   }
 
+
+  @UseInterceptors(
+    FileFieldsFastifyInterceptor(
+      [{ name: 'image', maxCount: 1 }],
+      multerOptions,
+    ),
+  )
   @UseGuards(AdminGuard)
   @Put('/:id')
   updateArticle(
     @Body() body: UpdateArticleDto,
     @Param('id') id: number,
     @CurrentUser() user: IUser,
+    @UploadedFiles()
+    image?: { image?: Express.Multer.File[] },
   ) {
-    return this.articlesService.updateArticle(body, id, user);
+    const imageFile = image?.image ? image.image[0] : null;
+    return this.articlesService.updateArticle(body, id, user, imageFile);
   }
   @UseGuards(AdminGuard)
   @Delete('/:id')
