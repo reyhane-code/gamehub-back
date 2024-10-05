@@ -1,4 +1,4 @@
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 import {
   IsNumber,
   IsString,
@@ -19,13 +19,13 @@ export class AddGameDto {
   description?: string;
 
   @Expose()
-  @IsNumber()
+  @Transform(({ value }) => Number(value))
   @IsOptional()
   rating_top?: number;
 
   @Expose()
-  @IsNumber()
   @IsOptional()
+  @Transform(({ value }) => Number(value))
   metacritic?: number;
 
   @Expose()
