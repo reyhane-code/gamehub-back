@@ -139,7 +139,6 @@ export class ArticlesService {
   async updateArticle(body: UpdateArticleDto, articleId: number, user: IUser,
     imageFile?: Express.Multer.File,
   ) {
-    console.log('image file from update', imageFile)
     await findOneById(this.articlesRepository, articleId, 'article')
     let updateBody
     if (imageFile) {
@@ -152,7 +151,6 @@ export class ArticlesService {
         image: hashKey
 
       }
-      console.log('update body', updateBody)
       await this.filesService.saveImageFileToDB(
         imageFile,
         imageFile.filename,

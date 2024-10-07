@@ -17,7 +17,7 @@ import { GameHelperService } from './games-helper.service';
 import { LikesService } from 'src/likes/likes.service';
 import { Screenshot } from 'models/screenshot.model';
 import { IPaginationQueryOptions } from 'src/interfaces/database.interfaces';
-import { buildQueryOptions } from 'src/helpers/dynamic-query-helper'
+import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
 import { deleteEntity, findOneById } from 'src/helpers/crud-helper';
 
 @Injectable()
@@ -32,8 +32,6 @@ export class GamesService {
     {
       name,
       description,
-      rating_top,
-      metacritic,
       platformIds,
       publisherIds,
       genreIds,
@@ -58,8 +56,6 @@ export class GamesService {
         slug: toSlug(name),
         description,
         image: imageHashKey,
-        rating_top,
-        metacritic,
         user_id: user.id,
       });
     } catch (error) {
@@ -159,31 +155,52 @@ export class GamesService {
     return deleteEntity(this.gamesRepository, 'game', gameId, isSoftDelete)
   }
 
-  async updateGame(
-    {
-      name,
-      description,
-      image,
-      rating_top,
-      metacritic,
-    }: UpdateGameDto,
-    id: number,
+  async updateGame(body: UpdateGameDto, gameId: number,
+    imageFile?: Express.Multer.File,
   ) {
-    const foundGame = await this.findOneById(id);
+    let imageHashKey = null;
+    let imageFileExtension = null;
+    let updateBody
+
+    await findOneById(this.gamesRepository, gameId, 'game')
+
+    if (imageFile) {
+      [imageHashKey = null, imageFileExtension] =
+        imageFile?.filename?.split('.') || [];
+
+      updateBody = {
+        name: body.name,
+        slug: body.name && toSlug(body.name),
+        description: body.description,
+        image: imageHashKey
+
+      }
+    } else {
+      updateBody = body
+    }
     try {
-      return this.gamesRepository.update(
-        {
-          name,
-          slug: name ? toSlug(name) : foundGame.slug,
-          description,
-          image,
-          rating_top,
-          metacritic,
-        },
-        { where: { id } },
-      );
+      const updatedGame = await this.gamesRepository.update(updateBody, {
+        where: { id: gameId },
+        returning: true,
+      });
+
+      if (!updatedGame) {
+        throw new BadRequestException('No rows were updated. Please check the entity ID.');
+      }
+
+      if (imageFile) {
+        await this.gameHelperService.saveImageFileToDB(
+          imageFile,
+          imageFile.filename,
+          imageHashKey,
+          imageFileExtension,
+        );
+      }
+
+      return updatedGame;
     } catch (error) {
-      throw new BadRequestException('Something went wrong!');
+      console.error('Update error:', error);
+      throw new BadRequestException('Something went wrong during the update!');
     }
   }
 

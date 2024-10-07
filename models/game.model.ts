@@ -35,10 +35,10 @@ export class Game extends Model {
   slug: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  image: string;
+  image?: string;
 
-  @Column({ type: DataType.STRING, allowNull: true })
-  rating_top: string;
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  rating_top: number;
 
   @Column({ type: DataType.INTEGER, allowNull: true })
   metacritic: number;

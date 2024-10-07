@@ -77,9 +77,22 @@ export class GamesController {
     return this.gamesService.addGame(body, user, imageFile, screenshots);
   }
 
+  @UseInterceptors(
+    FileFieldsFastifyInterceptor(
+      [{ name: 'image', maxCount: 1 }],
+      multerOptions,
+    ),
+  )
   @UseGuards(AdminGuard)
   @Put('/:id')
-  updateGame(@Body() body: UpdateGameDto, @Param('id') id: number) {
-    return this.gamesService.updateGame(body, id);
+  updateArticle(
+    @Body() body: UpdateGameDto,
+    @Param('id') id: number,
+    @CurrentUser() user: IUser,
+    @UploadedFiles()
+    image?: { image?: Express.Multer.File[] },
+  ) {
+    const imageFile = image?.image ? image.image[0] : null;
+    return this.gamesService.updateGame(body, id, imageFile);
   }
 }

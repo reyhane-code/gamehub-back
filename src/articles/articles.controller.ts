@@ -66,7 +66,7 @@ export class ArticlesController {
   }
 
   //does not add to view
-  @Get('/find/:id')
+  @Get('/admin/:id')
   getArticle(@Param('id') id: number) {
     return this.articlesService.findArticle(id);
   }
@@ -79,7 +79,6 @@ export class ArticlesController {
   ) {
     return this.articlesService.findUserArticles(user, query);
   }
-
 
   @UseInterceptors(
     FileFieldsFastifyInterceptor(
