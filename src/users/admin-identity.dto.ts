@@ -16,7 +16,7 @@ export class AdminIdentityDto {
     last_name: string;
 
     @Expose()
-    phone: number;
+    phone: string;
 
     @Expose()
     active: boolean;

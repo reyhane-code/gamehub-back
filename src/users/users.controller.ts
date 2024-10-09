@@ -7,6 +7,7 @@ import {
   Put,
   Query,
   Param,
+  Post,
 } from '@nestjs/common';
 
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -22,6 +23,9 @@ import { TransformResponse } from 'src/custome-transformer';
 import { UserIdentityDto } from './user-identity.dto';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { AdminIdentityDto } from './admin-identity.dto';
+import { AdminUpdateUserDto } from './dtos/admin-update-user.dto';
+import { UserDataDto } from './user-data.dto';
+import { AdminCreateUserDto } from './dtos/admin-create-user.dto';
 
 
 @Controller('/user')
@@ -44,11 +48,35 @@ export class UsersController {
     return this.usersService.updateUserRole(user, body.role, id);
   }
 
+  @Put('/admin/:id?')
+  @UseGuards(AdminGuard)
+  adminUpdateUser(
+    @Body() body: AdminUpdateUserDto,
+    @Param('id') id?: number,
+  ) {
+    return this.usersService.adminUpdateUser(body, id);
+  }
+
+  @Post()
+  @UseGuards(AdminGuard)
+  admiCreateUser(
+    @Body() body: AdminCreateUserDto,
+  ) {
+    return this.usersService.addUser(body);
+  }
+
   @Get()
   @UseGuards(AuthGuard)
   async getUsers(@Query() query: IPaginationQueryOptions = paginationDefault) {
-    return this.usersService.allUsers(query);
+    return this.usersService.findAllUsers(query);
   }
+
+  @Get('/:id')
+  @TransformResponse(UserDataDto)
+  async getUser(@Param('id') id: number) {
+    return this.usersService.findUser(id)
+  }
+
 
   @UseGuards(AuthGuard)
   @Delete()

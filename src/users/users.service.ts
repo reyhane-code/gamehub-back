@@ -4,6 +4,7 @@ import {
   BadRequestException,
   Inject,
   UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { IUser } from './interfaces/user.interface';
@@ -13,6 +14,8 @@ import { UserPasswordDto } from './dtos/user-password.dto';
 import { User } from '../../models/user.model';
 import { Repository, Role } from 'src/enums/database.enum';
 import { buildQueryOptions } from 'src/helpers/dynamic-query-helper';
+import { AdminUpdateUserDto } from './dtos/admin-update-user.dto';
+import { AdminCreateUserDto } from './dtos/admin-create-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -37,6 +40,8 @@ export class UsersService {
       if (existingUser) throw new ConflictException('email already taken!');
     }
 
+
+
     return this.usersRepository.update(body, { where: { id: user.id } });
   }
 
@@ -52,6 +57,21 @@ export class UsersService {
     throw new UnauthorizedException(
       'You do not have permission to access this route',
     );
+  }
+
+  async adminUpdateUser(body: AdminUpdateUserDto, userId?: number) {
+    if (body.username) {
+      const existingUser = await this.usersRepository.findOne({
+        where: { username: body.username },
+      });
+      if (existingUser) throw new ConflictException('username already taken!');
+    }
+    const updatedUser = await this.usersRepository.update(body, {
+      where: { id: userId },
+      returning: true
+    })
+
+    return updatedUser;
   }
 
   async setUserPassword(user: IUser, body: UserPasswordDto) {
@@ -79,7 +99,7 @@ export class UsersService {
     }
   }
 
-  async allUsers(query: IPaginationQueryOptions) {
+  async findAllUsers(query: IPaginationQueryOptions) {
     const { page, perPage, offset, limit } = buildQueryOptions(query, User);
     const { count, rows } = await this.usersRepository.findAndCountAll({
       attributes: { exclude: ['password'] },
@@ -99,5 +119,47 @@ export class UsersService {
 
   deleteUser(user: IUser) {
     return this.usersRepository.destroy({ where: { id: user.id } });
+  }
+
+  async findUser(id: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    })
+    if (!user) {
+      throw new NotFoundException('Can not find user with this id.')
+    }
+    return user;
+  }
+
+  async addUser(body: AdminCreateUserDto) {
+    let foundUser;
+    foundUser = await this.usersRepository.findOne({
+      where: { phone: body.phone }
+    })
+    if (foundUser) {
+      throw new ConflictException('User Already exists.')
+    }
+
+    if (body.email) {
+      foundUser = await this.usersRepository.findOne({
+        where: { email: body.email }
+      })
+
+      if (foundUser) {
+        throw new ConflictException('User Already exists.')
+      }
+    }
+
+    const user = this.usersRepository.create({
+      phone: body.phone,
+      username: body.username,
+      email: body.email,
+      first_name: body.first_name,
+      last_name: body.last_name,
+      role: body.role,
+      active: body.active,
+    })
+
+
   }
 }

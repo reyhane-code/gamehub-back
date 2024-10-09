@@ -15,7 +15,7 @@ export class UserIdentityDto {
   last_name: string;
 
   @Expose()
-  phone: number;
+  phone: string;
 
   @Expose()
   @Transform(({ obj }) => !!obj.password) // Transform based on the presence of password
