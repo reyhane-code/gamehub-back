@@ -1,20 +1,11 @@
 version: '3.8'
 services:
   api:
-    container_name: gamehub-container
-    build: .
+    image: gamehub-api:latest
     volumes:
       - files:/gamehub/src/app/files
-    # x-develop:
-    #   watch:
-    #     - action: sync
-    #       path: ./
-    #       target: /
-    #     - action: rebuild
-    #       path: package.json
-    restart: always
     ports:
-      - 3500:3500
+      - "3500"
     environment:
       STAGE: 'dev'
       NODE_ENV: 'development'
@@ -29,12 +20,10 @@ services:
       POSTGRES_PORT: '5432'
     depends_on:
       - postgres
-      # - migrate
       - redis
 
   postgres:
     image: 'postgres'
-    container_name: postgres-gamehub
     ports:
       - 5432:5432
     volumes:
@@ -45,45 +34,20 @@ services:
       POSTGRES_DB: 'gamehub_db'
       POSTGRES_HOST: 'postgres'
       POSTGRES_PORT: '5432'
-    restart: unless-stopped
 
   redis:
     image: 'redis'
-    container_name: redis-gamehub
     ports:
       - 6379:6379
     command:
       - /bin/sh
       - -c
-      # - Double dollars, so that the variable is not expanded by Docker Compose
-      # - Surround by quotes, so that the shell does not split the password
-      # - The ${variable:?message} syntax causes shell to exit with a non-zero
-      #   code and print a message, when the variable is not set or empty
       - redis-server --requirepass "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81"
-    #volumes:
-    # - redis:/var/lib/redis/data
-    # - ./redis.conf:/usr/local/etc/redis/redis.conf
 
-    # migrate:
-    #   image: mortezahatamikia/base-node
-    #   working_dir: /gamehub/src/app
-    #   volumes:
-    #     - .:/gamehub/src/app
-    #   depends_on:
-    #     - postgres
-    #   command: sh -c "sleep 2 && npx sequelize db:migrate"
-
-    # seed:
-    #   image: mortezahatamikia/base-node
-    #   working_dir: /gamehub/src/app
-    #   volumes:
-    #     - .:/gamehub/src/app
-    #   depends_on:
-    #     - postgres
-    #     - redis
-    #     - migrate
-    #     - api
-    #   command: sh -c "sleep 4 && npx sequelize-cli db:seed:all"
 volumes:
   postgres:
   files:
+
+networks:
+  gamehub-network:
+    external: true
